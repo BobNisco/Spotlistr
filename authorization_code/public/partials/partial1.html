@@ -8,7 +8,7 @@
 	<div class="content">
 		<h2>100% Matches</h2>
 		<ul>
-			<li ng-repeat="match in matches"><a href="{{ match.tracks[0].href }}">{{ createDisplayName(match.tracks[0]) }}</a></li>
+			<li ng-repeat="match in matches"><a href="{{ match.tracks.items[0].external_urls.spotify }}">{{ createDisplayName(match.tracks.items[0]) }}</a></li>
 		</ul>
 
 		<h2>Needs Review (Multiple Matches)</h2>
