@@ -13,12 +13,19 @@
 
 		<h2>Needs Review (Multiple Matches)</h2>
 		<ul>
-			<li ng-repeat="review in toBeReviewed">{{ review }}</li>
+			<li ng-repeat="review in toBeReviewed">
+				<span ng-repeat="track in review.tracks.items">
+					<div class="track-review">
+						<span class="display-name">{{ createDisplayName(track) }}</span>
+						<span class="album-artwork"><img ng-src="{{ track.album.images[1].url }}" /></span>
+					</div>
+				</span>
+			</li>
 		</ul>
 
 		<h2>Not Found on Spotify</h2>
 		<ul>
-			<li ng-repeat="match in noMatches">{{ match.info.query }}</li>
+			<li ng-repeat="match in noMatches">{{ match }}</li>
 		</ul>
 	</div>
 </div>

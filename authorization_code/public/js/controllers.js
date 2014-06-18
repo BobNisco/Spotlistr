@@ -25,7 +25,9 @@ angular.module('listr.controllers', [])
 
 		$scope.performSearch = function() {
 			clearResults();
-			var inputByLine = $scope.taData.split('\n');
+			var rawInputByLine = $scope.taData.split('\n');
+			console.log(rawInputByLine);
+			var inputByLine = normalizeSearchArray(rawInputByLine);
 			console.log(inputByLine);
 			for (var i = 0; i < inputByLine.length; i += 1) {
 				SpotifySearchFactory.search(inputByLine[i], function(response) {
@@ -35,11 +37,23 @@ angular.module('listr.controllers', [])
 					} else if (response.tracks.items.length === 1) {
 						$scope.matches.push(response);
 					} else {
-						$scope.noMatches.push(response);
+						$scope.noMatches.push(inputByLine[i]);
 					}
 				});
 			}
-		}
+		};
+
+		var normalizeSearchQuery = function(query) {
+			return query.replace(/[^\w\s]/gi, '');
+		};
+
+		var normalizeSearchArray = function(arr) {
+			var normalizedArray = new Array(arr.length);
+			for (var i = 0; i < arr.length; i += 1) {
+				normalizedArray[i] = normalizeSearchQuery(arr[i]);
+			}
+			return normalizedArray;
+		};
 
 		$scope.createDisplayName = function(track) {
 			var result = '';
