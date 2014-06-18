@@ -3,8 +3,17 @@
 /* Controllers */
 
 angular.module('listr.controllers', [])
-	.controller('MyCtrl1', ['$scope', 'SpotifySearchFactory', function($scope, SpotifySearchFactory) {
-
+	.controller('MyCtrl1', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory) {
+		if ($routeParams.access_token && $routeParams.refresh_token) {
+			console.log('New session being created');
+			// Save the access token into local storage
+			UserFactory.setAccessToken($routeParams.access_token);
+			// Save the refresh token into local storage
+			UserFactory.setRefreshToken($routeParams.refresh_token);
+			UserFactory.getSpotifyUserInfo();
+		}
+		$scope.currentUser = UserFactory.currentUser();
+		$scope.userLoggedIn = UserFactory.userLoggedIn();
 		// The tracks that matched 100%
 		$scope.matches = [];
 		// The track that need review
@@ -49,6 +58,10 @@ angular.module('listr.controllers', [])
 			$scope.matches = [];
 			$scope.toBeReviewed = [];
 			$scope.noMatches = [];
+		}
+
+		$scope.login = function() {
+			UserFactory.spotifyLogin();
 		}
 
 	}])

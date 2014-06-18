@@ -1,12 +1,36 @@
 'use strict';
 
 /* Services */
-
-
-// Demonstrate how to register services
-// In this case it is a simple value service.
 angular.module('listr.services', [])
 	.value('version', '0.1')
+	.factory('UserFactory', function($http) {
+		return {
+			currentUser: function() {
+				return JSON.parse(window.localStorage.getItem('currentUser'));
+			},
+			userLoggedIn: function() {
+				return this.currentUser() !== null && this.currentUser() !== undefined && this.currentUser() != "null";
+			},
+			getAccessToken: function() {
+				return window.localStorage.getItem('access_token');
+			},
+			setAccessToken: function(access_token) {
+				window.localStorage.setItem('access_token', access_token);
+			},
+			getRefreshToken: function() {
+				return window.localStorage.getItem('refresh_token');
+			},
+			setRefreshToken: function(refresh_token) {
+				window.localStorage.setItem('refresh_token', refresh_token);
+			},
+			getSpotifyUserInfo: function() {
+				$http.defaults.headers.common.Authorization = 'Bearer ' + this.getAccessToken();
+				$http.get('https://api.spotify.com/v1/me').success(function(response) {
+					window.localStorage.setItem('currentUser', JSON.stringify(response));
+				});
+			}
+		}
+	})
 	.factory('SpotifySearchFactory', function($http) {
 		return {
 			search: function(query, callback) {

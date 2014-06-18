@@ -1,3 +1,5 @@
+<span ng-if="userLoggedIn === true">Welcome {{ currentUser.display_name }}</span>
+<span ng-if="userLoggedIn === false"><a href="/login">Log in with Spotify</a></span>
 <h2>Textbox</h2>
 <textarea rows="15" cols="80" ng-model="taData"></textarea>
 <button type="submit" ng-click="performSearch()">Playlist Me</button>
