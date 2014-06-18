@@ -30,9 +30,9 @@ angular.module('listr.controllers', [])
 			for (var i = 0; i < inputByLine.length; i += 1) {
 				SpotifySearchFactory.search(inputByLine[i], function(response) {
 					console.log(response);
-					if (response.info.num_results > 1) {
+					if (response.tracks.items.length > 1) {
 						$scope.toBeReviewed.push(response);
-					} else if (response.info.num_results === 1) {
+					} else if (response.tracks.items.length === 1) {
 						$scope.matches.push(response);
 					} else {
 						$scope.noMatches.push(response);

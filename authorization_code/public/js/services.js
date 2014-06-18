@@ -34,8 +34,8 @@ angular.module('listr.services', [])
 	.factory('SpotifySearchFactory', function($http) {
 		return {
 			search: function(query, callback) {
-				//https://ws.spotify.com/search/1/track.json?q=kaizers+orchestra
-				var req = 'https://ws.spotify.com/search/1/track.json?q=' + encodeURIComponent(query);
+				// https://developer.spotify.com/web-api/search-item/
+				var req = 'https://api.spotify.com/v1/search?type=track&q=' + encodeURIComponent(query);
 				console.log(req);
 				$http.get(req).success(callback);
 			}
