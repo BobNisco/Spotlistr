@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.2.16
+ * @license AngularJS v1.2.18
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -900,7 +900,7 @@ angular.mock.dump = function(object) {
  * When an Angular application needs some data from a server, it calls the $http service, which
  * sends the request to a real server using $httpBackend service. With dependency injection, it is
  * easy to inject $httpBackend mock (which has the same API as $httpBackend) and use it to verify
- * the requests and respond with some testing data without sending a request to real server.
+ * the requests and respond with some testing data without sending a request to a real server.
  *
  * There are two ways to specify what test data should be returned as http responses by the mock
  * backend when the code under test makes http requests:
@@ -1791,8 +1791,8 @@ angular.module('ngMockE2E', ['ng']).config(['$provide', function($provide) {
  * on the `ngMockE2E` and your application modules and defines the fake backend:
  *
  * ```js
- *   listrDev = angular.module('listrDev', ['listr', 'ngMockE2E']);
- *   listrDev.run(function($httpBackend) {
+ *   myAppDev = angular.module('myAppDev', ['myApp', 'ngMockE2E']);
+ *   myAppDev.run(function($httpBackend) {
  *     phones = [{name: 'phone1'}, {name: 'phone2'}];
  *
  *     // returns the current list of phones
@@ -1800,7 +1800,9 @@ angular.module('ngMockE2E', ['ng']).config(['$provide', function($provide) {
  *
  *     // adds a new phone to the phones array
  *     $httpBackend.whenPOST('/phones').respond(function(method, url, data) {
- *       phones.push(angular.fromJson(data));
+ *       var phone = angular.fromJson(data);
+ *       phones.push(phone);
+ *       return [200, phone, {}];
  *     });
  *     $httpBackend.whenGET(/^\/templates\//).passThrough();
  *     //...
@@ -1956,11 +1958,11 @@ if(window.jasmine || window.mocha) {
       };
 
 
-  beforeEach(function() {
+  (window.beforeEach || window.setup)(function() {
     currentSpec = this;
   });
 
-  afterEach(function() {
+  (window.afterEach || window.teardown)(function() {
     var injector = currentSpec.$injector;
 
     currentSpec.$injector = null;
@@ -2002,7 +2004,7 @@ if(window.jasmine || window.mocha) {
    * @param {...(string|Function|Object)} fns any number of modules which are represented as string
    *        aliases or as anonymous module initialization functions. The modules are used to
    *        configure the injector. The 'ng' and 'ngMock' modules are automatically loaded. If an
-   *        object literal is passed they will be register as values in the module, the key being
+   *        object literal is passed they will be registered as values in the module, the key being
    *        the module name and the value being what is returned.
    */
   window.module = angular.mock.module = function() {
@@ -2077,16 +2079,16 @@ if(window.jasmine || window.mocha) {
    * Example of what a typical jasmine tests looks like with the inject method.
    * ```js
    *
-   *   angular.module('listrlicationModule', [])
+   *   angular.module('myApplicationModule', [])
    *       .value('mode', 'app')
    *       .value('version', 'v1.0.1');
    *
    *
-   *   describe('listr', function() {
+   *   describe('MyApp', function() {
    *
    *     // You need to load modules that you want to test,
    *     // it loads only the "ng" module by default.
-   *     beforeEach(module('listrlicationModule'));
+   *     beforeEach(module('myApplicationModule'));
    *
    *
    *     // inject() is used to inject arguments of all given functions

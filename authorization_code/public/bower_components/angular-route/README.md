@@ -21,7 +21,7 @@ Add a `<script>` to your `index.html`:
 And add `ngRoute` as a dependency for your app:
 
 ```javascript
-angular.module('listr', ['ngRoute']);
+angular.module('myApp', ['ngRoute']);
 ```
 
 ## Documentation
