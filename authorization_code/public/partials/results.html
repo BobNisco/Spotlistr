@@ -1,0 +1,18 @@
+<div class="result">
+	<div class="content" ng-transclude>
+		<h2>100% Matches</h2>
+		<ul>
+			<li ng-repeat="match in matches"><a href="{{ match.tracks[0].href }}">{{ createDisplayName(match.tracks[0]) }}</a></li>
+		</ul>
+
+		<h2>Needs Review (Multiple Matches)</h2>
+		<ul>
+			<li ng-repeat="review in toBeReviewed">{{ review }}</li>
+		</ul>
+
+		<h2>Not Found on Spotify</h2>
+		<ul>
+			<li ng-repeat="match in noMatches">{{ match.info.query }}</li>
+		</ul>
+	</div>
+</div>

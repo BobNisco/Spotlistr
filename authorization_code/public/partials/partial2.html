@@ -1,0 +1,7 @@
+<h2>Subreddit</h2>
+<input type="text" ng-model="subredditInput" />
+<select data-ng-options="opt.name for opt in subredditSortBy" data-ng-model="selectedSortBy">
+</select>
+<button type="submit" ng-click="performSearch()">Playlist Me</button>
+
+<div result-module></div>
