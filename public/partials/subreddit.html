@@ -1,7 +1,35 @@
-<h2>Subreddit</h2>
-<input type="text" ng-model="subredditInput" />
-<select data-ng-options="opt.name for opt in subredditSortBy" data-ng-model="selectedSortBy">
-</select>
-<button type="submit" ng-click="performSearch()">Playlist Me</button>
+<div class="row">
+	<div class="col-md-12">
+		<h1>Subreddit Search</h1>
+		<p class="lead">Type in your favorite Subreddit and select the sorting criteria to make a Spotify playlist based on the results!</p>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="subreddit" class="col-sm-2 control-label">Subreddit</label>
+				<div class="col-xs-10 col-sm-10 col-md-4 col-lg-4">
+					<div class="input-group">
+						<span class="input-group-addon">/r/</span>
+						<input type="text" class="form-control" name="subreddit" id="subreddit" ng-model="subredditInput" />
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="sortBy" class="col-sm-2 control-label">Sort By</label>
+				<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+					<select class="form-control" data-ng-options="opt.name for opt in subredditSortBy" data-ng-model="selectedSortBy"></select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button ng-if="userLoggedIn" class="btn btn-success btn-lg" type="submit" ng-click="performSearch()">Search Reddit and Generate Spotify Playlist</button>
+					<a href="/login" ng-if="!userLoggedIn" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
 
 <div result-module></div>

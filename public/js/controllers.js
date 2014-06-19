@@ -160,7 +160,14 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
-	.controller('Subreddit', ['$scope', 'SpotifySearchFactory', 'RedditFactory', function($scope, SpotifySearchFactory, RedditFactory) {
+	.controller('Subreddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'RedditFactory', function($scope, UserFactory, SpotifySearchFactory, RedditFactory) {
+		$scope.currentUser = UserFactory.currentUser();
+		$scope.userLoggedIn = UserFactory.userLoggedIn();
+		$scope.$on('userChanged', function(event, data) {
+			$scope.userLoggedIn = data.userLoggedIn;
+			$scope.currentUser = data.currentUser;
+		});
+
 		$scope.subredditSortBy = [{name: 'hot', id: 'hot'}, {name: 'top', id: 'top'}, {name: 'new', id: 'new'}];
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
 		$scope.subredditInput = '';
