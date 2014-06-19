@@ -8,6 +8,10 @@ angular.module('listr.services', [])
 			currentUser: function() {
 				return JSON.parse(window.localStorage.getItem('currentUser'));
 			},
+			getUserId: function() {
+				var user = this.currentUser();
+				return user.id;
+			},
 			userLoggedIn: function() {
 				return this.currentUser() !== null && this.currentUser() !== undefined && this.currentUser() != "null";
 			},
@@ -37,6 +41,24 @@ angular.module('listr.services', [])
 				// https://developer.spotify.com/web-api/search-item/
 				var req = 'https://api.spotify.com/v1/search?type=track&q=' + encodeURIComponent(query);
 				$http.get(req).success(callback);
+			}
+		}
+	})
+	.factory('SpotifyPlaylistFactory', function($http) {
+		return {
+			create: function(name, user_id, access_token, is_public) {
+				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
+				// https://developer.spotify.com/web-api/create-playlist/
+				// Endpoint: POST https://api.spotify.com/v1/users/{user_id}/playlists
+				$http.post(
+					'https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists',
+					{
+						'name' : name,
+						'public' : false // TODO: Make this listen to the checkbox
+					}
+				).success(function(response) {
+					console.log(response);
+				});
 			}
 		}
 	})

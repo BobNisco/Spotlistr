@@ -3,7 +3,7 @@
 /* Controllers */
 
 angular.module('listr.controllers', [])
-	.controller('MyCtrl1', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory) {
+	.controller('MyCtrl1', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			console.log('New session being created');
 			// Save the access token into local storage
@@ -25,7 +25,9 @@ angular.module('listr.controllers', [])
 		// The selected indexes of the review tracks
 		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
-		$scope.playlistName = '';
+		$scope.playlistName = 'Coolest Playlist Ever';
+		// Boolean for if the playlist will be public or nah
+		$scope.publicPlaylist = false;
 
 		$scope.performSearch = function() {
 			clearResults();
@@ -85,6 +87,12 @@ angular.module('listr.controllers', [])
 		}
 
 		$scope.createPlaylist = function() {
+			var playlist = gatherPlaylist();
+			console.log($scope.playlistName);
+			SpotifyPlaylistFactory.create($scope.playlistName, UserFactory.getUserId(), UserFactory.getAccessToken(), $scope.publicPlaylist);
+		};
+
+		var gatherPlaylist = function () {
 			var playlist = [];
 			// Add all of the 100% matches
 			for (var i = 0; i < $scope.matches.length; i += 1) {
@@ -98,11 +106,12 @@ angular.module('listr.controllers', [])
 			}
 			// TODO: Do something better with the ones that we couldn't find
 			console.log(playlist);
+			return playlist;
 		};
 
 		var createSpotifyUriFromTrackId = function(id) {
 			return 'spotify:track:' + id;
-		}
+		};
 
 	}])
 	.controller('MyCtrl2', ['$scope', 'SpotifySearchFactory', 'RedditFactory', function($scope, SpotifySearchFactory, RedditFactory) {
