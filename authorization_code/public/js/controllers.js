@@ -25,7 +25,7 @@ angular.module('listr.controllers', [])
 		// The selected indexes of the review tracks
 		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
-		$scope.playlistName = 'Coolest Playlist Ever';
+		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
 		$scope.publicPlaylist = false;
 
@@ -87,9 +87,9 @@ angular.module('listr.controllers', [])
 			$scope.selectedReviewedTracks[trackUrl] = trackId;
 		}
 
-		$scope.createPlaylist = function() {
+		$scope.createPlaylist = function(name, isPublic) {
 			var playlist = gatherPlaylist();
-			SpotifyPlaylistFactory.create($scope.playlistName, UserFactory.getUserId(), UserFactory.getAccessToken(), $scope.publicPlaylist, function(response) {
+			SpotifyPlaylistFactory.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, function(response) {
 				if (response.id) {
 					SpotifyPlaylistFactory.addTracks(UserFactory.getUserId(), response.id, UserFactory.getAccessToken(), playlist, function(response) {
 						console.log(response);

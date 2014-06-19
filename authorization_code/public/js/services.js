@@ -54,7 +54,7 @@ angular.module('listr.services', [])
 					'https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists',
 					{
 						'name' : name,
-						'public' : false // TODO: Make this listen to the checkbox
+						'public' : is_public
 					}
 				).success(callback);
 			},
