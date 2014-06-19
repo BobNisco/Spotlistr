@@ -142,7 +142,8 @@ angular.module('spotlistr.controllers', [])
 				}
 
 				// 2. Search Spotify
-				QueryFactory.performSearch(trackTitles, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				var inputByLine = QueryFactory.normalizeSearchArray(trackTitles);
+				QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
 			});
 		};
 

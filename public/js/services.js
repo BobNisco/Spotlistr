@@ -53,7 +53,7 @@ angular.module('spotlistr.services', [])
 		return {
 			search: function(query, callback) {
 				// https://developer.spotify.com/web-api/search-item/
-				var req = 'https://api.spotify.com/v1/search?type=track&q=' + encodeURIComponent(query);
+				var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(query);
 				$http.get(req).success(callback);
 			}
 		}
@@ -88,7 +88,18 @@ angular.module('spotlistr.services', [])
 	.factory('QueryFactory', function(SpotifySearchFactory) {
 		return {
 			normalizeSearchQuery: function(query) {
-				return query.replace(/[^\w\s]/gi, '');
+				var normalized = query;
+				// Remove any genre tags in the formation [genre]
+				// NOTE: This is pretty naive
+				normalized = normalized.replace(/\[(\w*|\s*|\/|-)+\]/gi, '');
+				// Remove the time listings in the format [hh:mm:ss]
+				normalized = normalized.replace(/(\[(\d*)?:?\d+:\d+\])/, '');
+				// Remove the year tags in the format [yyyy] or (yyyy)
+				normalized = normalized.replace(/(\[|\()+\d*(\]|\))+/, '');
+				// Remove all the extraneous stuff
+				normalized = normalized.replace(/[^\w\s]/gi, '');
+				console.log(normalized);
+				return normalized;
 			},
 			normalizeSearchArray: function(arr) {
 				var normalizedArray = new Array(arr.length);
