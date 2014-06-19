@@ -5,7 +5,6 @@
 angular.module('spotlistr.controllers', [])
 	.controller('Textbox', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
-			console.log('New session being created');
 			// Save the access token into local storage
 			UserFactory.setAccessToken($routeParams.access_token);
 			// Save the refresh token into local storage
@@ -28,15 +27,14 @@ angular.module('spotlistr.controllers', [])
 		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
 		$scope.publicPlaylist = false;
-		// Errors
-		$scope.errors = [];
+		// Messages to the user
+		$scope.messages = [];
 
 		$scope.performSearch = function() {
 			clearResults();
 			var rawInputByLine = $scope.taData.split('\n');
 			var inputByLine = normalizeSearchArray(rawInputByLine);
 			for (var i = 0; i < inputByLine.length; i += 1) {
-				console.log(inputByLine[i]);
 				SpotifySearchFactory.search(inputByLine[i], function(response) {
 					if (response.tracks.items.length > 1) {
 						$scope.toBeReviewed.push(response);
@@ -79,6 +77,7 @@ angular.module('spotlistr.controllers', [])
 			$scope.matches = [];
 			$scope.toBeReviewed = [];
 			$scope.noMatches = [];
+			$scope.messages = [];
 		}
 
 		$scope.login = function() {
@@ -90,14 +89,17 @@ angular.module('spotlistr.controllers', [])
 		}
 
 		$scope.createPlaylist = function(name, isPublic) {
+			$scope.messages = [];
 			var playlist = gatherPlaylist(),
 				successCallback = function(response) {
 					if (response.id) {
+						var playlistId = response.id;
 						SpotifyPlaylistFactory.addTracks(UserFactory.getUserId(), response.id, UserFactory.getAccessToken(), playlist, function(response) {
-							console.log(response);
+							addSuccess('Successfully created your playlist! Check your Spotify client to view it!');
 						});
 					} else {
 						// TODO: Handle error
+						addError('Error while creating playlist on Spotify');
 					}
 				},
 				errorCallback = function(data, status, headers, config) {
@@ -105,16 +107,15 @@ angular.module('spotlistr.controllers', [])
 						// 401 unauthorized
 						// The token needs to be refreshed
 						UserFactory.getNewAccessToken(function(newTokenResponse) {
-							console.log(newTokenResponse);
 							UserFactory.setAccessToken(newTokenResponse.access_token);
 							// Call the create new playlist function again
 							// since we now have the proper access token
 							SpotifyPlaylistFactory.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
 						}, function(data, status, headers, config) {
-							// TODO: Show the error to the user
+							addError(data.error.message);
 						});
 					} else {
-						// TODO: Show the error to the user
+						addError(data.error.message);
 					}
 				};
 			SpotifyPlaylistFactory.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
@@ -133,12 +134,25 @@ angular.module('spotlistr.controllers', [])
 				}
 			}
 			// TODO: Do something better with the ones that we couldn't find
-			console.log(playlist);
 			return playlist;
 		};
 
 		var createSpotifyUriFromTrackId = function(id) {
 			return 'spotify:track:' + id;
+		};
+
+		var addError = function(message) {
+			$scope.messages.push({
+				'status': 'error',
+				'message': message
+			});
+		};
+
+		var addSuccess = function(message) {
+			$scope.messages.push({
+				'status': 'success',
+				'message': message
+			});
 		};
 
 	}])

@@ -6,9 +6,7 @@
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<div class="page-header">
-			<h1>Textbox search</h1>
-		</div>
+		<h1>Textbox search</h1>
 		<p class="lead">Input a list of tracks separated on each line to create a playlist! Spotlistr will search the Spotify library and automatically pick the exact matches to your input. If Spotlistr is unsure of which track to choose, it will pick the closest match automatically but also present you with a list of the other matches and allow you to choose the correct match on the chance that it picked the wrong one.</p>
 	</div>
 </div>
@@ -67,6 +65,10 @@
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<h2>All Set?</h2>
 				<form role="form" class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+					<div class="form-group">
+						<div ng-repeat="message in messages" class="alert" ng-class="message.status=='success' ? 'alert-success' : 'alert-danger'">{{ message.message }}</div>
+						<div ng-repeat="error in errors" class="alert alert-danger">{{ }}</div>
+					</div>
 					<div class="form-group">
 						<label for="playlistName">Give your sweet new playlist a name!</label>
 						<input type="text" class="form-control" id="playlistName" ng-model="playlistName" ng-trim="true" required></input>
