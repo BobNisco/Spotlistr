@@ -17,8 +17,8 @@
 	<link rel="stylesheet" href="css/card.css">
 	<script src="bower_components/html5-boilerplate/js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
-<body>
-	<nav class="navbar navbar-default" role="navigation">
+<body ng-app="spotlistr">
+	<nav class="navbar navbar-default" role="navigation" ng-controller="User">
 		<div class="container">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -33,6 +33,10 @@
 				<ul class="nav navbar-nav">
 					<li><a href="#/search/textbox">Textbox Search</a></li>
 				</ul>
+				<ul class="nav navbar-nav navbar-right">
+        			<li ng-if="userLoggedIn === true"><a href="#">Sup, {{ currentUser.display_name }}</a></li>
+					<li ng-if="userLoggedIn === false"><a href="/login">Log in with Spotify</a></li>
+        		</ul>
 			</div>
 		</div>
 	</nav>

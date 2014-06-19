@@ -3,10 +3,13 @@
 /* Services */
 angular.module('spotlistr.services', [])
 	.value('version', '0.1')
-	.factory('UserFactory', function($http) {
+	.factory('UserFactory', function($http, $rootScope) {
 		return {
 			currentUser: function() {
 				return JSON.parse(window.localStorage.getItem('currentUser'));
+			},
+			setCurrentUser: function(userJson) {
+				window.localStorage.setItem('currentUser', JSON.stringify(userJson));
 			},
 			getUserId: function() {
 				var user = this.currentUser();
@@ -31,9 +34,17 @@ angular.module('spotlistr.services', [])
 				$http.get('/refresh_token?refresh_token=' + this.getRefreshToken()).success(successCallback).error(errorCallback);
 			},
 			getSpotifyUserInfo: function() {
+				var _this = this;
 				$http.defaults.headers.common.Authorization = 'Bearer ' + this.getAccessToken();
 				$http.get('https://api.spotify.com/v1/me').success(function(response) {
-					window.localStorage.setItem('currentUser', JSON.stringify(response));
+					// Update the stored data
+					_this.setCurrentUser(response);
+					// Broadcast the event so that the menu can to consume it
+					// along with any other controllers that may be consuming it
+					$rootScope.$broadcast('userChanged', {
+						'currentUser': _this.currentUser(),
+						'userLoggedIn': _this.userLoggedIn()
+					});
 				});
 			}
 		}

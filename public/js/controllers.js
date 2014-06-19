@@ -13,6 +13,10 @@ angular.module('spotlistr.controllers', [])
 		}
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
+		$scope.$on('userChanged', function(event, data) {
+			$scope.userLoggedIn = data.userLoggedIn;
+			$scope.currentUser = data.currentUser;
+		});
 		// The tracks that matched 100%
 		$scope.matches = [];
 		// The track that need review
@@ -166,6 +170,14 @@ angular.module('spotlistr.controllers', [])
 				console.log(response);
 			});
 		};
+	}])
+	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {
+		$scope.currentUser = UserFactory.currentUser();
+		$scope.userLoggedIn = UserFactory.userLoggedIn();
+		$scope.$on('userChanged', function(event, data) {
+			$scope.userLoggedIn = data.userLoggedIn;
+			$scope.currentUser = data.currentUser;
+		});
 	}])
 	.config(['$compileProvider', function( $compileProvider ) {
 		$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|spotify):/);
