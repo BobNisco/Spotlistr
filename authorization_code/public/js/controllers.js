@@ -28,12 +28,9 @@ angular.module('listr.controllers', [])
 		$scope.performSearch = function() {
 			clearResults();
 			var rawInputByLine = $scope.taData.split('\n');
-			console.log(rawInputByLine);
 			var inputByLine = normalizeSearchArray(rawInputByLine);
-			console.log(inputByLine);
 			for (var i = 0; i < inputByLine.length; i += 1) {
 				SpotifySearchFactory.search(inputByLine[i], function(response) {
-					console.log(response);
 					if (response.tracks.items.length > 1) {
 						$scope.toBeReviewed.push(response);
 						$scope.selectedReviewedTracks[response.tracks.href] = response.tracks.items[0].id;
@@ -83,6 +80,26 @@ angular.module('listr.controllers', [])
 
 		$scope.assignSelectedTrack = function(trackUrl, trackId) {
 			$scope.selectedReviewedTracks[trackUrl] = trackId;
+		}
+
+		$scope.createPlaylist = function() {
+			var playlist = [];
+			// Add all of the 100% matches
+			for (var i = 0; i < $scope.matches.length; i += 1) {
+				playlist.push(createSpotifyUriFromTrackId($scope.matches[i].tracks.items[0].id));
+			}
+			// Add the selected songs for the to-be-reviewed songs
+			for (var prop in $scope.selectedReviewedTracks) {
+				if ($scope.selectedReviewedTracks.hasOwnProperty(prop)) {
+					playlist.push(createSpotifyUriFromTrackId($scope.selectedReviewedTracks[prop]));
+				}
+			}
+			// TODO: Do something better with the ones that we couldn't find
+			console.log(playlist);
+		};
+
+		var createSpotifyUriFromTrackId = function(id) {
+			return 'spotify:track:' + id;
 		}
 
 	}])

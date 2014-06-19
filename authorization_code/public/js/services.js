@@ -36,7 +36,6 @@ angular.module('listr.services', [])
 			search: function(query, callback) {
 				// https://developer.spotify.com/web-api/search-item/
 				var req = 'https://api.spotify.com/v1/search?type=track&q=' + encodeURIComponent(query);
-				console.log(req);
 				$http.get(req).success(callback);
 			}
 		}
