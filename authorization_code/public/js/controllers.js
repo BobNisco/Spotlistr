@@ -34,6 +34,7 @@ angular.module('listr.controllers', [])
 			var rawInputByLine = $scope.taData.split('\n');
 			var inputByLine = normalizeSearchArray(rawInputByLine);
 			for (var i = 0; i < inputByLine.length; i += 1) {
+				console.log(inputByLine[i]);
 				SpotifySearchFactory.search(inputByLine[i], function(response) {
 					if (response.tracks.items.length > 1) {
 						$scope.toBeReviewed.push(response);
@@ -41,7 +42,7 @@ angular.module('listr.controllers', [])
 					} else if (response.tracks.items.length === 1) {
 						$scope.matches.push(response);
 					} else {
-						$scope.noMatches.push(inputByLine[i]);
+						$scope.noMatches.push(response);
 					}
 				});
 			}

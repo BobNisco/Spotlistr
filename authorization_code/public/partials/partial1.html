@@ -50,7 +50,7 @@
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<h2>Not Found on Spotify</h2>
 				<ul>
-					<li ng-repeat="match in noMatches">{{ match }}</li>
+					<li ng-repeat="match in noMatches"><a href="{{ match.tracks.href }}" target="_blank">{{ match.tracks.href }}</a></li>
 				</ul>
 			</div>
 		</div>
