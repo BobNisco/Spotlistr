@@ -24,6 +24,8 @@ angular.module('listr.controllers', [])
 		$scope.taData = '';
 		// The selected indexes of the review tracks
 		$scope.selectedReviewedTracks = {};
+		// The name of the playlist
+		$scope.playlistName = '';
 
 		$scope.performSearch = function() {
 			clearResults();
