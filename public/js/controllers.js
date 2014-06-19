@@ -57,7 +57,7 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.createPlaylist = function(name, isPublic) {
 			$scope.messages = [];
-			var playlist = QueryFactory.gatherPlaylist(),
+			var playlist = QueryFactory.gatherPlaylist($scope.matches, $scope.selectedReviewedTracks),
 				successCallback = function(response) {
 					if (response.id) {
 						var playlistId = response.id;
