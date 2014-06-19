@@ -1,18 +1,64 @@
 <div class="result">
-	<div class="content" ng-transclude>
-		<h2>100% Matches</h2>
-		<ul>
-			<li ng-repeat="match in matches"><a href="{{ match.tracks[0].href }}">{{ createDisplayName(match.tracks[0]) }}</a></li>
-		</ul>
+	<div class="content">
+		<div ng-if="matches.length > 0" class="row">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<h2><span class="label label-info">{{ matches.length }}</span> Tracks with Exact Matches</h2>
+				<ul class="list-unstyled">
+					<li ng-repeat="track in matches">
+						<a href="{{ track.tracks.items[0].external_urls.spotify }}">{{ createDisplayName(track.tracks.items[0]) }}</a>
+					</li>
+				</ul>
+			</div>
+		</div>
 
-		<h2>Needs Review (Multiple Matches)</h2>
-		<ul>
-			<li ng-repeat="review in toBeReviewed">{{ review }}</li>
-		</ul>
+		<div ng-if="toBeReviewed.length > 0" class="row multiple-matches">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<h2><span class="label label-info">{{ toBeReviewed.length }}</span> Tracks with Multiple Matches</h2>
+				<ul class="list-unstyled">
+					<li ng-repeat="review in toBeReviewed">
+						<div class="row form-group product-chooser">
+							<span ng-repeat="track in review.tracks.items">
+								<card></card>
+							</span>
+						</div>
+						<div class="clear"></div>
+						<hr />
+					</li>
+				</ul>
+			</div>
+		</div>
 
-		<h2>Not Found on Spotify</h2>
-		<ul>
-			<li ng-repeat="match in noMatches">{{ match.info.query }}</li>
-		</ul>
+		<div ng-if="noMatches.length > 0" class="row">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<h2><span class="label label-warning">{{ noMatches.length }}</span> Tracks Not Found on Spotify <small>:(</small></h2>
+				<ul class="list-unstyled">
+					<li ng-repeat="match in noMatches"><a href="{{ match.tracks.href }}" target="_blank">{{ match.tracks.href }}</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div ng-if="matches.length > 0 || toBeReviewed.length > 0" class="row">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<h2>All Set?</h2>
+				<form role="form" class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+					<div class="form-group">
+						<div ng-repeat="message in messages" class="alert" ng-class="message.status=='success' ? 'alert-success' : 'alert-danger'">{{ message.message }}</div>
+						<div ng-repeat="error in errors" class="alert alert-danger">{{ }}</div>
+					</div>
+					<div class="form-group">
+						<label for="playlistName">Give your sweet new playlist a name!</label>
+						<input type="text" class="form-control" id="playlistName" ng-model="playlistName" ng-trim="true" required></input>
+					</div>
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" ng-model="publicPlaylist"> Make {{ playlistName }} public?
+						</label>
+					</div>
+					<div class="form-group">
+						<button class="btn btn-success btn-lg" ng-click="createPlaylist(playlistName, publicPlaylist)">Create {{ playlistName }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>

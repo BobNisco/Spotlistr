@@ -10,12 +10,9 @@ angular.module('spotlistr.directives', []).
 	}])
 	.directive('resultModule', function() {
 		return {
-			restrict: 'A',
-			scope : {
-				title : '@'
-			},
-			templateUrl : 'partials/results.html',
-			transclude : true
+			restrict: 'AE',
+			scope: false,
+			templateUrl : 'partials/results.html'
 		};
 	})
 	.directive('card', function () {
