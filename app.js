@@ -13,7 +13,14 @@ var querystring = require('querystring');
 
 var client_id = '0dc431a2682b462e93cd00fbf8295447'; // Your client id
 var client_secret = '3c29e4ee31b242758532b7c12cffe4a5'; // Your client secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var redirect_uri = 'http://spotlistr.heroku.com/callback'; // Your redirect uri
+
+// Change the redirect URI if we are developing
+// To set NODE_ENV in Windows: SET NODE_ENV=development
+//        NODE_ENV in *nix/OSX: export NODE_ENV=development
+if (process.env.NODE_ENV === "development") {
+  redirect_uri = 'http://localhost:8888/callback';
+}
 
 var app = express();
 
