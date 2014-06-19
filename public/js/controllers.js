@@ -3,7 +3,7 @@
 /* Controllers */
 
 angular.module('listr.controllers', [])
-	.controller('MyCtrl1', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory) {
+	.controller('Textbox', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			console.log('New session being created');
 			// Save the access token into local storage
@@ -122,7 +122,7 @@ angular.module('listr.controllers', [])
 		};
 
 	}])
-	.controller('MyCtrl2', ['$scope', 'SpotifySearchFactory', 'RedditFactory', function($scope, SpotifySearchFactory, RedditFactory) {
+	.controller('Subreddit', ['$scope', 'SpotifySearchFactory', 'RedditFactory', function($scope, SpotifySearchFactory, RedditFactory) {
 		$scope.subredditSortBy = [{name: 'hot', id: 'hot'}, {name: 'top', id: 'top'}, {name: 'new', id: 'new'}];
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
 		$scope.subredditInput = '';
