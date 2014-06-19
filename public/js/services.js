@@ -27,6 +27,9 @@ angular.module('spotlistr.services', [])
 			setRefreshToken: function(refresh_token) {
 				window.localStorage.setItem('refresh_token', refresh_token);
 			},
+			getNewAccessToken: function(successCallback, errorCallback) {
+				$http.get('/refresh_token?refresh_token=' + this.getRefreshToken()).success(successCallback).error(errorCallback);
+			},
 			getSpotifyUserInfo: function() {
 				$http.defaults.headers.common.Authorization = 'Bearer ' + this.getAccessToken();
 				$http.get('https://api.spotify.com/v1/me').success(function(response) {
@@ -44,9 +47,9 @@ angular.module('spotlistr.services', [])
 			}
 		}
 	})
-	.factory('SpotifyPlaylistFactory', function($http) {
+	.factory('SpotifyPlaylistFactory', function($http, UserFactory) {
 		return {
-			create: function(name, user_id, access_token, is_public, callback) {
+			create: function(name, user_id, access_token, is_public, callback, errorCallback) {
 				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
 				// https://developer.spotify.com/web-api/create-playlist/
 				// Endpoint: POST https://api.spotify.com/v1/users/{user_id}/playlists
@@ -56,7 +59,7 @@ angular.module('spotlistr.services', [])
 						'name' : name,
 						'public' : is_public
 					}
-				).success(callback);
+				).success(callback).error(errorCallback);
 			},
 			addTracks: function(user_id, playlist_id, access_token, arr, callback) {
 				// https://developer.spotify.com/web-api/add-tracks-to-playlist/

@@ -88,16 +88,34 @@ angular.module('spotlistr.controllers', [])
 		}
 
 		$scope.createPlaylist = function(name, isPublic) {
-			var playlist = gatherPlaylist();
-			SpotifyPlaylistFactory.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, function(response) {
-				if (response.id) {
-					SpotifyPlaylistFactory.addTracks(UserFactory.getUserId(), response.id, UserFactory.getAccessToken(), playlist, function(response) {
-						console.log(response);
-					});
-				} else {
-					// TODO: Handle error
-				}
-			});
+			var playlist = gatherPlaylist(),
+				successCallback = function(response) {
+					if (response.id) {
+						SpotifyPlaylistFactory.addTracks(UserFactory.getUserId(), response.id, UserFactory.getAccessToken(), playlist, function(response) {
+							console.log(response);
+						});
+					} else {
+						// TODO: Handle error
+					}
+				},
+				errorCallback = function(data, status, headers, config) {
+					if (status === 401) {
+						// 401 unauthorized
+						// The token needs to be refreshed
+						UserFactory.getNewAccessToken(function(newTokenResponse) {
+							console.log(newTokenResponse);
+							UserFactory.setAccessToken(newTokenResponse.access_token);
+							// Call the create new playlist function again
+							// since we now have the proper access token
+							SpotifyPlaylistFactory.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
+						}, function(data, status, headers, config) {
+							// TODO: Show the error to the user
+						});
+					} else {
+						// TODO: Show the error to the user
+					}
+				};
+			SpotifyPlaylistFactory.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
 		};
 
 		var gatherPlaylist = function () {
