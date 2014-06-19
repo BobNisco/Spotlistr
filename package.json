@@ -1,0 +1,31 @@
+{
+  "name": "Spotlistr",
+  "version": "0.0.0",
+  "description": "Spotlistr is the easiest way to create playlists for Spotify!",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.0.0",
+    "querystring": "^0.2.0",
+    "request": "^2.34.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/BobNisco/Spotlistr.git"
+  },
+  "keywords": [
+    "spotify",
+    "playlist",
+    "music",
+    "heroku"
+  ],
+  "author": "Bob Nisco",
+  "license": "Apache2",
+  "bugs": {
+    "url": "https://github.com/BobNisco/Spotlistr/issues"
+  },
+  "homepage": "https://github.com/BobNisco/Spotlistr"
+}
