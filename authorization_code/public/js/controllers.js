@@ -22,6 +22,8 @@ angular.module('listr.controllers', [])
 		$scope.noMatches = [];
 		// The data in the text area
 		$scope.taData = '';
+		// The selected indexes of the review tracks
+		$scope.selectedReviewedTracks = {};
 
 		$scope.performSearch = function() {
 			clearResults();
@@ -34,6 +36,7 @@ angular.module('listr.controllers', [])
 					console.log(response);
 					if (response.tracks.items.length > 1) {
 						$scope.toBeReviewed.push(response);
+						$scope.selectedReviewedTracks[response.tracks.href] = response.tracks.items[0].id;
 					} else if (response.tracks.items.length === 1) {
 						$scope.matches.push(response);
 					} else {
@@ -76,6 +79,10 @@ angular.module('listr.controllers', [])
 
 		$scope.login = function() {
 			UserFactory.spotifyLogin();
+		}
+
+		$scope.assignSelectedTrack = function(trackUrl, trackId) {
+			$scope.selectedReviewedTracks[trackUrl] = trackId;
 		}
 
 	}])
