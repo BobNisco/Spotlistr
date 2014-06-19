@@ -28,3 +28,7 @@
   content: "";
   padding: 0;
 }
+.multiple-matches hr {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}

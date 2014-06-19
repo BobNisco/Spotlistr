@@ -28,6 +28,8 @@ angular.module('spotlistr.controllers', [])
 		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
 		$scope.publicPlaylist = false;
+		// Errors
+		$scope.errors = [];
 
 		$scope.performSearch = function() {
 			clearResults();
