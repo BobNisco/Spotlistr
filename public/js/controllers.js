@@ -3,7 +3,7 @@
 /* Controllers */
 
 angular.module('spotlistr.controllers', [])
-	.controller('Textbox', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory) {
+	.controller('Textbox', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			// Save the access token into local storage
 			UserFactory.setAccessToken($routeParams.access_token);
@@ -37,64 +37,27 @@ angular.module('spotlistr.controllers', [])
 		$scope.performSearch = function() {
 			clearResults();
 			var rawInputByLine = $scope.taData.split('\n');
-			var inputByLine = normalizeSearchArray(rawInputByLine);
-			for (var i = 0; i < inputByLine.length; i += 1) {
-				SpotifySearchFactory.search(inputByLine[i], function(response) {
-					if (response.tracks.items.length > 1) {
-						$scope.toBeReviewed.push(response);
-						$scope.selectedReviewedTracks[response.tracks.href] = response.tracks.items[0].id;
-					} else if (response.tracks.items.length === 1) {
-						$scope.matches.push(response);
-					} else {
-						$scope.noMatches.push(response);
-					}
-				});
-			}
+			var inputByLine = QueryFactory.normalizeSearchArray(rawInputByLine);
+			QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
 		};
 
-		var normalizeSearchQuery = function(query) {
-			return query.replace(/[^\w\s]/gi, '');
-		};
-
-		var normalizeSearchArray = function(arr) {
-			var normalizedArray = new Array(arr.length);
-			for (var i = 0; i < arr.length; i += 1) {
-				normalizedArray[i] = normalizeSearchQuery(arr[i]);
-			}
-			return normalizedArray;
-		};
-
-		$scope.createDisplayName = function(track) {
-			var result = '';
-			for (var i = 0; i < track.artists.length; i += 1) {
-				if (i < track.artists.length - 1) {
-					result += track.artists[i].name + ', ';
-				} else {
-					result += track.artists[i].name;
-				}
-			}
-			result += ' - ' + track.name;
-			return result;
-		}
+		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		var clearResults = function() {
 			$scope.matches = [];
 			$scope.toBeReviewed = [];
+			$scope.selectedReviewedTracks = {};
 			$scope.noMatches = [];
 			$scope.messages = [];
-		}
-
-		$scope.login = function() {
-			UserFactory.spotifyLogin();
-		}
+		};
 
 		$scope.assignSelectedTrack = function(trackUrl, trackId) {
-			$scope.selectedReviewedTracks[trackUrl] = trackId;
-		}
+			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		};
 
 		$scope.createPlaylist = function(name, isPublic) {
 			$scope.messages = [];
-			var playlist = gatherPlaylist(),
+			var playlist = QueryFactory.gatherPlaylist(),
 				successCallback = function(response) {
 					if (response.id) {
 						var playlistId = response.id;
@@ -125,26 +88,6 @@ angular.module('spotlistr.controllers', [])
 			SpotifyPlaylistFactory.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
 		};
 
-		var gatherPlaylist = function () {
-			var playlist = [];
-			// Add all of the 100% matches
-			for (var i = 0; i < $scope.matches.length; i += 1) {
-				playlist.push(createSpotifyUriFromTrackId($scope.matches[i].tracks.items[0].id));
-			}
-			// Add the selected songs for the to-be-reviewed songs
-			for (var prop in $scope.selectedReviewedTracks) {
-				if ($scope.selectedReviewedTracks.hasOwnProperty(prop)) {
-					playlist.push(createSpotifyUriFromTrackId($scope.selectedReviewedTracks[prop]));
-				}
-			}
-			// TODO: Do something better with the ones that we couldn't find
-			return playlist;
-		};
-
-		var createSpotifyUriFromTrackId = function(id) {
-			return 'spotify:track:' + id;
-		};
-
 		var addError = function(message) {
 			$scope.messages.push({
 				'status': 'error',
@@ -160,7 +103,7 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
-	.controller('Subreddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'RedditFactory', function($scope, UserFactory, SpotifySearchFactory, RedditFactory) {
+	.controller('Subreddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'RedditFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, RedditFactory, QueryFactory) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
 		$scope.$on('userChanged', function(event, data) {
@@ -172,10 +115,47 @@ angular.module('spotlistr.controllers', [])
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
 		$scope.subredditInput = '';
 
+		// The tracks that matched 100%
+		$scope.matches = [];
+		// The track that need review
+		$scope.toBeReviewed = [];
+		// The tracks with no matches
+		$scope.noMatches = [];
+		// The selected indexes of the review tracks
+		$scope.selectedReviewedTracks = {};
+
+		$scope.createDisplayName = QueryFactory.createDisplayName;
+
 		$scope.performSearch = function() {
+			clearResults();
 			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, function(response) {
-				console.log(response);
+				var listings = response.data.children,
+					trackTitles = [];
+
+				// 1. Take the title of each listing returned from Reddit
+				for (var i = 0; i < listings.length; i += 1) {
+					// 1.1. Filter out anything with a self-post
+					//      Self posts have a "domain" of self.subreddit
+					if (listings[i].data.domain !== 'self.' + $scope.subredditInput) {
+						trackTitles.push(listings[i].data.title);
+					}
+				}
+
+				// 2. Search Spotify
+				QueryFactory.performSearch(trackTitles, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
 			});
+		};
+
+		$scope.assignSelectedTrack = function(trackUrl, trackId) {
+			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		};
+
+		var clearResults = function() {
+			$scope.matches = [];
+			$scope.toBeReviewed = [];
+			$scope.selectedReviewedTracks = {};
+			$scope.noMatches = [];
+			$scope.messages = [];
 		};
 	}])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {

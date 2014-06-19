@@ -85,6 +85,67 @@ angular.module('spotlistr.services', [])
 			}
 		}
 	})
+	.factory('QueryFactory', function(SpotifySearchFactory) {
+		return {
+			normalizeSearchQuery: function(query) {
+				return query.replace(/[^\w\s]/gi, '');
+			},
+			normalizeSearchArray: function(arr) {
+				var normalizedArray = new Array(arr.length);
+				for (var i = 0; i < arr.length; i += 1) {
+					normalizedArray[i] = this.normalizeSearchQuery(arr[i]);
+				}
+				return normalizedArray;
+			},
+			createDisplayName: function(track) {
+				var result = '';
+				for (var i = 0; i < track.artists.length; i += 1) {
+					if (i < track.artists.length - 1) {
+						result += track.artists[i].name + ', ';
+					} else {
+						result += track.artists[i].name;
+					}
+				}
+				result += ' - ' + track.name;
+				return result;
+			},
+			createSpotifyUriFromTrackId: function(id) {
+				return 'spotify:track:' + id;
+			},
+			performSearch: function(inputByLine, matches, toBeReviewed, selectedReviewedTracks, noMatches) {
+				for (var i = 0; i < inputByLine.length; i += 1) {
+					SpotifySearchFactory.search(inputByLine[i], function(response) {
+						if (response.tracks.items.length > 1) {
+							toBeReviewed.push(response);
+							selectedReviewedTracks[response.tracks.href] = response.tracks.items[0].id;
+						} else if (response.tracks.items.length === 1) {
+							matches.push(response);
+						} else {
+							noMatches.push(response);
+						}
+					});
+				}
+			},
+			assignSelectedTrack: function(trackUrl, trackId, selectedReviewedTracks) {
+				selectedReviewedTracks[trackUrl] = trackId;
+			},
+			gatherPlaylist: function (matches, selectedReviewedTracks) {
+				var playlist = [];
+				// Add all of the 100% matches
+				for (var i = 0; i < matches.length; i += 1) {
+					playlist.push(this.createSpotifyUriFromTrackId(matches[i].tracks.items[0].id));
+				}
+				// Add the selected songs for the to-be-reviewed songs
+				for (var prop in selectedReviewedTracks) {
+					if (selectedReviewedTracks.hasOwnProperty(prop)) {
+						playlist.push(this.createSpotifyUriFromTrackId(selectedReviewedTracks[prop]));
+					}
+				}
+				// TODO: Do something better with the ones that we couldn't find
+				return playlist;
+			}
+		}
+	})
 	.factory('RedditFactory', function($http) {
 		return {
 			getSubreddit: function(subreddit, sort, callback) {
