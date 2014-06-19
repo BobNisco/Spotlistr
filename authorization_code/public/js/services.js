@@ -46,7 +46,7 @@ angular.module('listr.services', [])
 	})
 	.factory('SpotifyPlaylistFactory', function($http) {
 		return {
-			create: function(name, user_id, access_token, is_public) {
+			create: function(name, user_id, access_token, is_public, callback) {
 				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
 				// https://developer.spotify.com/web-api/create-playlist/
 				// Endpoint: POST https://api.spotify.com/v1/users/{user_id}/playlists
@@ -56,9 +56,18 @@ angular.module('listr.services', [])
 						'name' : name,
 						'public' : false // TODO: Make this listen to the checkbox
 					}
-				).success(function(response) {
-					console.log(response);
-				});
+				).success(callback);
+			},
+			addTracks: function(user_id, playlist_id, access_token, arr, callback) {
+				// https://developer.spotify.com/web-api/add-tracks-to-playlist/
+				// POST https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
+				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
+				if (arr.length > 100) {
+					// TODO: Spotify limits to adding 100 songs at a time
+					//       we need to handle this
+				}
+				$http.post(
+					'https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(callback);
 			}
 		}
 	})

@@ -88,8 +88,15 @@ angular.module('listr.controllers', [])
 
 		$scope.createPlaylist = function() {
 			var playlist = gatherPlaylist();
-			console.log($scope.playlistName);
-			SpotifyPlaylistFactory.create($scope.playlistName, UserFactory.getUserId(), UserFactory.getAccessToken(), $scope.publicPlaylist);
+			SpotifyPlaylistFactory.create($scope.playlistName, UserFactory.getUserId(), UserFactory.getAccessToken(), $scope.publicPlaylist, function(response) {
+				if (response.id) {
+					SpotifyPlaylistFactory.addTracks(UserFactory.getUserId(), response.id, UserFactory.getAccessToken(), playlist, function(response) {
+						console.log(response);
+					});
+				} else {
+					// TODO: Handle error
+				}
+			});
 		};
 
 		var gatherPlaylist = function () {
