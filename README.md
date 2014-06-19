@@ -1,5 +1,4 @@
 # Spotlistr
-===========
 Spotlistr is the easiest way to create playlists for Spotify!
 
 ## Technologies Used
