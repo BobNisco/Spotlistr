@@ -2,7 +2,6 @@
 
 /* Directives */
 
-
 angular.module('listr.directives', []).
 	directive('appVersion', ['version', function(version) {
 		return function(scope, elm, attrs) {
@@ -17,5 +16,12 @@ angular.module('listr.directives', []).
 			},
 			templateUrl : 'partials/results.html',
 			transclude : true
+		};
+	})
+	.directive('card', function () {
+		return {
+			restrict: 'E',
+			scope: false,
+			templateUrl: 'partials/card.html'
 		};
 	});
