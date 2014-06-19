@@ -2,12 +2,12 @@
 
 
 // Declare app level module which depends on filters, and services
-angular.module('listr', [
+angular.module('spotlistr', [
   'ngRoute',
-  'listr.filters',
-  'listr.services',
-  'listr.directives',
-  'listr.controllers'
+  'spotlistr.filters',
+  'spotlistr.services',
+  'spotlistr.directives',
+  'spotlistr.controllers'
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/search/textbox', {

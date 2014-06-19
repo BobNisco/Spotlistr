@@ -1,7 +1,7 @@
 'use strict';
 
 /* Services */
-angular.module('listr.services', [])
+angular.module('spotlistr.services', [])
 	.value('version', '0.1')
 	.factory('UserFactory', function($http) {
 		return {

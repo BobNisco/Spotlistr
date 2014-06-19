@@ -2,7 +2,7 @@
 
 /* Directives */
 
-angular.module('listr.directives', []).
+angular.module('spotlistr.directives', []).
 	directive('appVersion', ['version', function(version) {
 		return function(scope, elm, attrs) {
 			elm.text(version);

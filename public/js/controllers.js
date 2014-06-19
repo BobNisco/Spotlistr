@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-angular.module('listr.controllers', [])
+angular.module('spotlistr.controllers', [])
 	.controller('Textbox', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			console.log('New session being created');
