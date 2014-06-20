@@ -30,7 +30,7 @@ angular.module('spotlistr.controllers', [])
 		// The name of the playlist
 		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
-		$scope.publicPlaylist = false;
+		$scope.publicPlaylist = true;
 		// Messages to the user
 		$scope.messages = [];
 
@@ -83,7 +83,7 @@ angular.module('spotlistr.controllers', [])
 		// The name of the playlist
 		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
-		$scope.publicPlaylist = false;
+		$scope.publicPlaylist = true;
 		// Messages to the user
 		$scope.messages = [];
 
