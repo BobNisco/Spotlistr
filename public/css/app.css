@@ -35,3 +35,26 @@
 .spotify-green {
   background-color: #84BD00;
 }
+.spotlistr-footer {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  margin-top: 100px;
+  color: #777;
+  text-align: center;
+  border-top: 1px solid #E5E5E5;
+}
+.spotlistr-footer-links {
+  margin-top: 20px;
+  padding-left: 0px;
+  color: #999;
+}
+.spotlistr-footer-links li:first-child {
+  padding-left: 0px;
+}
+.spotlistr-footer-links li {
+  display: inline;
+  padding: 0px 2px;
+}
+.spotlistr-footer p {
+  margin-bottom: 0px;
+}
