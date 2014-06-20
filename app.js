@@ -29,7 +29,7 @@ app.use(express.static(__dirname + '/public'));
 app.get('/login', function(req, res) {
 
   // your application requests authorization
-  var scope = 'user-read-private user-read-email playlist-read playlist-read-private playlist-modify playlist-modify-private';
+  var scope = 'user-read-private playlist-read playlist-read-private playlist-modify playlist-modify-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
