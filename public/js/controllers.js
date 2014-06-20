@@ -56,54 +56,11 @@ angular.module('spotlistr.controllers', [])
 		};
 
 		$scope.createPlaylist = function(name, isPublic) {
-			$scope.messages = [];
-			var playlist = QueryFactory.gatherPlaylist($scope.matches, $scope.selectedReviewedTracks),
-				successCallback = function(response) {
-					if (response.id) {
-						var playlistId = response.id;
-						SpotifyPlaylistFactory.addTracks(UserFactory.getUserId(), response.id, UserFactory.getAccessToken(), playlist, function(response) {
-							addSuccess('Successfully created your playlist! Check your Spotify client to view it!');
-						});
-					} else {
-						// TODO: Handle error
-						addError('Error while creating playlist on Spotify');
-					}
-				},
-				errorCallback = function(data, status, headers, config) {
-					if (status === 401) {
-						// 401 unauthorized
-						// The token needs to be refreshed
-						UserFactory.getNewAccessToken(function(newTokenResponse) {
-							UserFactory.setAccessToken(newTokenResponse.access_token);
-							// Call the create new playlist function again
-							// since we now have the proper access token
-							SpotifyPlaylistFactory.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
-						}, function(data, status, headers, config) {
-							addError(data.error.message);
-						});
-					} else {
-						addError(data.error.message);
-					}
-				};
-			SpotifyPlaylistFactory.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
-		};
-
-		var addError = function(message) {
-			$scope.messages.push({
-				'status': 'error',
-				'message': message
-			});
-		};
-
-		var addSuccess = function(message) {
-			$scope.messages.push({
-				'status': 'success',
-				'message': message
-			});
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
 		};
 
 	}])
-	.controller('Subreddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'RedditFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, RedditFactory, QueryFactory) {
+	.controller('Subreddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
 		$scope.$on('userChanged', function(event, data) {
@@ -123,6 +80,12 @@ angular.module('spotlistr.controllers', [])
 		$scope.noMatches = [];
 		// The selected indexes of the review tracks
 		$scope.selectedReviewedTracks = {};
+		// The name of the playlist
+		$scope.playlistName = '';
+		// Boolean for if the playlist will be public or nah
+		$scope.publicPlaylist = false;
+		// Messages to the user
+		$scope.messages = [];
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
 
@@ -158,6 +121,11 @@ angular.module('spotlistr.controllers', [])
 			$scope.noMatches = [];
 			$scope.messages = [];
 		};
+
+		$scope.createPlaylist = function(name, isPublic) {
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+		};
+
 	}])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {
 		$scope.currentUser = UserFactory.currentUser();
@@ -166,7 +134,5 @@ angular.module('spotlistr.controllers', [])
 			$scope.userLoggedIn = data.userLoggedIn;
 			$scope.currentUser = data.currentUser;
 		});
-	}])
-	.config(['$compileProvider', function( $compileProvider ) {
-		$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|spotify):/);
+
 	}]);

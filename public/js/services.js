@@ -58,7 +58,7 @@ angular.module('spotlistr.services', [])
 			}
 		}
 	})
-	.factory('SpotifyPlaylistFactory', function($http, UserFactory) {
+	.factory('SpotifyPlaylistFactory', function($http, UserFactory, QueryFactory) {
 		return {
 			create: function(name, user_id, access_token, is_public, callback, errorCallback) {
 				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
@@ -82,6 +82,51 @@ angular.module('spotlistr.services', [])
 				}
 				$http.post(
 					'https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(callback);
+			},
+			createPlaylist: function(name, isPublic, matches, selectedReviewedTracks, messages) {
+				// Clear the array, but keep the reference
+				messages.length = 0;
+				var _this = this,
+					playlist = QueryFactory.gatherPlaylist(matches, selectedReviewedTracks),
+					successCallback = function(response) {
+						if (response.id) {
+							var playlistId = response.id;
+							_this.addTracks(UserFactory.getUserId(), response.id, UserFactory.getAccessToken(), playlist, function(response) {
+								_this.addSuccess(messages, 'Successfully created your playlist! Check your Spotify client to view it!');
+							});
+						} else {
+							_this.addError(messages, 'Error while creating playlist on Spotify');
+						}
+					},
+					errorCallback = function(data, status, headers, config) {
+						if (status === 401) {
+							// 401 unauthorized
+							// The token needs to be refreshed
+							UserFactory.getNewAccessToken(function(newTokenResponse) {
+								UserFactory.setAccessToken(newTokenResponse.access_token);
+								// Call the create new playlist function again
+								// since we now have the proper access token
+								_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
+							}, function(data, status, headers, config) {
+								_this.addError(messages, data.error.message);
+							});
+						} else {
+							_this.addError(messages, data.error.message);
+						}
+					};
+				_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
+			},
+			addError: function(messages, message) {
+				messages.push({
+					'status': 'error',
+					'message': message
+				});
+			},
+			addSuccess: function(messages, message) {
+				messages.push({
+					'status': 'success',
+					'message': message
+				});
 			}
 		}
 	})
