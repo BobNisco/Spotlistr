@@ -33,12 +33,16 @@ angular.module('spotlistr.controllers', [])
 		$scope.publicPlaylist = true;
 		// Messages to the user
 		$scope.messages = [];
+		// Bool flag for if search is running
+		$scope.searching = false;
 
 		$scope.performSearch = function() {
+			$scope.searching = true;
 			clearResults();
 			var rawInputByLine = $scope.taData.split('\n');
 			var inputByLine = QueryFactory.normalizeSearchArray(rawInputByLine);
 			QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+			$scope.searching = false;
 		};
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
@@ -86,10 +90,13 @@ angular.module('spotlistr.controllers', [])
 		$scope.publicPlaylist = true;
 		// Messages to the user
 		$scope.messages = [];
+		// Bool flag for if search is running
+		$scope.searching = false;
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		$scope.performSearch = function() {
+			$scope.searching = true;
 			clearResults();
 			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, function(response) {
 				var listings = response.data.children,
@@ -107,6 +114,7 @@ angular.module('spotlistr.controllers', [])
 				// 2. Search Spotify
 				var inputByLine = QueryFactory.normalizeSearchArray(trackTitles);
 				QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				$scope.searching = false;
 			});
 		};
 
