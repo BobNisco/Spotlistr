@@ -204,9 +204,9 @@ angular.module('spotlistr.services', [])
 	})
 	.factory('RedditFactory', function($http) {
 		return {
-			getSubreddit: function(subreddit, sort, callback) {
+			getSubreddit: function(subreddit, sort, fetchAmount, callback) {
 				// http://www.reddit.com/r/trap/hot.json
-				var req = 'http://www.reddit.com/r/' + subreddit + '/' + sort + '.json';
+				var req = 'http://www.reddit.com/r/' + subreddit + '/' + sort + '.json?limit=' + fetchAmount;
 				console.log(req);
 				$http.get(req).success(callback);
 			}

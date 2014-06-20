@@ -92,13 +92,17 @@ angular.module('spotlistr.controllers', [])
 		$scope.messages = [];
 		// Bool flag for if search is running
 		$scope.searching = false;
+		// How many results to fetch from Reddit (multiples of 25)
+		$scope.fetchAmounts = [25, 50, 75, 100];
+		// The selected fetch amount
+		$scope.selectedFetchAmounts = $scope.fetchAmounts[0];
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			clearResults();
-			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, function(response) {
+			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, $scope.selectedFetchAmounts, function(response) {
 				var listings = response.data.children,
 					trackTitles = [];
 
