@@ -22,5 +22,9 @@ config(['$routeProvider', function($routeProvider) {
   	templateUrl: 'partials/subreddit.html',
   	controller: 'Subreddit'
   });
+  $routeProvider.when('/search/lastfm-similar', {
+    templateUrl: 'partials/lastfm-similar.html',
+    controller: 'LastfmSimilar'
+  });
   $routeProvider.otherwise({redirectTo: '/search/textbox'});
 }]);

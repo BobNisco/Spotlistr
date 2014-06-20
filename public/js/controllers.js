@@ -139,6 +139,61 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
+	.controller('LastfmSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
+
+		$scope.currentUser = UserFactory.currentUser();
+		$scope.userLoggedIn = UserFactory.userLoggedIn();
+		$scope.$on('userChanged', function(event, data) {
+			$scope.userLoggedIn = data.userLoggedIn;
+			$scope.currentUser = data.currentUser;
+		});
+		// The tracks that matched 100%
+		$scope.matches = [];
+		// The track that need review
+		$scope.toBeReviewed = [];
+		// The tracks with no matches
+		$scope.noMatches = [];
+		// The data in the text area
+		$scope.taData = '';
+		// The selected indexes of the review tracks
+		$scope.selectedReviewedTracks = {};
+		// The name of the playlist
+		$scope.playlistName = '';
+		// Boolean for if the playlist will be public or nah
+		$scope.publicPlaylist = true;
+		// Messages to the user
+		$scope.messages = [];
+		// Bool flag for if search is running
+		$scope.searching = false;
+
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			clearResults();
+			var rawInputByLine = $scope.taData.split('\n');
+			var inputByLine = QueryFactory.normalizeSearchArray(rawInputByLine);
+			QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+			$scope.searching = false;
+		};
+
+		$scope.createDisplayName = QueryFactory.createDisplayName;
+
+		var clearResults = function() {
+			$scope.matches = [];
+			$scope.toBeReviewed = [];
+			$scope.selectedReviewedTracks = {};
+			$scope.noMatches = [];
+			$scope.messages = [];
+		};
+
+		$scope.assignSelectedTrack = function(trackUrl, trackId) {
+			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		};
+
+		$scope.createPlaylist = function(name, isPublic) {
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+		};
+
+	}])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
