@@ -211,4 +211,29 @@ angular.module('spotlistr.services', [])
 				$http.get(req).success(callback);
 			}
 		}
+	})
+	.factory('LastfmFactory', function($http, $q) {
+		return {
+			getSimilarTracksAndExtractInfo: function(inputByLine, callback) {
+				var _this = this,
+					lastfmSimilarTracks = [],
+					splitTrack = [];
+
+				var promises = inputByLine.map(function(value) {
+					var deferred = $q.defer();
+					// We are expecting input to be in the format Arist - Track Title
+					splitTrack = value.split('-');
+					// Async task
+					var req = 'http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' + encodeURIComponent(splitTrack[0]) + '&track=' + encodeURIComponent(splitTrack[1]) + '&api_key=0fa55d46c0a036a3f785cdd768fadbba&limit=10&format=json';
+					$http.get(req).success(function(response) {
+						deferred.resolve(response);
+					}).error(function() {
+						deferred.reject();
+					});
+					return deferred.promise;
+				});
+
+				$q.all(promises).then(callback);
+			}
+		}
 	});

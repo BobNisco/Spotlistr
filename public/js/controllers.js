@@ -139,7 +139,7 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
-	.controller('LastfmSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
+	.controller('LastfmSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
 
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
@@ -169,10 +169,21 @@ angular.module('spotlistr.controllers', [])
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			clearResults();
-			var rawInputByLine = $scope.taData.split('\n');
-			var inputByLine = QueryFactory.normalizeSearchArray(rawInputByLine);
-			QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
-			$scope.searching = false;
+			var inputByLine = $scope.taData.split('\n'),
+				splitTrack = [];
+
+			LastfmFactory.getSimilarTracksAndExtractInfo(inputByLine, function(lastfmSimilarTracks) {
+				console.log(lastfmSimilarTracks);
+				var similar = [];
+				for (var i = 0; i < lastfmSimilarTracks.length; i++) {
+					console.log(lastfmSimilarTracks[i].similartracks);
+					for (var j = 0; j < lastfmSimilarTracks[i].similartracks.track.length; j++) {
+						similar.push(lastfmSimilarTracks[i].similartracks.track[j].artist.name + ' ' + lastfmSimilarTracks[i].similartracks.track[j].name);
+					}
+				}
+				QueryFactory.performSearch(similar, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				$scope.searching = false;
+			});
 		};
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
