@@ -179,8 +179,10 @@ angular.module('spotlistr.controllers', [])
 				var similar = [];
 				for (var i = 0; i < lastfmSimilarTracks.length; i++) {
 					console.log(lastfmSimilarTracks[i].similartracks);
-					for (var j = 0; j < lastfmSimilarTracks[i].similartracks.track.length; j++) {
-						similar.push(lastfmSimilarTracks[i].similartracks.track[j].artist.name + ' ' + lastfmSimilarTracks[i].similartracks.track[j].name);
+					if (lastfmSimilarTracks[i].similartracks.track instanceof Array) {
+						for (var j = 0; j < lastfmSimilarTracks[i].similartracks.track.length; j++) {
+							similar.push(lastfmSimilarTracks[i].similartracks.track[j].artist.name + ' ' + lastfmSimilarTracks[i].similartracks.track[j].name);
+						}
 					}
 				}
 				QueryFactory.performSearch(similar, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
