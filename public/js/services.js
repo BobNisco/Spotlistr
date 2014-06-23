@@ -73,15 +73,23 @@ angular.module('spotlistr.services', [])
 				).success(callback).error(errorCallback);
 			},
 			addTracks: function(user_id, playlist_id, access_token, arr, callback) {
+				var _this = this,
+					SPOTIFY_TRACK_LIMIT = 100;
 				// https://developer.spotify.com/web-api/add-tracks-to-playlist/
 				// POST https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
 				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
-				if (arr.length > 100) {
-					// TODO: Spotify limits to adding 100 songs at a time
-					//       we need to handle this
+				if (arr.length > SPOTIFY_TRACK_LIMIT) {
+					// Spotify limits to adding 100 songs at a time
+					// So we'll batch submit in 100 track subsets
+					for (var i = 0; i * SPOTIFY_TRACK_LIMIT < arr.length; i += 1) {
+						_this.handleSubmitTracksToPlaylist(arr.slice(i * SPOTIFY_TRACK_LIMIT, (i + 1) * SPOTIFY_TRACK_LIMIT), user_id, playlist_id, callback);
+					}
+				} else {
+					_this.handleSubmitTracksToPlaylist(arr, user_id, playlist_id, callback);
 				}
-				$http.post(
-					'https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(callback);
+			},
+			handleSubmitTracksToPlaylist: function(arr, user_id, playlist_id, callback) {
+				$http.post('https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(callback);
 			},
 			createPlaylist: function(name, isPublic, matches, selectedReviewedTracks, messages) {
 				// Clear the array, but keep the reference
