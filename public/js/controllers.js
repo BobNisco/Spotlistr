@@ -165,6 +165,8 @@ angular.module('spotlistr.controllers', [])
 		$scope.messages = [];
 		// Bool flag for if search is running
 		$scope.searching = false;
+		// Amount of similar tracks per track
+		$scope.similarCount = 10;
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
@@ -172,7 +174,7 @@ angular.module('spotlistr.controllers', [])
 			var inputByLine = $scope.taData.split('\n'),
 				splitTrack = [];
 
-			LastfmFactory.getSimilarTracksAndExtractInfo(inputByLine, function(lastfmSimilarTracks) {
+			LastfmFactory.getSimilarTracksAndExtractInfo(inputByLine, $scope.similarCount, function(lastfmSimilarTracks) {
 				console.log(lastfmSimilarTracks);
 				var similar = [];
 				for (var i = 0; i < lastfmSimilarTracks.length; i++) {
