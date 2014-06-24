@@ -220,6 +220,27 @@ angular.module('spotlistr.services', [])
 			}
 		}
 	})
+	.factory('RedditUserFactory', function($http) {
+		return {
+			userLoggedIn: function() {
+				return false;
+			},
+			getCurrentUser: function() {
+
+			},
+			setCurrentUser: function(user) {
+
+			},
+			getAccessToken: function() {
+			},
+			setAccessToken: function(access_token) {
+			},
+			getRefreshToken: function() {
+			},
+			setRefreshToken: function(refresh_token) {
+			},
+		}
+	})
 	.factory('LastfmFactory', function($http, $q) {
 		return {
 			getSimilarTracksAndExtractInfo: function(inputByLine, similarCount, callback) {

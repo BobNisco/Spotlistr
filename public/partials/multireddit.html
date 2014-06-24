@@ -5,7 +5,12 @@
 		<p><span class="label label-warning"><strong>Heads up</strong></span> If you're using an adblocker, you'll have to disable it or else the Subreddit search won't work! There are no ads on this website anyway :)</p>
 	</div>
 </div>
-<div class="row">
+<div class="row" ng-if="userRedditLoggedIn === false">
+	<div class="col-md-12">
+		<a href="https://ssl.reddit.com/api/v1/authorize?client_id=x_1EWGYnLKmEZA&response_type=code&state=multiredditsupport&redirect_uri=http://127.0.0.1:8888/callback&duration=permanent&scope=mysubreddits"><button class="btn btn-success btn-lg">Log in with Reddit to continue</button></a>
+	</div>
+</div>
+<div class="row" ng-if="userRedditLoggedIn === true">
 	<div class="col-md-12">
 		<form class="form-horizontal" role="form">
 			<div class="form-group">

@@ -344,13 +344,23 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
-.controller('Subreddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory) {
+.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$location', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $location) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
 		$scope.$on('userChanged', function(event, data) {
 			$scope.userLoggedIn = data.userLoggedIn;
 			$scope.currentUser = data.currentUser;
 		});
+
+		// Reddit Authentication Info
+		$scope.currentRedditUser = RedditUserFactory.getCurrentUser();
+		$scope.userRedditLoggedIn = RedditUserFactory.userLoggedIn();
+		$scope.$on('redditUserChanged', function(event, data) {
+			$scope.userRedditLoggedIn = data.userLoggedIn;
+			$scope.currentRedditUser = data.currentUser;
+		});
+
+		console.log($location.search());
 
 		$scope.subredditSortBy = [{name: 'hot', id: 'hot'}, {name: 'top', id: 'top'}, {name: 'new', id: 'new'}];
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
