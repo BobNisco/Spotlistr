@@ -22,6 +22,10 @@ config(['$routeProvider', function($routeProvider) {
   	templateUrl: 'partials/subreddit.html',
   	controller: 'Subreddit'
   });
+  $routeProvider.when('/search/multireddit', {
+    templateUrl: 'partials/multireddit.html',
+    controller: 'Multireddit'
+  });
   $routeProvider.when('/search/lastfm-similar', {
     templateUrl: 'partials/lastfm-similar.html',
     controller: 'LastfmSimilar'

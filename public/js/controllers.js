@@ -344,6 +344,81 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
+.controller('Subreddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory) {
+		$scope.currentUser = UserFactory.currentUser();
+		$scope.userLoggedIn = UserFactory.userLoggedIn();
+		$scope.$on('userChanged', function(event, data) {
+			$scope.userLoggedIn = data.userLoggedIn;
+			$scope.currentUser = data.currentUser;
+		});
+
+		$scope.subredditSortBy = [{name: 'hot', id: 'hot'}, {name: 'top', id: 'top'}, {name: 'new', id: 'new'}];
+		$scope.selectedSortBy = $scope.subredditSortBy[0];
+		$scope.subredditInput = '';
+
+		// The tracks that matched 100%
+		$scope.matches = [];
+		// The track that need review
+		$scope.toBeReviewed = [];
+		// The tracks with no matches
+		$scope.noMatches = [];
+		// The selected indexes of the review tracks
+		$scope.selectedReviewedTracks = {};
+		// The name of the playlist
+		$scope.playlistName = '';
+		// Boolean for if the playlist will be public or nah
+		$scope.publicPlaylist = true;
+		// Messages to the user
+		$scope.messages = [];
+		// Bool flag for if search is running
+		$scope.searching = false;
+		// How many results to fetch from Reddit (multiples of 25)
+		$scope.fetchAmounts = [25, 50, 75, 100];
+		// The selected fetch amount
+		$scope.selectedFetchAmounts = $scope.fetchAmounts[0];
+
+		$scope.createDisplayName = QueryFactory.createDisplayName;
+
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			clearResults();
+			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, $scope.selectedFetchAmounts, function(response) {
+				var listings = response.data.children,
+					trackTitles = [];
+
+				// 1. Take the title of each listing returned from Reddit
+				for (var i = 0; i < listings.length; i += 1) {
+					// 1.1. Filter out anything with a self-post
+					//      Self posts have a "domain" of self.subreddit
+					if (listings[i].data.domain !== 'self.' + $scope.subredditInput) {
+						trackTitles.push(listings[i].data.title);
+					}
+				}
+
+				// 2. Search Spotify
+				var inputByLine = QueryFactory.normalizeSearchArray(trackTitles);
+				QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				$scope.searching = false;
+			});
+		};
+
+		$scope.assignSelectedTrack = function(trackUrl, trackId) {
+			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		};
+
+		var clearResults = function() {
+			$scope.matches = [];
+			$scope.toBeReviewed = [];
+			$scope.selectedReviewedTracks = {};
+			$scope.noMatches = [];
+			$scope.messages = [];
+		};
+
+		$scope.createPlaylist = function(name, isPublic) {
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+		};
+
+	}])
 	.controller('LastfmSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
 
 		$scope.currentUser = UserFactory.currentUser();
