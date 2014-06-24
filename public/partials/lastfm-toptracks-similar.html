@@ -10,15 +10,15 @@
 		<form role="form">
 			<div class="form-group">
 				<label for="sortBy" class="col-sm-2 control-label">Last.fm Username</label>
-				<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+				<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
 					<input type="text" class="form-control" data-ng-model="lastfmUsername" />
 				</div>
 				<div class="clearfix"></div>
 			</div>
 			<div class="form-group">
-				<label for="sortBy" class="col-sm-2 control-label">Limit</label>
+				<label for="sortBy" class="col-sm-2 control-label">Period</label>
 				<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-					<select class="form-control" data-ng-options="opt.name for opt in lastfmSortByOptions" data-ng-model="selectedLastfmSortByOption"></select>
+					<select class="form-control" data-ng-options="opt.name for opt in lastfmPeriodOptions" data-ng-model="selectedLastfmPeriodOption"></select>
 				</div>
 				<div class="clearfix"></div>
 			</div>

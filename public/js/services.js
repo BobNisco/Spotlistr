@@ -225,6 +225,7 @@ angular.module('spotlistr.services', [])
 	})
 	.factory('LastfmFactory', function($http, $q) {
 		return {
+			apiKey: '0fa55d46c0a036a3f785cdd768fadbba',
 			getSimilarTracksAndExtractInfo: function(inputByLine, similarCount, callback) {
 				var _this = this,
 					lastfmSimilarTracks = [],
@@ -235,7 +236,7 @@ angular.module('spotlistr.services', [])
 					// We are expecting input to be in the format Arist - Track Title
 					splitTrack = value.split('-');
 					// Async task
-					var req = 'http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' + encodeURIComponent(splitTrack[0]) + '&track=' + encodeURIComponent(splitTrack[1]) + '&api_key=0fa55d46c0a036a3f785cdd768fadbba&limit=' + similarCount + '&format=json';
+					var req = 'http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' + encodeURIComponent(splitTrack[0]) + '&track=' + encodeURIComponent(splitTrack[1]) + '&api_key=' + _this.apiKey + '&limit=' + similarCount + '&format=json';
 					$http.get(req).success(function(response) {
 						deferred.resolve(response);
 					}).error(function() {
@@ -245,6 +246,25 @@ angular.module('spotlistr.services', [])
 				});
 
 				$q.all(promises).then(callback);
-			}
+			},
+			getUserTopTracks: function(username, period, callback) {
+				// http://www.last.fm/api/show/user.getTopTracks
+				// http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=rj&api_key=0fa55d46c0a036a3f785cdd768fadbba&format=json
+				var _this = this;
+
+				var req = 'http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user='+ encodeURIComponent(username) + '&api_key=' + _this.apiKey + '&period=' + period + '&format=json';
+
+				$http.get(req).success(callback);
+			},
+			extractInfoFromLastfmResults: function(results) {
+				var extracted = [];
+				console.log(results);
+				if (results.track instanceof Array) {
+					for (var j = 0; j < results.track.length; j++) {
+						extracted.push(results.track[j].artist.name + ' ' + results.track[j].name);
+					}
+				}
+				return extracted;
+			},
 		}
 	});

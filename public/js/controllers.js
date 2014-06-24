@@ -454,16 +454,16 @@ angular.module('spotlistr.controllers', [])
 		// Inputted Last.fm username
 		$scope.lastfmUsername = '';
 		// Sort by options
-		$scope.lastfmSortByOptions = [
-			{name: 'Overall', id: 'overall'},
+		$scope.lastfmPeriodOptions = [
 			{name: '7 Days', id: '7day'},
 			{name: '1 Month', id: '1month'},
 			{name: '3 Months', id: '3month'},
 			{name: '6 Months', id: '6month'},
 			{name: '12 Months', id: '12month'},
+			{name: 'Overall', id: 'overall'},
 		];
 		// Selected sort option
-		$scope.selectedLastfmSortByOption = $scope.lastfmSortByOptions[0];
+		$scope.selectedLastfmPeriodOption = $scope.lastfmPeriodOptions[0];
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
@@ -471,19 +471,15 @@ angular.module('spotlistr.controllers', [])
 			var inputByLine = $scope.taData.split('\n'),
 				splitTrack = [];
 
-			LastfmFactory.getSimilarTracksAndExtractInfo(inputByLine, $scope.similarCount, function(lastfmSimilarTracks) {
-				console.log(lastfmSimilarTracks);
-				var similar = [];
-				for (var i = 0; i < lastfmSimilarTracks.length; i++) {
-					console.log(lastfmSimilarTracks[i].similartracks);
-					if (lastfmSimilarTracks[i].similartracks.track instanceof Array) {
-						for (var j = 0; j < lastfmSimilarTracks[i].similartracks.track.length; j++) {
-							similar.push(lastfmSimilarTracks[i].similartracks.track[j].artist.name + ' ' + lastfmSimilarTracks[i].similartracks.track[j].name);
-						}
-					}
-				}
-				QueryFactory.performSearch(similar, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
-				$scope.searching = false;
+			// 1. Grab the tracks from the Last.fm user's profile
+			LastfmFactory.getUserTopTracks($scope.lastfmUsername, $scope.selectedLastfmPeriodOption.id, function(response) {
+				// 2. Extract the Artist - Track Title from the results
+				var topTracks = LastfmFactory.extractInfoFromLastfmResults(response.toptracks);
+				// 3. For each Top Track, find similar tracks and produce results
+				LastfmFactory.getSimilarTracksAndExtractInfo(topTracks, $scope.similarCount, function(lastfmSimilarTracks) {
+					QueryFactory.performSearch(topTracks, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+					$scope.searching = false;
+				});
 			});
 		};
 
