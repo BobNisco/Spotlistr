@@ -389,13 +389,12 @@ angular.module('spotlistr.controllers', [])
 				splitTrack = [];
 
 			LastfmFactory.getSimilarTracksAndExtractInfo(inputByLine, $scope.similarCount, function(lastfmSimilarTracks) {
-				console.log(lastfmSimilarTracks);
 				var similar = [];
 				for (var i = 0; i < lastfmSimilarTracks.length; i++) {
-					console.log(lastfmSimilarTracks[i].similartracks);
 					if (lastfmSimilarTracks[i].similartracks.track instanceof Array) {
-						for (var j = 0; j < lastfmSimilarTracks[i].similartracks.track.length; j++) {
-							similar.push(lastfmSimilarTracks[i].similartracks.track[j].artist.name + ' ' + lastfmSimilarTracks[i].similartracks.track[j].name);
+						var found = LastfmFactory.extractInfoFromLastfmResults(lastfmSimilarTracks[i].similartracks);
+						for (var j = 0; j < found.length; j++) {
+							similar.push(found[j]);
 						}
 					}
 				}

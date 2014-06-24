@@ -258,7 +258,6 @@ angular.module('spotlistr.services', [])
 			},
 			extractInfoFromLastfmResults: function(results) {
 				var extracted = [];
-				console.log(results);
 				if (results.track instanceof Array) {
 					for (var j = 0; j < results.track.length; j++) {
 						extracted.push(results.track[j].artist.name + ' ' + results.track[j].name);
