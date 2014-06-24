@@ -455,7 +455,7 @@ angular.module('spotlistr.controllers', [])
 		// Sort by options
 		$scope.lastfmPeriodOptions = [
 			{name: '7 Days', id: '7day'},
-			{name: '1 Month', id: '1month'},
+			//{name: '1 Month', id: '1month'},
 			{name: '3 Months', id: '3month'},
 			{name: '6 Months', id: '6month'},
 			{name: '12 Months', id: '12month'},
