@@ -1,0 +1,40 @@
+<div class="row">
+	<div class="col-md-12">
+		<h1>Last.fm Top Tracks Similar Search</h1>
+		<p class="lead">Input a Last.fm username and select the range of time to search for top tracks. Spotlistr will generate a playlist based on the users top tracks similar tracks.</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<form role="form">
+			<div class="form-group">
+				<label for="sortBy" class="col-sm-2 control-label">Last.fm Username</label>
+				<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+					<input type="text" class="form-control" data-ng-model="lastfmUsername" />
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="form-group">
+				<label for="sortBy" class="col-sm-2 control-label">Limit</label>
+				<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+					<select class="form-control" data-ng-options="opt.name for opt in lastfmSortByOptions" data-ng-model="selectedLastfmSortByOption"></select>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="form-group">
+				<label for="sortBy" class="col-sm-2 control-label">Similar Tracks per Track</label>
+				<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+					<input type="number" min="1" max="100" class="form-control" data-ng-model="similarCount" />
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="form-group">
+				<button ng-if="userLoggedIn" type="submit" ng-click="performSearch()" class="btn btn-success btn-lg" ng-disabled="searching===true"><span ng-if="searching===true">Searching...</span><span ng-if="searching===false">Search Last.fm</span></button>
+				<a href="/login" ng-if="!userLoggedIn" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div result-module></div>

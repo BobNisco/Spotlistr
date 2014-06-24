@@ -26,5 +26,9 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/lastfm-similar.html',
     controller: 'LastfmSimilar'
   });
+  $routeProvider.when('/search/lastfm-toptracks-similar', {
+    templateUrl: 'partials/lastfm-toptracks-similar.html',
+    controller: 'LastfmToptracksSimilar'
+  });
   $routeProvider.otherwise({redirectTo: '/search/textbox'});
 }]);

@@ -423,6 +423,89 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
+.controller('LastfmToptracksSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
+
+		$scope.currentUser = UserFactory.currentUser();
+		$scope.userLoggedIn = UserFactory.userLoggedIn();
+		$scope.$on('userChanged', function(event, data) {
+			$scope.userLoggedIn = data.userLoggedIn;
+			$scope.currentUser = data.currentUser;
+		});
+		// The tracks that matched 100%
+		$scope.matches = [];
+		// The track that need review
+		$scope.toBeReviewed = [];
+		// The tracks with no matches
+		$scope.noMatches = [];
+		// The data in the text area
+		$scope.taData = '';
+		// The selected indexes of the review tracks
+		$scope.selectedReviewedTracks = {};
+		// The name of the playlist
+		$scope.playlistName = '';
+		// Boolean for if the playlist will be public or nah
+		$scope.publicPlaylist = true;
+		// Messages to the user
+		$scope.messages = [];
+		// Bool flag for if search is running
+		$scope.searching = false;
+		// Amount of similar tracks per track
+		$scope.similarCount = 10;
+		// Inputted Last.fm username
+		$scope.lastfmUsername = '';
+		// Sort by options
+		$scope.lastfmSortByOptions = [
+			{name: 'Overall', id: 'overall'},
+			{name: '7 Days', id: '7day'},
+			{name: '1 Month', id: '1month'},
+			{name: '3 Months', id: '3month'},
+			{name: '6 Months', id: '6month'},
+			{name: '12 Months', id: '12month'},
+		];
+		// Selected sort option
+		$scope.selectedLastfmSortByOption = $scope.lastfmSortByOptions[0];
+
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			clearResults();
+			var inputByLine = $scope.taData.split('\n'),
+				splitTrack = [];
+
+			LastfmFactory.getSimilarTracksAndExtractInfo(inputByLine, $scope.similarCount, function(lastfmSimilarTracks) {
+				console.log(lastfmSimilarTracks);
+				var similar = [];
+				for (var i = 0; i < lastfmSimilarTracks.length; i++) {
+					console.log(lastfmSimilarTracks[i].similartracks);
+					if (lastfmSimilarTracks[i].similartracks.track instanceof Array) {
+						for (var j = 0; j < lastfmSimilarTracks[i].similartracks.track.length; j++) {
+							similar.push(lastfmSimilarTracks[i].similartracks.track[j].artist.name + ' ' + lastfmSimilarTracks[i].similartracks.track[j].name);
+						}
+					}
+				}
+				QueryFactory.performSearch(similar, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				$scope.searching = false;
+			});
+		};
+
+		$scope.createDisplayName = QueryFactory.createDisplayName;
+
+		var clearResults = function() {
+			$scope.matches = [];
+			$scope.toBeReviewed = [];
+			$scope.selectedReviewedTracks = {};
+			$scope.noMatches = [];
+			$scope.messages = [];
+		};
+
+		$scope.assignSelectedTrack = function(trackUrl, trackId) {
+			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		};
+
+		$scope.createPlaylist = function(name, isPublic) {
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+		};
+
+	}])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
