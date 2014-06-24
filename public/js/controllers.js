@@ -72,7 +72,16 @@ angular.module('spotlistr.controllers', [])
 			$scope.currentUser = data.currentUser;
 		});
 
-		$scope.subredditSortBy = [{name: 'hot', id: 'hot'}, {name: 'top', id: 'top'}, {name: 'new', id: 'new'}];
+		$scope.subredditSortBy = [
+			{name: 'hot', id: 'hot'},
+			{name: 'top - hour', id: 'top', sort: 't=hour'},
+			{name: 'top - day', id: 'top', sort: 't=day'},
+			{name: 'top - week', id: 'top', sort: 't=week'},
+			{name: 'top - month', id: 'top', sort: 't=month'},
+			{name: 'top - year', id: 'top', sort: 't=year'},
+			{name: 'top - all', id: 'top', sort: 't=all'},
+			{name: 'new', id: 'new'}
+		];
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
 		$scope.subredditInput = '';
 
@@ -299,7 +308,7 @@ angular.module('spotlistr.controllers', [])
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			clearResults();
-			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, $scope.selectedFetchAmounts, function(response) {
+			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, $scope.selectedSortBy.sort, $scope.selectedFetchAmounts, function(response) {
 				var listings = response.data.children,
 					trackTitles = [];
 
