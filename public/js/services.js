@@ -223,7 +223,7 @@ angular.module('spotlistr.services', [])
 	.factory('RedditUserFactory', function($http) {
 		return {
 			userLoggedIn: function() {
-				return false;
+				return this.getAccessToken() != null;
 			},
 			getCurrentUser: function() {
 
@@ -232,12 +232,16 @@ angular.module('spotlistr.services', [])
 
 			},
 			getAccessToken: function() {
+				return window.localStorage.getItem('reddit_access_token');
 			},
 			setAccessToken: function(access_token) {
+				window.localStorage.setItem('reddit_access_token', access_token);
 			},
 			getRefreshToken: function() {
+				return window.localStorage.getItem('reddit_refresh_token');
 			},
 			setRefreshToken: function(refresh_token) {
+				window.localStorage.setItem('reddit_refresh_token', refresh_token);
 			},
 		}
 	})

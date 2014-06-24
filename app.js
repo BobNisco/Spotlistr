@@ -15,6 +15,11 @@ var client_id = '0dc431a2682b462e93cd00fbf8295447'; // Your client id
 var client_secret = '3c29e4ee31b242758532b7c12cffe4a5'; // Your client secret
 var redirect_uri = 'http://spotlistr.herokuapp.com/callback'; // Your redirect uri
 
+// Reddit API settings
+var reddit_client_id = 'x_1EWGYnLKmEZA';
+var reddit_client_secret = 'N6csZ5eNC_js63V5GxxRXTEn2UY';
+var reddit_redirect_uri = 'http://127.0.0.1:8888/reddit-oauth-callback';
+
 // Change the redirect URI if we are developing
 // To set NODE_ENV in Windows: SET NODE_ENV=development
 //        NODE_ENV in *nix/OSX: export NODE_ENV=development
@@ -74,6 +79,36 @@ app.get('/callback', function(req, res) {
 
       // we can also pass the tokens to the browser to make requests from there
       res.redirect('/#/search/textbox/' + access_token + '/' + refresh_token);
+    }
+  });
+});
+
+app.get('/reddit-oauth-callback', function(req, res) {
+
+  if (req.query.error) {
+    // TODO: Handle error
+  }
+
+  var code = req.query.code,
+      state = req.query.state;
+
+  var authOptions = {
+    url: 'https://ssl.reddit.com/api/v1/access_token',
+      form: {
+        code: code,
+        redirect_uri: reddit_redirect_uri,
+        grant_type: 'authorization_code',
+    },
+    headers: { 'Authorization': 'Basic ' + (new Buffer(reddit_client_id + ':' + reddit_client_secret).toString('base64')) },
+    json: true
+  };
+
+  request.post(authOptions, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      var access_token = body.access_token,
+          refresh_token = body.refresh_token;
+
+      res.redirect('/#/search/multireddit/' + access_token + '/' + refresh_token);
     }
   });
 });

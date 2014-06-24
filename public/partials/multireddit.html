@@ -7,7 +7,7 @@
 </div>
 <div class="row" ng-if="userRedditLoggedIn === false">
 	<div class="col-md-12">
-		<a href="https://ssl.reddit.com/api/v1/authorize?client_id=x_1EWGYnLKmEZA&response_type=code&state=multiredditsupport&redirect_uri=http://127.0.0.1:8888/callback&duration=permanent&scope=mysubreddits"><button class="btn btn-success btn-lg">Log in with Reddit to continue</button></a>
+		<a href="https://ssl.reddit.com/api/v1/authorize?client_id=x_1EWGYnLKmEZA&response_type=code&state=multiredditsupport&redirect_uri=http://127.0.0.1:8888/reddit-oauth-callback&duration=permanent&scope=read,mysubreddits"><button class="btn btn-success btn-lg">Log in with Reddit to continue</button></a>
 	</div>
 </div>
 <div class="row" ng-if="userRedditLoggedIn === true">

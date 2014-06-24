@@ -344,7 +344,7 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
-.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$location', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $location) {
+.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
 		$scope.$on('userChanged', function(event, data) {
@@ -360,7 +360,12 @@ angular.module('spotlistr.controllers', [])
 			$scope.currentRedditUser = data.currentUser;
 		});
 
-		console.log($location.search());
+		if ($routeParams.access_token && $routeParams.refresh_token) {
+			// Save the access token into local storage
+			RedditUserFactory.setAccessToken($routeParams.access_token);
+			// Save the refresh token into local storage
+			RedditUserFactory.setRefreshToken($routeParams.refresh_token);
+		}
 
 		$scope.subredditSortBy = [{name: 'hot', id: 'hot'}, {name: 'top', id: 'top'}, {name: 'new', id: 'new'}];
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
