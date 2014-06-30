@@ -17,6 +17,7 @@
     "angular-loader": "1.2.x",
     "angular-mocks": "~1.2.x",
     "angular-route": "1.2.x",
-    "bootstrap": "~3.2.0"
+    "bootstrap": "~3.2.0",
+    "font-awesome": "~4.1.0"
   }
 }
