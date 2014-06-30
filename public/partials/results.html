@@ -2,7 +2,9 @@
 	<div class="content">
 		<div ng-if="matches.length > 0" class="row">
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<h2><span class="label label-info">{{ matches.length }}</span> Tracks with Exact Matches</h2>
+				<h2><span class="label label-info">{{ matches.length }}</span> Tracks with Exact Matches <small class="mouse-click" onclick="$('#exact-explanation').toggle();">What does this mean?</small></h2>
+				<p id="exact-explanation" style="display: none;">Spotlistr found an exact match for a given song.</p>
+				<hr>
 				<ul class="list-unstyled">
 					<li ng-repeat="track in matches">
 						<a href="{{ track.tracks.items[0].external_urls.spotify }}">{{ createDisplayName(track.tracks.items[0]) }}</a>
@@ -13,7 +15,9 @@
 
 		<div ng-if="toBeReviewed.length > 0" class="row multiple-matches">
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<h2><span class="label label-info">{{ toBeReviewed.length }}</span> Tracks with Multiple Matches</h2>
+				<h2><span class="label label-info">{{ toBeReviewed.length }}</span> Tracks with Multiple Matches <small class="mouse-click" onclick="$('#multiple-explanation').toggle();">What does this mean?</small></h2>
+				<p id="multiple-explanation" style="display: none;">Spotlistr found a few possibilities for a matching song. We automatically choose the closest match, but we give you the option to override our selection.</p>
+				<hr>
 				<ul class="list-unstyled">
 					<li ng-repeat="review in toBeReviewed">
 						<div class="row form-group product-chooser">
@@ -30,7 +34,9 @@
 
 		<div ng-if="noMatches.length > 0" class="row">
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<h2><span class="label label-warning">{{ noMatches.length }}</span> Tracks Not Found on Spotify <small>:(</small></h2>
+				<h2><span class="label label-warning">{{ noMatches.length }}</span> Tracks Not Found on Spotify <small class="mouse-click" onclick="$('#not-found-explanation').toggle();">What does this mean?</small></h2>
+				<p id="not-found-explanation" style="display: none;">Spotlistr could not find the given track on Spotify :(</p>
+				<hr>
 				<ul class="list-unstyled">
 					<li ng-repeat="match in noMatches"><a href="{{ match.tracks.href }}" target="_blank">{{ match.tracks.href }}</a></li>
 				</ul>
