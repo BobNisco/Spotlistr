@@ -270,11 +270,31 @@ angular.module('spotlistr.services', [])
 		return {
 			apiKey: 'AIzaSyDHBGaCYTWZhfmtnJeOnjXrFe3WRl62YSk',
 			getPlaylist: function(playlistId, callback) {
-				var _this = this;
+				var _this = this,
+					results = [];
+
+				_this.getVideosFromPlaylist(playlistId, results, null, callback);
+			},
+			getVideosFromPlaylist: function(playlistId, results, nextPageToken, callback) {
 				// Docs: https://developers.google.com/youtube/v3/docs/playlistItems/list
 				// endpoint: GET https://www.googleapis.com/youtube/v3/playlistItems
-				var req = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=' + playlistId + '&maxResults=50&key=' + _this.apiKey;
-				$http.get(req).success(callback);
+				var _this = this,
+					req = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=' + playlistId + '&maxResults=50&key=' + _this.apiKey;
+
+				if (nextPageToken) {
+					req += '&pageToken=' + nextPageToken;
+				}
+				$http.get(req).success(function(res) {
+					for (var i = 0; i < res.items.length; i += 1) {
+						results.push(res.items[i]);
+					}
+
+					if (res.nextPageToken) {
+						_this.getVideosFromPlaylist(playlistId, results, res.nextPageToken, callback);
+					} else {
+						callback(results);
+					}
+				});
 			},
 		}
 	});

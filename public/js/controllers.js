@@ -537,13 +537,12 @@ angular.module('spotlistr.controllers', [])
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			clearResults();
-			YouTubeFactory.getPlaylist($scope.playlistId, function(response) {
+			YouTubeFactory.getPlaylist($scope.playlistId, function(items) {
 				var titles = [];
 
-				for (var i = 0; i < response.items.length; i += 1) {
-					titles.push(QueryFactory.normalizeSearchQuery(response.items[i].snippet.title));
+				for (var i = 0; i < items.length; i += 1) {
+					titles.push(QueryFactory.normalizeSearchQuery(items[i].snippet.title));
 				}
-
 				QueryFactory.performSearch(titles, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
 			});
 			$scope.searching = false;
