@@ -501,7 +501,7 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
-	.controller('YouTube', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
+	.controller('YouTube', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'YouTubeFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, YouTubeFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			// Save the access token into local storage
 			UserFactory.setAccessToken($routeParams.access_token);
@@ -521,8 +521,6 @@ angular.module('spotlistr.controllers', [])
 		$scope.toBeReviewed = [];
 		// The tracks with no matches
 		$scope.noMatches = [];
-		// The data in the text area
-		$scope.taData = '';
 		// The selected indexes of the review tracks
 		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
@@ -534,12 +532,20 @@ angular.module('spotlistr.controllers', [])
 		// Bool flag for if search is running
 		$scope.searching = false;
 
+		$scope.playlistId = '';
+
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			clearResults();
-			var rawInputByLine = $scope.taData.split('\n');
-			var inputByLine = QueryFactory.normalizeSearchArray(rawInputByLine);
-			QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+			YouTubeFactory.getPlaylist($scope.playlistId, function(response) {
+				var titles = [];
+
+				for (var i = 0; i < response.items.length; i += 1) {
+					titles.push(QueryFactory.normalizeSearchQuery(response.items[i].snippet.title));
+				}
+
+				QueryFactory.performSearch(titles, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+			});
 			$scope.searching = false;
 		};
 

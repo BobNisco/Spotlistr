@@ -151,7 +151,6 @@ angular.module('spotlistr.services', [])
 				normalized = normalized.replace(/(\[|\()+\d*(\]|\))+/, '');
 				// Remove all the extraneous stuff
 				normalized = normalized.replace(/[^\w\s]/gi, '');
-				console.log(normalized);
 				return normalized;
 			},
 			normalizeSearchArray: function(arr) {
@@ -264,6 +263,18 @@ angular.module('spotlistr.services', [])
 					}
 				}
 				return extracted;
+			},
+		}
+	})
+	.factory('YouTubeFactory', function($http, $q) {
+		return {
+			apiKey: 'AIzaSyDHBGaCYTWZhfmtnJeOnjXrFe3WRl62YSk',
+			getPlaylist: function(playlistId, callback) {
+				var _this = this;
+				// Docs: https://developers.google.com/youtube/v3/docs/playlistItems/list
+				// endpoint: GET https://www.googleapis.com/youtube/v3/playlistItems
+				var req = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=' + playlistId + '&maxResults=50&key=' + _this.apiKey;
+				$http.get(req).success(callback);
 			},
 		}
 	});
