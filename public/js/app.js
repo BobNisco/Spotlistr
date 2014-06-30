@@ -30,5 +30,9 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/lastfm-toptracks-similar.html',
     controller: 'LastfmToptracksSimilar'
   });
+  $routeProvider.when('/search/youtube', {
+    templateUrl: 'partials/youtube.html',
+    controller: 'YouTube'
+  });
   $routeProvider.otherwise({redirectTo: '/search/textbox'});
 }]);
