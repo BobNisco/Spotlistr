@@ -537,7 +537,7 @@ angular.module('spotlistr.controllers', [])
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			clearResults();
-			YouTubeFactory.getPlaylist($scope.playlistId, function(items) {
+			YouTubeFactory.getPlaylist(getPlaylistIdFromUrl(), function(items) {
 				var titles = [];
 
 				for (var i = 0; i < items.length; i += 1) {
@@ -547,6 +547,15 @@ angular.module('spotlistr.controllers', [])
 			});
 			$scope.searching = false;
 		};
+
+		var getPlaylistIdFromUrl = function() {
+			var name = 'list';
+			// http://stackoverflow.com/a/901144/877117
+			name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+		    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		        results = regex.exec($scope.playlistId);
+		    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+		}
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
 
