@@ -1,21 +1,23 @@
-<div class="row">
-	<div class="col-md-12">
-		<h1>Textbox search</h1>
-		<p class="lead">Input a list of tracks separated on each line to create a playlist! Spotlistr will search the Spotify library and automatically pick the exact matches to your input. If Spotlistr is unsure of which track to choose, it will pick the closest match automatically but also present you with a list of the other matches and allow you to choose the correct match on the chance that it picked the wrong one.</p>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Textbox search</h1>
+			<p class="lead">Input a list of tracks separated on each line to create a playlist! Spotlistr will search the Spotify library and automatically pick the exact matches to your input. If Spotlistr is unsure of which track to choose, it will pick the closest match automatically but also present you with a list of the other matches and allow you to choose the correct match on the chance that it picked the wrong one.</p>
+		</div>
 	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<form role="form">
-			<div class="form-group">
-				<textarea class="form-control" rows="10" ng-model="taData"></textarea>
-			</div>
-			<div class="form-group">
-				<button ng-if="userLoggedIn" type="submit" ng-click="performSearch()" class="btn btn-success btn-lg" ng-disabled="searching===true"><span ng-if="searching===true">Searching...</span><span ng-if="searching===false">Search Spotify</span></button>
-				<a href="/login" ng-if="!userLoggedIn" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
-			</div>
-		</form>
+	<div class="row">
+		<div class="col-md-12">
+			<form role="form">
+				<div class="form-group">
+					<textarea class="form-control" rows="10" ng-model="taData"></textarea>
+				</div>
+				<div class="form-group">
+					<button ng-if="userLoggedIn" type="submit" ng-click="performSearch()" class="btn btn-success btn-lg" ng-disabled="searching===true"><span ng-if="searching===true">Searching...</span><span ng-if="searching===false">Search Spotify</span></button>
+					<a href="/login" ng-if="!userLoggedIn" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
+				</div>
+			</form>
+		</div>
 	</div>
-</div>
 
-<div result-module></div>
+	<div result-module></div>
+</div>

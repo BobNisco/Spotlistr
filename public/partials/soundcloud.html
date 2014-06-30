@@ -1,34 +1,36 @@
-<script>
-	SC.initialize({
-		client_id: "88434bd865d117fd3f098ca6c2c7ad38",
-		redirect_uri: "http://spotlistr.herokuapp.com/soundcloud-callback",
-	});
+<div class="container">
+	<script>
+		SC.initialize({
+			client_id: "88434bd865d117fd3f098ca6c2c7ad38",
+			redirect_uri: "http://spotlistr.herokuapp.com/soundcloud-callback",
+		});
+	</script>
+
+	<div class="row">
+		<div class="col-md-12">
+			<h1>SoundCloud Playlist/Set Search</h1>
+			<p class="lead">Paste in the SoundCloud playlist/set URL to search for each track on Spotify</p>
+			<p><span class="label label-warning"><strong>Heads up</strong></span> If you're using an adblocker, you'll have to disable it or else the SoundCloud search won't work! There are no ads on this website anyway :)</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label for="playlist-id" class="col-sm-2 control-label">Playlist URL</label>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" name="playlist-id" id="playlist-id" ng-model="playlistId" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button ng-if="userLoggedIn" class="btn btn-success btn-lg" type="submit" ng-click="performSearch()" ng-disabled="searching===true"><span ng-if="searching===true">Searching...</span><span ng-if="searching===false">Search SoundCloud</span></button>
+						<a href="/login" ng-if="!userLoggedIn" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div result-module></div>
 </script>
-
-<div class="row">
-	<div class="col-md-12">
-		<h1>SoundCloud Playlist/Set Search</h1>
-		<p class="lead">Paste in the SoundCloud playlist/set URL to search for each track on Spotify</p>
-		<p><span class="label label-warning"><strong>Heads up</strong></span> If you're using an adblocker, you'll have to disable it or else the SoundCloud search won't work! There are no ads on this website anyway :)</p>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<form class="form-horizontal" role="form">
-			<div class="form-group">
-				<label for="playlist-id" class="col-sm-2 control-label">Playlist URL</label>
-				<div class="col-sm-6">
-					<input type="text" class="form-control" name="playlist-id" id="playlist-id" ng-model="playlistId" />
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<button ng-if="userLoggedIn" class="btn btn-success btn-lg" type="submit" ng-click="performSearch()" ng-disabled="searching===true"><span ng-if="searching===true">Searching...</span><span ng-if="searching===false">Search SoundCloud</span></button>
-					<a href="/login" ng-if="!userLoggedIn" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
-
-<div result-module></div>

@@ -1,45 +1,47 @@
-<div class="row">
-	<div class="col-md-12">
-		<h1>Subreddit Search</h1>
-		<p class="lead">Type in your favorite Subreddit and select the sorting criteria to make a Spotify playlist based on the results!</p>
-		<p><span class="label label-warning"><strong>Heads up</strong></span> If you're using an adblocker, you'll have to disable it or else the Subreddit search won't work! There are no ads on this website anyway :)</p>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Subreddit Search</h1>
+			<p class="lead">Type in your favorite Subreddit and select the sorting criteria to make a Spotify playlist based on the results!</p>
+			<p><span class="label label-warning"><strong>Heads up</strong></span> If you're using an adblocker, you'll have to disable it or else the Subreddit search won't work! There are no ads on this website anyway :)</p>
+		</div>
 	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<form class="form-horizontal" role="form">
-			<div class="form-group">
-				<label for="subreddit" class="col-sm-2 control-label">Subreddit</label>
-				<div class="col-xs-5 col-sm-5 col-md-3 col-lg-3">
-					<div class="input-group">
-						<span class="input-group-addon">/r/</span>
-						<input type="text" class="form-control" name="subreddit" id="subreddit" ng-model="subredditInput" />
+	<div class="row">
+		<div class="col-md-12">
+			<form class="form-horizontal" role="form">
+				<div class="form-group">
+					<label for="subreddit" class="col-sm-2 control-label">Subreddit</label>
+					<div class="col-xs-5 col-sm-5 col-md-3 col-lg-3">
+						<div class="input-group">
+							<span class="input-group-addon">/r/</span>
+							<input type="text" class="form-control" name="subreddit" id="subreddit" ng-model="subredditInput" />
+						</div>
+					</div>
+					<div class="col-xs-5 col-sm-5 col-md-3 col-lg-3">
+						<select class="form-control" data-ng-options="opt for opt in popularSubreddits" ng-model="selectedPopularSubreddits" ng-change="popularSubredditOnChange()"></select>
 					</div>
 				</div>
-				<div class="col-xs-5 col-sm-5 col-md-3 col-lg-3">
-					<select class="form-control" data-ng-options="opt for opt in popularSubreddits" ng-model="selectedPopularSubreddits" ng-change="popularSubredditOnChange()"></select>
+				<div class="form-group">
+					<label for="sortBy" class="col-sm-2 control-label">Sort By</label>
+					<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+						<select class="form-control" data-ng-options="opt.name for opt in subredditSortBy" data-ng-model="selectedSortBy"></select>
+					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				<label for="sortBy" class="col-sm-2 control-label">Sort By</label>
-				<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-					<select class="form-control" data-ng-options="opt.name for opt in subredditSortBy" data-ng-model="selectedSortBy"></select>
+				<div class="form-group">
+					<label for="sortBy" class="col-sm-2 control-label">Number of Listings to Fetch</label>
+					<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
+						<select class="form-control" data-ng-options="amount for amount in fetchAmounts" data-ng-model="selectedFetchAmounts"></select>
+					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				<label for="sortBy" class="col-sm-2 control-label">Number of Listings to Fetch</label>
-				<div class="col-xs-4 col-sm-4 col-md-2 col-lg-2">
-					<select class="form-control" data-ng-options="amount for amount in fetchAmounts" data-ng-model="selectedFetchAmounts"></select>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button ng-if="userLoggedIn" class="btn btn-success btn-lg" type="submit" ng-click="performSearch()" ng-disabled="searching===true"><span ng-if="searching===true">Searching...</span><span ng-if="searching===false">Search Reddit</span></button>
+						<a href="/login" ng-if="!userLoggedIn" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
+					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-10">
-					<button ng-if="userLoggedIn" class="btn btn-success btn-lg" type="submit" ng-click="performSearch()" ng-disabled="searching===true"><span ng-if="searching===true">Searching...</span><span ng-if="searching===false">Search Reddit</span></button>
-					<a href="/login" ng-if="!userLoggedIn" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
-				</div>
-			</div>
-		</form>
+			</form>
+		</div>
 	</div>
-</div>
 
-<div result-module></div>
+	<div result-module></div>
+</div>
