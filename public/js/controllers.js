@@ -3,7 +3,7 @@
 /* Controllers */
 
 angular.module('spotlistr.controllers', [])
-	.controller('Splash', ['$scope', '$routeParams', 'UserFactory', function($sope, $routeParams, UserFactory) {
+	.controller('Splash', ['$scope', '$routeParams', 'UserFactory', function($scope, $routeParams, UserFactory) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
 		$scope.$on('userChanged', function(event, data) {
