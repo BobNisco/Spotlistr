@@ -576,6 +576,80 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
+	.controller('SoundCloud', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
+		if ($routeParams.access_token && $routeParams.refresh_token) {
+			// Save the access token into local storage
+			UserFactory.setAccessToken($routeParams.access_token);
+			// Save the refresh token into local storage
+			UserFactory.setRefreshToken($routeParams.refresh_token);
+			UserFactory.getSpotifyUserInfo();
+		}
+		$scope.currentUser = UserFactory.currentUser();
+		$scope.userLoggedIn = UserFactory.userLoggedIn();
+		$scope.$on('userChanged', function(event, data) {
+			$scope.userLoggedIn = data.userLoggedIn;
+			$scope.currentUser = data.currentUser;
+		});
+		// The tracks that matched 100%
+		$scope.matches = [];
+		// The track that need review
+		$scope.toBeReviewed = [];
+		// The tracks with no matches
+		$scope.noMatches = [];
+		// The selected indexes of the review tracks
+		$scope.selectedReviewedTracks = {};
+		// The name of the playlist
+		$scope.playlistName = '';
+		// Boolean for if the playlist will be public or nah
+		$scope.publicPlaylist = true;
+		// Messages to the user
+		$scope.messages = [];
+		// Bool flag for if search is running
+		$scope.searching = false;
+
+		$scope.playlistId = '';
+
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			clearResults();
+			SC.get('/resolve.json?url=' + $scope.playlistId, function(playlist) {
+				var tracks = [];
+				for (var i = 0; i < playlist.tracks.length; i++) {
+					tracks.push(QueryFactory.normalizeSearchQuery(playlist.tracks[i].title));
+				}
+				QueryFactory.performSearch(tracks, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				$scope.searching = false;
+			});
+		};
+
+		var getPlaylistIdFromUrl = function() {
+			var name = 'list';
+			// http://stackoverflow.com/a/901144/877117
+			name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+		    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		        results = regex.exec($scope.playlistId);
+		    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+		}
+
+		$scope.createDisplayName = QueryFactory.createDisplayName;
+
+		var clearResults = function() {
+			$scope.matches = [];
+			$scope.toBeReviewed = [];
+			$scope.selectedReviewedTracks = {};
+			$scope.noMatches = [];
+			$scope.messages = [];
+		};
+
+		$scope.assignSelectedTrack = function(trackUrl, trackId) {
+			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		};
+
+		$scope.createPlaylist = function(name, isPublic) {
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+		};
+
+	}])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();

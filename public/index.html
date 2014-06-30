@@ -48,6 +48,7 @@
 						</ul>
 					</li>
 					<li><a href="#/search/youtube">YouTube Search</a></li>
+					<li><a href="#/search/soundcloud">SoundCloud Search</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
         			<li ng-if="userLoggedIn === true"><a href="#">Sup, {{ currentUser.display_name }}</a></li>
@@ -80,6 +81,7 @@
 	<script src="bower_components/angular/angular.js"></script>
 	<script src="bower_components/angular-route/angular-route.js"></script>
 	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="//connect.soundcloud.com/sdk.js"></script>
 	<script src="js/app.js"></script>
 	<script src="js/services.js"></script>
 	<script src="js/controllers.js"></script>

@@ -34,5 +34,9 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/youtube.html',
     controller: 'YouTube'
   });
+  $routeProvider.when('/search/soundcloud', {
+    templateUrl: 'partials/soundcloud.html',
+    controller: 'SoundCloud'
+  });
   $routeProvider.otherwise({redirectTo: '/search/textbox'});
 }]);
