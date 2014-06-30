@@ -10,6 +10,10 @@ angular.module('spotlistr', [
   'spotlistr.controllers'
 ]).
 config(['$routeProvider', function($routeProvider) {
+  $routeProvider.when('/splash', {
+    templateUrl: 'partials/splash.html',
+    controller: 'Splash'
+  });
   $routeProvider.when('/search/textbox', {
   	templateUrl: 'partials/textbox.html',
   	controller: 'Textbox'
@@ -38,5 +42,5 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/soundcloud.html',
     controller: 'SoundCloud'
   });
-  $routeProvider.otherwise({redirectTo: '/search/textbox'});
+  $routeProvider.otherwise({redirectTo: '/splash'});
 }]);

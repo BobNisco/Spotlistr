@@ -3,6 +3,15 @@
 /* Controllers */
 
 angular.module('spotlistr.controllers', [])
+	.controller('Splash', ['$scope', '$routeParams', 'UserFactory', function($sope, $routeParams, UserFactory) {
+		$scope.currentUser = UserFactory.currentUser();
+		$scope.userLoggedIn = UserFactory.userLoggedIn();
+		$scope.$on('userChanged', function(event, data) {
+			$scope.userLoggedIn = data.userLoggedIn;
+			$scope.currentUser = data.currentUser;
+		});
+
+	}])
 	.controller('Textbox', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			// Save the access token into local storage
