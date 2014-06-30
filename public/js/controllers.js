@@ -312,6 +312,7 @@ angular.module('spotlistr.controllers', [])
 		];
 		$scope.selectedPopularSubreddits = $scope.popularSubreddits[0];
 
+		$scope.searchType = 'Subreddit';
 		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		$scope.performSearch = function() {
@@ -390,6 +391,7 @@ angular.module('spotlistr.controllers', [])
 		$scope.searching = false;
 		// Amount of similar tracks per track
 		$scope.similarCount = 10;
+		$scope.searchType = 'Last.fm Similar Tracks';
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
@@ -470,6 +472,7 @@ angular.module('spotlistr.controllers', [])
 			{name: '12 Months', id: '12month'},
 			{name: 'Overall', id: 'overall'},
 		];
+		$scope.searchType = 'Last.fm Top Tracks Similar';
 		// Selected sort option
 		$scope.selectedLastfmPeriodOption = $scope.lastfmPeriodOptions[0];
 
@@ -542,6 +545,8 @@ angular.module('spotlistr.controllers', [])
 		$scope.searching = false;
 
 		$scope.playlistId = '';
+
+		$scope.searchType = 'YouTube';
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
@@ -617,6 +622,8 @@ angular.module('spotlistr.controllers', [])
 		$scope.searching = false;
 
 		$scope.playlistId = '';
+
+		$scope.searchType = 'SoundCloud';
 
 		$scope.performSearch = function() {
 			$scope.searching = true;

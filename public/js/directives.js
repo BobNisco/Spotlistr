@@ -21,4 +21,11 @@ angular.module('spotlistr.directives', []).
 			scope: false,
 			templateUrl: 'partials/card.html'
 		};
+	})
+	.directive('adblockWarning', function () {
+		return {
+			restrict: 'E',
+			scope: false,
+			templateUrl: 'partials/adblock-warning.html'
+		};
 	});
