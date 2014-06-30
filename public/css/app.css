@@ -61,3 +61,42 @@
 .navbar {
   margin-bottom: 0px;
 }
+.youtube-red-bg {
+  background-color: #e52d27;
+  color: white;
+}
+.youtube-red {
+  color: #e52d27;
+}
+.lastfm-red-bg {
+  background-color: #D21309;
+  color: white;
+}
+.lastfm-red {
+  color: #D21309;
+}
+.soundcloud-orange-bg {
+  background-color: #FC6825;
+  color: white;
+}
+.soundcloud-orange {
+  color: #FC6825;
+}
+.spotify-green-bg {
+  background-color: #8FC447;
+  color: white;
+}
+.spotify-green {
+  color: #8FC447;
+}
+.reddit-blue-bg {
+  background-color: #CEE3F8;
+  color: black;
+}
+.reddit-blue-bg:hover {
+  background-color: #CEE3F8;
+  color: white;
+}
+.reddit-blue {
+  color: #CEE3F8;
+}
