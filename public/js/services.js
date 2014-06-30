@@ -217,19 +217,22 @@ angular.module('spotlistr.services', [])
 				var req = 'http://www.reddit.com/r/' + subreddit + '/' + sort + '.json?limit=' + fetchAmount;
 				console.log(req);
 				$http.get(req).success(callback);
-			}
+			},
+			getUsersMultiReddits: function(access_token, callback) {
+				// http://www.reddit.com/dev/api#GET_api_multi_mine
+				var req = 'https://oauth.reddit.com/api/multi/mine.json';
+				console.log(access_token);
+				$http.defaults.withCredentials = true;
+				$http.defaults.useXDomain = true;
+				$http.defaults.headers.common.Authorization = 'bearer ' + access_token;
+				$http.post(req).success(callback);
+			},
 		}
 	})
 	.factory('RedditUserFactory', function($http) {
 		return {
 			userLoggedIn: function() {
 				return this.getAccessToken() != null;
-			},
-			getCurrentUser: function() {
-
-			},
-			setCurrentUser: function(user) {
-
 			},
 			getAccessToken: function() {
 				return window.localStorage.getItem('reddit_access_token');

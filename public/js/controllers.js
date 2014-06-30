@@ -353,11 +353,9 @@ angular.module('spotlistr.controllers', [])
 		});
 
 		// Reddit Authentication Info
-		$scope.currentRedditUser = RedditUserFactory.getCurrentUser();
 		$scope.userRedditLoggedIn = RedditUserFactory.userLoggedIn();
 		$scope.$on('redditUserChanged', function(event, data) {
 			$scope.userRedditLoggedIn = data.userLoggedIn;
-			$scope.currentRedditUser = data.currentUser;
 		});
 
 		if ($routeParams.access_token && $routeParams.refresh_token) {
@@ -393,6 +391,10 @@ angular.module('spotlistr.controllers', [])
 		$scope.selectedFetchAmounts = $scope.fetchAmounts[0];
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
+
+		$scope.usersMultireddits = RedditFactory.getUsersMultiReddits(RedditUserFactory.getAccessToken(), function(response) {
+			console.log(response);
+		});
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
