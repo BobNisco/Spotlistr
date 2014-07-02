@@ -10,7 +10,11 @@ angular.module('spotlistr', [
   'spotlistr.controllers'
 ]).
 config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/splash', {
+  $routeProvider.when('/splash/', {
+    templateUrl: 'partials/splash.html',
+    controller: 'Splash'
+  });
+  $routeProvider.when('/splash/:access_token/:refresh_token', {
     templateUrl: 'partials/splash.html',
     controller: 'Splash'
   });

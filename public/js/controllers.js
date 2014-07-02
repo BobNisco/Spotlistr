@@ -4,6 +4,13 @@
 
 angular.module('spotlistr.controllers', [])
 	.controller('Splash', ['$scope', '$routeParams', 'UserFactory', function($scope, $routeParams, UserFactory) {
+		if ($routeParams.access_token && $routeParams.refresh_token) {
+			// Save the access token into local storage
+			UserFactory.setAccessToken($routeParams.access_token);
+			// Save the refresh token into local storage
+			UserFactory.setRefreshToken($routeParams.refresh_token);
+			UserFactory.getSpotifyUserInfo();
+		}
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
 		$scope.$on('userChanged', function(event, data) {
