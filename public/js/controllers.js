@@ -674,4 +674,8 @@ angular.module('spotlistr.controllers', [])
 			$scope.currentUser = data.currentUser;
 		});
 
+	}])
+	.controller('UsersLogOut', ['$scope', '$location', 'UserFactory', function($scope, $location, UserFactory) {
+		UserFactory.clearUserData();
+		$location.path('#/splash')
 	}]);

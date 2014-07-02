@@ -42,5 +42,9 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/soundcloud.html',
     controller: 'SoundCloud'
   });
+  $routeProvider.when('/users/log-out', {
+    templateUrl: 'partials/splash.html',
+    controller: 'UsersLogOut'
+  });
   $routeProvider.otherwise({redirectTo: '/splash'});
 }]);
