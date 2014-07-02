@@ -632,10 +632,13 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.searchType = 'SoundCloud';
 
+		$scope.soundCloudClientId = '88434bd865d117fd3f098ca6c2c7ad38';
+
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			clearResults();
-			SC.get('/resolve.json?url=' + $scope.playlistId, function(playlist) {
+			var url = '/resolve.json?url=' + $scope.playlistId + '&client_id=' + $scope.soundCloudClientId;
+			SC.get(url, function(playlist) {
 				var tracks = [];
 				for (var i = 0; i < playlist.tracks.length; i++) {
 					tracks.push(QueryFactory.normalizeSearchQuery(playlist.tracks[i].title));
