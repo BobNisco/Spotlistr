@@ -33,7 +33,7 @@
 						<select class="form-control" data-ng-options="amount for amount in fetchAmounts" data-ng-model="selectedFetchAmounts"></select>
 					</div>
 				</div>
-				<div class="form-group">
+				<div class="form-group" ng-cloak>
 					<div class="col-sm-offset-2 col-sm-10">
 						<button ng-if="userLoggedIn" class="btn btn-success btn-lg" type="submit" ng-click="performSearch()" ng-disabled="searching===true"><span ng-if="searching===true">Searching...</span><span ng-if="searching===false">Search Reddit</span></button>
 						<a href="/login" ng-if="!userLoggedIn" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
