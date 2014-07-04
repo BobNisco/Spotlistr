@@ -6,7 +6,7 @@
 				<p id="exact-explanation" style="display: none;">Spotlistr found an exact match for a given song.</p>
 				<hr>
 
-				<table class="table">
+				<table class="table table-hover">
 					<thead>
 						<tr>
 							<th>Track</th>
@@ -53,9 +53,22 @@
 				<h2>Tracks Not Found on Spotify <small class="mouse-click" onclick="$('#not-found-explanation').toggle();">What does this mean?</small></h2>
 				<p id="not-found-explanation" style="display: none;">Spotlistr could not find the given track on Spotify :( However, if the artist provided a Soundcloud download link, it will be next to the track.</p>
 				<hr>
-				<ul class="list-unstyled">
-					<li ng-repeat="track in trackArr" ng-if="track.spotifyMatches.length == 0">{{ track.originalQuery }} <a ng-href="{{ track.generateSoundcloudDownloadUrl(soundCloudClientId) }}" ng-if="track.downloadUrl"><i class="fa fa-cloud-download"></i> Free Download Available</a></li>
-				</ul>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Search Query</th>
+							<th>Source URL</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="track in trackArr" ng-if="track.spotifyMatches.length == 0">
+							<td>{{ track.cleanedQuery }}</td>
+							<td><a ng-href="{{ track.sourceUrl }}" ng-if="track.sourceUrl">Source</a></td>
+							<td><a ng-href="{{ track.generateSoundcloudDownloadUrl(soundCloudClientId) }}" ng-if="track.downloadUrl"><i class="fa fa-cloud-download"></i> Download Available</a></td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 

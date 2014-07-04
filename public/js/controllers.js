@@ -326,6 +326,7 @@ angular.module('spotlistr.controllers', [])
                         return deferred.promise;
                     }
 					var newTrack = new Track(value.data.title);
+					newTrack.sourceUrl = value.data.url;
 					// 1.2. If the domain is soundcloud, we will add some extra info
 					//      into the Track object so we can potentially show the free DL
 					if (value.data.domain === 'soundcloud.com') {

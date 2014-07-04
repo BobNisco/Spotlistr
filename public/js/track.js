@@ -10,6 +10,7 @@ function Track(query) {
 	this.spotifyMatches = [];
 	this.selectedMatch = -1;
 	this.downloadUrl = '';
+	this.sourceUrl = '';
 };
 
 Track.prototype.generateSoundcloudDownloadUrl = function(client_id) {
@@ -61,7 +62,7 @@ Track.prototype.normalizeSearchQuery = function(query) {
 
 Track.prototype.createDisplayNameForSelectedSong = function() {
 	return this.createDisplayName(this.getSelectedSong());
-}
+};
 
 Track.prototype.createDisplayName = function(track) {
 	return this.artist() + ' - ' + track.name;
