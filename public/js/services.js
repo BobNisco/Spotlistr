@@ -192,8 +192,8 @@ angular.module('spotlistr.services', [])
 					SpotifySearchFactory.search(trackArr[i]);
 				}
 			},
-			assignSelectedTrack: function(trackUrl, trackId, selectedReviewedTracks) {
-				selectedReviewedTracks[trackUrl] = trackId;
+			assignSelectedTrack: function(track, index) {
+				track.setSelectedMatch(index);
 			},
 			gatherPlaylist: function (matches, selectedReviewedTracks) {
 				var playlist = [];

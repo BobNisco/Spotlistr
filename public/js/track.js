@@ -11,6 +11,13 @@ function Track(query) {
 	this.selectedMatch = -1;
 };
 
+Track.prototype.setSelectedMatch = function(index) {
+	if (index < 0 || index > this.spotifyMatches.length - 1) {
+		throw new Error('Selected Match out of bounds');
+	}
+	this.selectedMatch = index;
+}
+
 Track.prototype.normalizeSearchQuery = function(query) {
 	var normalized = query;
 	// Remove any genre tags in the formation [genre]

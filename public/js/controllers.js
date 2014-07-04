@@ -67,8 +67,8 @@ angular.module('spotlistr.controllers', [])
 			$scope.messages = [];
 		};
 
-		$scope.assignSelectedTrack = function(trackUrl, trackId) {
-			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		$scope.assignSelectedTrack = function(track, index) {
+			QueryFactory.assignSelectedTrack(track, index);
 		};
 
 		$scope.createPlaylist = function(name, isPublic) {
