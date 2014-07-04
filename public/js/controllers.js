@@ -571,7 +571,11 @@ angular.module('spotlistr.controllers', [])
 			var url = '/resolve.json?url=' + $scope.playlistId + '&client_id=' + $scope.soundCloudClientId;
 			SC.get(url, function(playlist) {
 				for (var i = 0; i < playlist.tracks.length; i++) {
-					$scope.trackArr.push(new Track(playlist.tracks[i].title));
+					var newTrack = new Track(playlist.tracks[i].title);
+					if (playlist.tracks[i].downloadable) {
+						newTrack.downloadUrl = playlist.tracks[i].download_url;
+					}
+					$scope.trackArr.push(newTrack);
 				}
 				QueryFactory.performSearch($scope.trackArr);
 				$scope.searching = false;

@@ -9,7 +9,15 @@ function Track(query) {
 	*/
 	this.spotifyMatches = [];
 	this.selectedMatch = -1;
+	this.downloadUrl = '';
 };
+
+Track.prototype.generateSoundcloudDownloadUrl = function(client_id) {
+	if (this.downloadUrl) {
+		return this.downloadUrl + '?client_id=' + client_id;
+	}
+	return null;
+}
 
 Track.prototype.setSelectedMatch = function(index) {
 	if (index < 0 || index > this.spotifyMatches.length - 1) {
