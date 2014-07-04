@@ -65,7 +65,6 @@ angular.module('spotlistr.services', [])
 				var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(track.cleanedQuery);
 				$http.get(req).success(function(response) {
 					track.addSpotifyMatches(response.tracks.items);
-					console.log(track);
 				});
 			}
 		}

@@ -20,8 +20,10 @@
 				<hr>
 				<ul class="list-unstyled">
 					<li ng-repeat="query in trackArr" ng-if="query.spotifyMatches.length > 1">
+						<h4>Results for "{{ query.originalQuery }}"</h4>
 						<div class="row form-group product-chooser">
 							<span ng-repeat="track in query.spotifyMatches">
+								<div class="row" ng-if="$index % 4 == 0"></div>
 								<card></card>
 							</span>
 						</div>
