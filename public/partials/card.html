@@ -2,7 +2,7 @@
 	<div class="product-chooser-item" ng-class="{selected:query.selectedMatch == $index}" ng-click="assignSelectedTrack(query, $index)">
 		<img ng-src="{{ track.album.images[1].url }}" class="img-rounded col-xs-4 col-sm-4 col-md-12 col-lg-12">
 		<div class="col-xs-8 col-sm-8 col-md-12 col-lg-12">
-			<a href="{{ track.external_urls.spotify }}" target="_blank"><span class="title">{{ createDisplayName(track) }}</span></a>
+			<a href="{{ track.external_urls.spotify }}" target="_blank"><span class="title">{{ query.createDisplayName(track) }}</span></a>
 			<input type="radio" name="{{ review.href }}" value="{{ track.id }}">
 		</div>
 		<div class="clear"></div>

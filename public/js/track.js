@@ -16,7 +16,17 @@ Track.prototype.setSelectedMatch = function(index) {
 		throw new Error('Selected Match out of bounds');
 	}
 	this.selectedMatch = index;
-}
+};
+
+Track.prototype.getSelectedSong = function() {
+	if (this.spotifyMatches.length === 0) {
+		return null;
+	} else if (this.spotifyMatches.length === 1) {
+		return this.spotifyMatches[0];
+	} else {
+		return this.spotifyMatches[this.selectedMatch];
+	}
+};
 
 Track.prototype.normalizeSearchQuery = function(query) {
 	var normalized = query;
@@ -31,6 +41,10 @@ Track.prototype.normalizeSearchQuery = function(query) {
 	normalized = normalized.replace(/[^\w\s]/gi, '');
 	return normalized;
 };
+
+Track.prototype.createDisplayNameForSelectedSong = function() {
+	return this.createDisplayName(this.getSelectedSong());
+}
 
 Track.prototype.createDisplayName = function(track) {
 	var result = '';
@@ -56,4 +70,4 @@ Track.prototype.addSpotifyMatches = function(matches) {
 	if (this.spotifyMatches.length > 1) {
 		this.selectedMatch = 0;
 	}
-}
+};

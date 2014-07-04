@@ -57,8 +57,6 @@ angular.module('spotlistr.controllers', [])
 			$scope.searching = false;
 		};
 
-		$scope.createDisplayName = QueryFactory.createDisplayName;
-
 		var clearResults = function() {
 			$scope.trackArr = [];
 			$scope.messages = [];
@@ -309,7 +307,6 @@ angular.module('spotlistr.controllers', [])
 		$scope.selectedPopularSubreddits = $scope.popularSubreddits[0];
 
 		$scope.searchType = 'Subreddit';
-		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
@@ -386,21 +383,18 @@ angular.module('spotlistr.controllers', [])
 				splitTrack = [];
 
 			LastfmFactory.getSimilarTracksAndExtractInfo(inputByLine, $scope.similarCount, function(lastfmSimilarTracks) {
-				var similar = [];
 				for (var i = 0; i < lastfmSimilarTracks.length; i++) {
 					if (lastfmSimilarTracks[i].similartracks.track instanceof Array) {
 						var found = LastfmFactory.extractInfoFromLastfmResults(lastfmSimilarTracks[i].similartracks);
 						for (var j = 0; j < found.length; j++) {
-							similar.push(found[j]);
+							$scope.trackArr.push(new Track(found[j]));
 						}
 					}
 				}
-				QueryFactory.performSearch(similar, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				QueryFactory.performSearch($scope.trackArr);
 				$scope.searching = false;
 			});
 		};
-
-		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		var clearResults = function() {
 			$scope.trackArr = [];
