@@ -565,8 +565,8 @@ angular.module('spotlistr.controllers', [])
 					titles.push(QueryFactory.normalizeSearchQuery(items[i].snippet.title));
 				}
 				QueryFactory.performSearch(titles, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				$scope.searching = false;
 			});
-			$scope.searching = false;
 		};
 
 		var getPlaylistIdFromUrl = function() {
