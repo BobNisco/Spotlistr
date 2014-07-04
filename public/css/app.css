@@ -28,7 +28,7 @@
   content: "";
   padding: 0;
 }
-.multiple-matches hr {
+.multiple-matches ul hr {
   margin-top: 50px;
   margin-bottom: 50px;
 }
