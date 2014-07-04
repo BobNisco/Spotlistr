@@ -1,8 +1,8 @@
-<div class="result">
+<div class="result" ng-if="trackArr.length > 0">
 	<div class="content">
 		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<h2><span class="label label-info">{{ matches.length }}</span> Tracks with Exact Matches <small class="mouse-click" onclick="$('#exact-explanation').toggle();">What does this mean?</small></h2>
+				<h2>Tracks with Exact Matches <small class="mouse-click" onclick="$('#exact-explanation').toggle();">What does this mean?</small></h2>
 				<p id="exact-explanation" style="display: none;">Spotlistr found an exact match for a given song.</p>
 				<hr>
 				<ul class="list-unstyled">
@@ -15,7 +15,7 @@
 
 		<div class="row multiple-matches">
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<h2><span class="label label-info">{{ toBeReviewed.length }}</span> Tracks with Multiple Matches <small class="mouse-click" onclick="$('#multiple-explanation').toggle();">What does this mean?</small></h2>
+				<h2>Tracks with Multiple Matches <small class="mouse-click" onclick="$('#multiple-explanation').toggle();">What does this mean?</small></h2>
 				<p id="multiple-explanation" style="display: none;">Spotlistr found a few possibilities for a matching song. We automatically choose the closest match, but we give you the option to override our selection.</p>
 				<hr>
 				<ul class="list-unstyled">
@@ -36,7 +36,7 @@
 
 		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<h2><span class="label label-warning">{{ noMatches.length }}</span> Tracks Not Found on Spotify <small class="mouse-click" onclick="$('#not-found-explanation').toggle();">What does this mean?</small></h2>
+				<h2>Tracks Not Found on Spotify <small class="mouse-click" onclick="$('#not-found-explanation').toggle();">What does this mean?</small></h2>
 				<p id="not-found-explanation" style="display: none;">Spotlistr could not find the given track on Spotify :(</p>
 				<hr>
 				<ul class="list-unstyled">
