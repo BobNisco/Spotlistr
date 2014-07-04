@@ -481,12 +481,8 @@ angular.module('spotlistr.controllers', [])
 			$scope.userLoggedIn = data.userLoggedIn;
 			$scope.currentUser = data.currentUser;
 		});
-		// The tracks that matched 100%
-		$scope.matches = [];
-		// The track that need review
-		$scope.toBeReviewed = [];
-		// The tracks with no matches
-		$scope.noMatches = [];
+		// The tracks
+		$scope.trackArr = [];
 		// The selected indexes of the review tracks
 		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
@@ -506,12 +502,10 @@ angular.module('spotlistr.controllers', [])
 			$scope.searching = true;
 			clearResults();
 			YouTubeFactory.getPlaylist(getPlaylistIdFromUrl(), function(items) {
-				var titles = [];
-
 				for (var i = 0; i < items.length; i += 1) {
-					titles.push(QueryFactory.normalizeSearchQuery(items[i].snippet.title));
+					$scope.trackArr.push(new Track(items[i].snippet.title));
 				}
-				QueryFactory.performSearch(titles, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				QueryFactory.performSearch($scope.trackArr);
 				$scope.searching = false;
 			});
 		};
@@ -525,24 +519,18 @@ angular.module('spotlistr.controllers', [])
 		    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
 
-		$scope.createDisplayName = QueryFactory.createDisplayName;
-
 		var clearResults = function() {
-			$scope.matches = [];
-			$scope.toBeReviewed = [];
-			$scope.selectedReviewedTracks = {};
-			$scope.noMatches = [];
+			$scope.trackArr = [];
 			$scope.messages = [];
 		};
 
-		$scope.assignSelectedTrack = function(trackUrl, trackId) {
-			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		$scope.assignSelectedTrack = function(track, index) {
+			QueryFactory.assignSelectedTrack(track, index);
 		};
 
 		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
-
 	}])
 	.controller('SoundCloud', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
