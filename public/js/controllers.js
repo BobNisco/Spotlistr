@@ -529,7 +529,9 @@ angular.module('spotlistr.controllers', [])
 			clearResults();
 			YouTubeFactory.getPlaylist(getPlaylistIdFromUrl(), function(items) {
 				for (var i = 0; i < items.length; i += 1) {
-					$scope.trackArr.push(new Track(items[i].snippet.title));
+					var newTrack = new Track(items[i].snippet.title);
+					newTrack.sourceUrl = 'http://youtube.com/watch?v=' + items[i].snippet.resourceId.videoId;
+					$scope.trackArr.push(newTrack);
 				}
 				QueryFactory.performSearch($scope.trackArr);
 				$scope.searching = false;
