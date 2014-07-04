@@ -33,16 +33,8 @@ angular.module('spotlistr.controllers', [])
 			$scope.userLoggedIn = data.userLoggedIn;
 			$scope.currentUser = data.currentUser;
 		});
-		// The tracks that matched 100%
-		$scope.matches = [];
-		// The track that need review
-		$scope.toBeReviewed = [];
-		// The tracks with no matches
-		$scope.noMatches = [];
 		// The data in the text area
 		$scope.taData = '';
-		// The selected indexes of the review tracks
-		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
 		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
@@ -51,13 +43,17 @@ angular.module('spotlistr.controllers', [])
 		$scope.messages = [];
 		// Bool flag for if search is running
 		$scope.searching = false;
+		// The tracks
+		$scope.trackArr = [];
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			clearResults();
 			var rawInputByLine = $scope.taData.split('\n');
-			var inputByLine = QueryFactory.normalizeSearchArray(rawInputByLine);
-			QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+			for (var i = 0; i < rawInputByLine.length; i += 1) {
+				$scope.trackArr.push(new Track(rawInputByLine[i]));
+			}
+			QueryFactory.performSearch($scope.trackArr);
 			$scope.searching = false;
 		};
 

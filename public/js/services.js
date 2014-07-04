@@ -60,10 +60,13 @@ angular.module('spotlistr.services', [])
 	})
 	.factory('SpotifySearchFactory', function($http) {
 		return {
-			search: function(query, callback) {
+			search: function(track) {
 				// https://developer.spotify.com/web-api/search-item/
-				var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(query);
-				$http.get(req).success(callback);
+				var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(track.cleanedQuery);
+				$http.get(req).success(function(response) {
+					track.addSpotifyMatches(response.tracks.items);
+					console.log(track);
+				});
 			}
 		}
 	})
@@ -184,18 +187,9 @@ angular.module('spotlistr.services', [])
 			createSpotifyUriFromTrackId: function(id) {
 				return 'spotify:track:' + id;
 			},
-			performSearch: function(inputByLine, matches, toBeReviewed, selectedReviewedTracks, noMatches) {
-				for (var i = 0; i < inputByLine.length; i += 1) {
-					SpotifySearchFactory.search(inputByLine[i], function(response) {
-						if (response.tracks.items.length > 1) {
-							toBeReviewed.push(response);
-							selectedReviewedTracks[response.tracks.href] = response.tracks.items[0].id;
-						} else if (response.tracks.items.length === 1) {
-							matches.push(response);
-						} else {
-							noMatches.push(response);
-						}
-					});
+			performSearch: function(trackArr) {
+				for (var i = 0; i < trackArr.length; i += 1) {
+					SpotifySearchFactory.search(trackArr[i]);
 				}
 			},
 			assignSelectedTrack: function(trackUrl, trackId, selectedReviewedTracks) {
