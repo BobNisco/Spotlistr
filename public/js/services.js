@@ -103,11 +103,11 @@ angular.module('spotlistr.services', [])
 			handleSubmitTracksToPlaylist: function(arr, user_id, playlist_id, callback) {
 				$http.post('https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(callback);
 			},
-			createPlaylist: function(name, isPublic, matches, selectedReviewedTracks, messages) {
+			createPlaylist: function(name, isPublic, trackArr, messages) {
 				// Clear the array, but keep the reference
 				messages.length = 0;
 				var _this = this,
-					playlist = QueryFactory.gatherPlaylist(matches, selectedReviewedTracks),
+					playlist = QueryFactory.gatherPlaylist(trackArr),
 					successCallback = function(response) {
 						if (response.id) {
 							var playlistId = response.id;
@@ -195,17 +195,19 @@ angular.module('spotlistr.services', [])
 			assignSelectedTrack: function(track, index) {
 				track.setSelectedMatch(index);
 			},
-			gatherPlaylist: function (matches, selectedReviewedTracks) {
-				var playlist = [];
-				// Add all of the 100% matches
-				for (var i = 0; i < matches.length; i += 1) {
-					playlist.push(this.createSpotifyUriFromTrackId(matches[i].tracks.items[0].id));
-				}
-				// Add the selected songs for the to-be-reviewed songs
-				for (var prop in selectedReviewedTracks) {
-					if (selectedReviewedTracks.hasOwnProperty(prop)) {
-						playlist.push(this.createSpotifyUriFromTrackId(selectedReviewedTracks[prop]));
+			gatherPlaylist: function(trackArr) {
+				var playlist = [],
+					currentItem;
+				for (var i = 0; i < trackArr.length; i += 1) {
+					currentItem = trackArr[i];
+					if (currentItem.spotifyMatches.length === 1) {
+						// Exact match
+						playlist.push(currentItem.createSpotifyUriFromTrackId(currentItem.spotifyMatches[0].id));
+					} else if (currentItem.spotifyMatches.length > 1) {
+						// Push the selected match of the multiple matches
+						playlist.push(currentItem.createSpotifyUriFromTrackId(currentItem.spotifyMatches[currentItem.selectedMatch].id));
 					}
+					// Do not push the given track if we did not find any matches on Spotify
 				}
 				// TODO: Do something better with the ones that we couldn't find
 				return playlist;
