@@ -277,7 +277,7 @@ angular.module('spotlistr.services', [])
 	})
 	.factory('YouTubeFactory', function($http, $q) {
 		return {
-			apiKey: 'AIzaSyDHBGaCYTWZhfmtnJeOnjXrFe3WRl62YSk',
+			apiKey: 'AIzaSyDh-yB1krW7TFjW30TYhLJLL-dZ90zOraY',
 			getPlaylist: function(playlistId, callback) {
 				var _this = this,
 					results = [];
