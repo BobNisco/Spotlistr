@@ -546,12 +546,8 @@ angular.module('spotlistr.controllers', [])
 			$scope.userLoggedIn = data.userLoggedIn;
 			$scope.currentUser = data.currentUser;
 		});
-		// The tracks that matched 100%
-		$scope.matches = [];
-		// The track that need review
-		$scope.toBeReviewed = [];
-		// The tracks with no matches
-		$scope.noMatches = [];
+		// The tracks
+		$scope.trackArr = [];
 		// The selected indexes of the review tracks
 		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
@@ -574,11 +570,10 @@ angular.module('spotlistr.controllers', [])
 			clearResults();
 			var url = '/resolve.json?url=' + $scope.playlistId + '&client_id=' + $scope.soundCloudClientId;
 			SC.get(url, function(playlist) {
-				var tracks = [];
 				for (var i = 0; i < playlist.tracks.length; i++) {
-					tracks.push(QueryFactory.normalizeSearchQuery(playlist.tracks[i].title));
+					$scope.trackArr.push(new Track(playlist.tracks[i].title));
 				}
-				QueryFactory.performSearch(tracks, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				QueryFactory.performSearch($scope.trackArr);
 				$scope.searching = false;
 			});
 		};
@@ -595,21 +590,17 @@ angular.module('spotlistr.controllers', [])
 		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		var clearResults = function() {
-			$scope.matches = [];
-			$scope.toBeReviewed = [];
-			$scope.selectedReviewedTracks = {};
-			$scope.noMatches = [];
+			$scope.trackArr = [];
 			$scope.messages = [];
 		};
 
-		$scope.assignSelectedTrack = function(trackUrl, trackId) {
-			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		$scope.assignSelectedTrack = function(track, index) {
+			QueryFactory.assignSelectedTrack(track, index);
 		};
 
 		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
-
 	}])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {
 		$scope.currentUser = UserFactory.currentUser();
