@@ -71,7 +71,7 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
-	.controller('Subreddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory) {
+	.controller('Subreddit', ['$scope', '$q', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', function($scope, $q, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
 		$scope.$on('userChanged', function(event, data) {
@@ -315,17 +315,41 @@ angular.module('spotlistr.controllers', [])
 				var listings = response.data.children;
 
 				// 1. Take the title of each listing returned from Reddit
-				for (var i = 0; i < listings.length; i += 1) {
+				var promises = listings.map(function(value) {
+					var deferred = $q.defer();
+					// Async task
 					// 1.1. Filter out anything with a self-post
-					//      Self posts have a "domain" of self.subreddit
-					if (listings[i].data.domain !== 'self.' + $scope.subredditInput) {
-						$scope.trackArr.push(new Track(listings[i].data.title));
+                    //      Self posts have a "domain" of self.subreddit
+                   	if (value.data.domain === 'self.' + $scope.subredditInput) {
+                        deferred.resolve();
+                        return deferred.promise;
+                    }
+					var newTrack = new Track(value.data.title);
+					// 1.2. If the domain is soundcloud, we will add some extra info
+					//      into the Track object so we can potentially show the free DL
+					if (value.data.domain === 'soundcloud.com') {
+						var url = '/resolve.json?url=' + value.data.url + '&client_id=' + $scope.soundCloudClientId;
+						SC.get(url, function(scResponse) {
+							if (scResponse.kind === 'track' && scResponse.downloadable) {
+								newTrack.downloadUrl = scResponse.download_url;
+							} else if (scResponse.kind === 'playlist') {
+								// TODO: Handle playlists
+							}
+							$scope.trackArr.push(newTrack);
+							deferred.resolve(response);
+						});
+					} else {
+						$scope.trackArr.push(newTrack);
+						deferred.resolve(response);
 					}
-				}
+					return deferred.promise;
+				});
 
-				// 2. Search Spotify
-				QueryFactory.performSearch($scope.trackArr);
-				$scope.searching = false;
+				$q.all(promises).then(function() {
+					// 2. Search Spotify
+					QueryFactory.performSearch($scope.trackArr);
+					$scope.searching = false;
+				});
 			});
 		};
 
