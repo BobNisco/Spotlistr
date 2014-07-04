@@ -71,7 +71,7 @@ angular.module('spotlistr.controllers', [])
 		};
 
 	}])
-	.controller('Subreddit', ['$scope', '$q', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', function($scope, $q, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory) {
+	.controller('Subreddit', ['$scope', '$q', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'SoundCloudFactory', function($scope, $q, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, SoundCloudFactory) {
 		$scope.currentUser = UserFactory.currentUser();
 		$scope.userLoggedIn = UserFactory.userLoggedIn();
 		$scope.$on('userChanged', function(event, data) {
@@ -307,6 +307,7 @@ angular.module('spotlistr.controllers', [])
 		$scope.selectedPopularSubreddits = $scope.popularSubreddits[0];
 
 		$scope.searchType = 'Subreddit';
+		$scope.soundCloudClientId = SoundCloudFactory.apiKey;
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
@@ -556,7 +557,7 @@ angular.module('spotlistr.controllers', [])
 			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
 	}])
-	.controller('SoundCloud', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
+	.controller('SoundCloud', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'SoundCloudFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, SoundCloudFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			// Save the access token into local storage
 			UserFactory.setAccessToken($routeParams.access_token);
@@ -587,7 +588,7 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.searchType = 'SoundCloud';
 
-		$scope.soundCloudClientId = '88434bd865d117fd3f098ca6c2c7ad38';
+		$scope.soundCloudClientId = SoundCloudFactory.apiKey;
 
 		$scope.performSearch = function() {
 			$scope.searching = true;

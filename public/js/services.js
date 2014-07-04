@@ -312,4 +312,9 @@ angular.module('spotlistr.services', [])
 				});
 			},
 		}
+	})
+	.factory('SoundCloudFactory', function($http) {
+		return {
+			apiKey: '88434bd865d117fd3f098ca6c2c7ad38',
+		}
 	});
