@@ -5,11 +5,25 @@
 				<h2>Tracks with Exact Matches <small class="mouse-click" onclick="$('#exact-explanation').toggle();">What does this mean?</small></h2>
 				<p id="exact-explanation" style="display: none;">Spotlistr found an exact match for a given song.</p>
 				<hr>
-				<ul class="list-unstyled">
-					<li ng-repeat="track in trackArr" ng-if="track.spotifyMatches.length == 1">
-						<a href="{{ track.spotifyMatches[0].external_urls.spotify }}">{{ track.createDisplayName(track.spotifyMatches[0]) }}</a>
-					</li>
-				</ul>
+
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Track</th>
+							<th>Artist</th>
+							<th>Album</th>
+							<th>Length</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="track in trackArr" ng-if="track.spotifyMatches.length == 1">
+							<td><img ng-src="{{ track.getSelectedSong().album.images[1].url }}" class="img-responsive col-md-2"><a href="{{ track.spotifyMatches[0].external_urls.spotify }}">{{ track.getSelectedSong().name }}</a></td>
+							<td>{{ track.artist() }}</td>
+							<td>{{ track.getSelectedSong().album.name }}</td>
+							<td>{{ track.trackLength() }}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 
