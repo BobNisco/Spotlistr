@@ -45,8 +45,8 @@ Track.prototype.createDisplayName = function(track) {
 	return result;
 };
 
-Track.prototype.createSpotifyUriFromTrackId = function(id) {
-	return 'spotify:track:' + id;
+Track.prototype.createSpotifyUriForTrack = function(index) {
+	return 'spotify:track:' + this.spotifyMatches[index];
 };
 
 Track.prototype.addSpotifyMatches = function(matches) {

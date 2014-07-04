@@ -60,10 +60,7 @@ angular.module('spotlistr.controllers', [])
 		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		var clearResults = function() {
-			$scope.matches = [];
-			$scope.toBeReviewed = [];
-			$scope.selectedReviewedTracks = {};
-			$scope.noMatches = [];
+			$scope.trackArr = [];
 			$scope.messages = [];
 		};
 
@@ -97,12 +94,8 @@ angular.module('spotlistr.controllers', [])
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
 		$scope.subredditInput = '';
 
-		// The tracks that matched 100%
-		$scope.matches = [];
-		// The track that need review
-		$scope.toBeReviewed = [];
-		// The tracks with no matches
-		$scope.noMatches = [];
+		// The tracks
+		$scope.trackArr = [];
 		// The selected indexes of the review tracks
 		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
@@ -322,27 +315,21 @@ angular.module('spotlistr.controllers', [])
 			$scope.searching = true;
 			clearResults();
 			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, $scope.selectedSortBy.sort, $scope.selectedFetchAmounts, function(response) {
-				var listings = response.data.children,
-					trackTitles = [];
+				var listings = response.data.children;
 
 				// 1. Take the title of each listing returned from Reddit
 				for (var i = 0; i < listings.length; i += 1) {
 					// 1.1. Filter out anything with a self-post
 					//      Self posts have a "domain" of self.subreddit
 					if (listings[i].data.domain !== 'self.' + $scope.subredditInput) {
-						trackTitles.push(listings[i].data.title);
+						$scope.trackArr.push(new Track(listings[i].data.title));
 					}
 				}
 
 				// 2. Search Spotify
-				var inputByLine = QueryFactory.normalizeSearchArray(trackTitles);
-				QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				QueryFactory.performSearch($scope.trackArr);
 				$scope.searching = false;
 			});
-		};
-
-		$scope.assignSelectedTrack = function(trackUrl, trackId) {
-			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
 		};
 
 		$scope.popularSubredditOnChange = function() {
@@ -354,17 +341,17 @@ angular.module('spotlistr.controllers', [])
 		}
 
 		var clearResults = function() {
-			$scope.matches = [];
-			$scope.toBeReviewed = [];
-			$scope.selectedReviewedTracks = {};
-			$scope.noMatches = [];
+			$scope.trackArr = [];
 			$scope.messages = [];
 		};
 
-		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+		$scope.assignSelectedTrack = function(track, index) {
+			QueryFactory.assignSelectedTrack(track, index);
 		};
 
+		$scope.createPlaylist = function(name, isPublic) {
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
+		};
 	}])
 	.controller('LastfmSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
 
@@ -374,12 +361,8 @@ angular.module('spotlistr.controllers', [])
 			$scope.userLoggedIn = data.userLoggedIn;
 			$scope.currentUser = data.currentUser;
 		});
-		// The tracks that matched 100%
-		$scope.matches = [];
-		// The track that need review
-		$scope.toBeReviewed = [];
-		// The tracks with no matches
-		$scope.noMatches = [];
+		// The tracks
+		$scope.trackArr = [];
 		// The data in the text area
 		$scope.taData = '';
 		// The selected indexes of the review tracks
@@ -420,21 +403,17 @@ angular.module('spotlistr.controllers', [])
 		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		var clearResults = function() {
-			$scope.matches = [];
-			$scope.toBeReviewed = [];
-			$scope.selectedReviewedTracks = {};
-			$scope.noMatches = [];
+			$scope.trackArr = [];
 			$scope.messages = [];
 		};
 
-		$scope.assignSelectedTrack = function(trackUrl, trackId) {
-			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		$scope.assignSelectedTrack = function(track, index) {
+			QueryFactory.assignSelectedTrack(track, index);
 		};
 
 		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
-
 	}])
 .controller('LastfmToptracksSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
 
