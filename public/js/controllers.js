@@ -383,14 +383,7 @@ angular.module('spotlistr.controllers', [])
 				splitTrack = [];
 
 			LastfmFactory.getSimilarTracksAndExtractInfo(inputByLine, $scope.similarCount, function(lastfmSimilarTracks) {
-				for (var i = 0; i < lastfmSimilarTracks.length; i++) {
-					if (lastfmSimilarTracks[i].similartracks.track instanceof Array) {
-						var found = LastfmFactory.extractInfoFromLastfmResults(lastfmSimilarTracks[i].similartracks);
-						for (var j = 0; j < found.length; j++) {
-							$scope.trackArr.push(new Track(found[j]));
-						}
-					}
-				}
+				LastfmFactory.extractQueriesFromLastfmSimilarTracks(lastfmSimilarTracks, $scope.trackArr);
 				QueryFactory.performSearch($scope.trackArr);
 				$scope.searching = false;
 			});
@@ -417,16 +410,8 @@ angular.module('spotlistr.controllers', [])
 			$scope.userLoggedIn = data.userLoggedIn;
 			$scope.currentUser = data.currentUser;
 		});
-		// The tracks that matched 100%
-		$scope.matches = [];
-		// The track that need review
-		$scope.toBeReviewed = [];
-		// The tracks with no matches
-		$scope.noMatches = [];
-		// The data in the text area
-		$scope.taData = '';
-		// The selected indexes of the review tracks
-		$scope.selectedReviewedTracks = {};
+		// The tracks
+		$scope.trackArr = [];
 		// The name of the playlist
 		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
@@ -436,7 +421,7 @@ angular.module('spotlistr.controllers', [])
 		// Bool flag for if search is running
 		$scope.searching = false;
 		// Amount of similar tracks per track
-		$scope.similarCount = 10;
+		$scope.similarCount = 5;
 		// Inputted Last.fm username
 		$scope.lastfmUsername = '';
 		// Sort by options
@@ -455,8 +440,6 @@ angular.module('spotlistr.controllers', [])
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			clearResults();
-			var inputByLine = $scope.taData.split('\n'),
-				splitTrack = [];
 
 			// 1. Grab the tracks from the Last.fm user's profile
 			LastfmFactory.getUserTopTracks($scope.lastfmUsername, $scope.selectedLastfmPeriodOption.id, function(response) {
@@ -464,30 +447,25 @@ angular.module('spotlistr.controllers', [])
 				var topTracks = LastfmFactory.extractInfoFromLastfmResults(response.toptracks);
 				// 3. For each Top Track, find similar tracks and produce results
 				LastfmFactory.getSimilarTracksAndExtractInfo(topTracks, $scope.similarCount, function(lastfmSimilarTracks) {
-					QueryFactory.performSearch(topTracks, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+					LastfmFactory.extractQueriesFromLastfmSimilarTracks(lastfmSimilarTracks, $scope.trackArr);
+					QueryFactory.performSearch($scope.trackArr);
 					$scope.searching = false;
 				});
 			});
 		};
 
-		$scope.createDisplayName = QueryFactory.createDisplayName;
-
 		var clearResults = function() {
-			$scope.matches = [];
-			$scope.toBeReviewed = [];
-			$scope.selectedReviewedTracks = {};
-			$scope.noMatches = [];
+			$scope.trackArr = [];
 			$scope.messages = [];
 		};
 
-		$scope.assignSelectedTrack = function(trackUrl, trackId) {
-			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
+		$scope.assignSelectedTrack = function(track, index) {
+			QueryFactory.assignSelectedTrack(track, index);
 		};
 
 		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
-
 	}])
 	.controller('YouTube', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'YouTubeFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, YouTubeFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {

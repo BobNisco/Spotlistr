@@ -264,10 +264,21 @@ angular.module('spotlistr.services', [])
 				var extracted = [];
 				if (results.track instanceof Array) {
 					for (var j = 0; j < results.track.length; j++) {
-						extracted.push(results.track[j].artist.name + ' ' + results.track[j].name);
+						extracted.push(results.track[j].artist.name + ' - ' + results.track[j].name);
 					}
 				}
 				return extracted;
+			},
+			extractQueriesFromLastfmSimilarTracks: function(lastfmSimilarTracks, trackArr) {
+				var _this = this;
+				for (var i = 0; i < lastfmSimilarTracks.length; i += 1) {
+					if (lastfmSimilarTracks[i].similartracks.track instanceof Array) {
+						var found = _this.extractInfoFromLastfmResults(lastfmSimilarTracks[i].similartracks);
+						for (var j = 0; j < found.length; j++) {
+							trackArr.push(new Track(found[j]));
+						}
+					}
+				}
 			},
 		}
 	})
