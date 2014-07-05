@@ -4,14 +4,14 @@
 
 angular.module('spotlistr.controllers', [])
 	.controller('Splash', ['$scope', '$routeParams', 'UserFactory', function($scope, $routeParams, UserFactory) {
-		if ($routeParams.access_token && $routeParams.refresh_token) {
-			UserFactory.setTokensAndPullUserInfo($routeParams.access_token, $routeParams.refresh_token);
+		if ($routeParams.accessToken && $routeParams.refreshToken) {
+			UserFactory.setTokensAndPullUserInfo($routeParams.accessToken, $routeParams.refreshToken);
 		}
 		$scope.userFactory = UserFactory;
 	}])
 	.controller('Textbox', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
-		if ($routeParams.access_token && $routeParams.refresh_token) {
-			UserFactory.setTokensAndPullUserInfo($routeParams.access_token, $routeParams.refresh_token);
+		if ($routeParams.accessToken && $routeParams.refreshToken) {
+			UserFactory.setTokensAndPullUserInfo($routeParams.accessToken, $routeParams.refreshToken);
 		}
 		$scope.userFactory = UserFactory;
 		// The data in the text area

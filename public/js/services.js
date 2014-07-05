@@ -21,14 +21,14 @@ angular.module('spotlistr.services', [])
 			getAccessToken: function() {
 				return window.localStorage.getItem('access_token');
 			},
-			setAccessToken: function(access_token) {
-				window.localStorage.setItem('access_token', access_token);
+			setAccessToken: function(accessToken) {
+				window.localStorage.setItem('access_token', accessToken);
 			},
 			getRefreshToken: function() {
 				return window.localStorage.getItem('refresh_token');
 			},
-			setRefreshToken: function(refresh_token) {
-				window.localStorage.setItem('refresh_token', refresh_token);
+			setRefreshToken: function(refreshToken) {
+				window.localStorage.setItem('refresh_token', refreshToken);
 			},
 			getNewAccessToken: function(successCallback, errorCallback) {
 				$http.get('/refresh_token?refresh_token=' + this.getRefreshToken()).success(successCallback).error(errorCallback);

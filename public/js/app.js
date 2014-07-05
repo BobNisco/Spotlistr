@@ -14,7 +14,7 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/splash.html',
     controller: 'Splash'
   });
-  $routeProvider.when('/splash/:access_token/:refresh_token', {
+  $routeProvider.when('/splash/:accessToken/:refreshToken', {
     templateUrl: 'partials/splash.html',
     controller: 'Splash'
   });
@@ -22,7 +22,7 @@ config(['$routeProvider', function($routeProvider) {
   	templateUrl: 'partials/textbox.html',
   	controller: 'Textbox'
   });
-  $routeProvider.when('/search/textbox/:access_token/:refresh_token', {
+  $routeProvider.when('/search/textbox/:accessToken/:refreshToken', {
   	templateUrl: 'partials/textbox.html',
   	controller: 'Textbox'
   });
