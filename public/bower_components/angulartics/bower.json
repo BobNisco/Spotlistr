@@ -1,0 +1,14 @@
+{
+  "name": "angulartics",
+  "version": "0.15.19",
+  "main": "./src/angulartics.js",
+  "dependencies": {
+    "angular": ">= 1.0.7",
+    "jquery-waypoints": "~v2.0.3"
+  },
+  "devDependencies": {
+    "angular-mocks": ">= 1.0.7",
+    "angular-route": "~1.2",
+    "angular-ui-router": "~0.2"
+  }
+}
