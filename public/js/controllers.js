@@ -29,18 +29,13 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
-			clearResults();
+			QueryFactory.clearResults($scope.trackArr, $scope.messages);
 			var rawInputByLine = $scope.taData.split('\n');
 			for (var i = 0; i < rawInputByLine.length; i += 1) {
 				$scope.trackArr.push(new Track(rawInputByLine[i]));
 			}
 			QueryFactory.performSearch($scope.trackArr);
 			$scope.searching = false;
-		};
-
-		var clearResults = function() {
-			$scope.trackArr = [];
-			$scope.messages = [];
 		};
 
 		$scope.assignSelectedTrack = function(track, index) {
@@ -287,7 +282,7 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
-			clearResults();
+			QueryFactory.clearResults($scope.trackArr, $scope.messages);
 			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, $scope.selectedSortBy.sort, $scope.selectedFetchAmounts, function(response) {
 				var listings = response.data.children;
 
@@ -339,11 +334,6 @@ angular.module('spotlistr.controllers', [])
 			}
 		}
 
-		var clearResults = function() {
-			$scope.trackArr = [];
-			$scope.messages = [];
-		};
-
 		$scope.assignSelectedTrack = function(track, index) {
 			QueryFactory.assignSelectedTrack(track, index);
 		};
@@ -375,7 +365,7 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
-			clearResults();
+			QueryFactory.clearResults($scope.trackArr, $scope.messages);
 			var inputByLine = $scope.taData.split('\n'),
 				splitTrack = [];
 
@@ -384,11 +374,6 @@ angular.module('spotlistr.controllers', [])
 				QueryFactory.performSearch($scope.trackArr);
 				$scope.searching = false;
 			});
-		};
-
-		var clearResults = function() {
-			$scope.trackArr = [];
-			$scope.messages = [];
 		};
 
 		$scope.assignSelectedTrack = function(track, index) {
@@ -431,7 +416,7 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
-			clearResults();
+			QueryFactory.clearResults($scope.trackArr, $scope.messages);
 
 			// 1. Grab the tracks from the Last.fm user's profile
 			LastfmFactory.getUserTopTracks($scope.lastfmUsername, $scope.selectedLastfmPeriodOption.id, function(response) {
@@ -444,11 +429,6 @@ angular.module('spotlistr.controllers', [])
 					$scope.searching = false;
 				});
 			});
-		};
-
-		var clearResults = function() {
-			$scope.trackArr = [];
-			$scope.messages = [];
 		};
 
 		$scope.assignSelectedTrack = function(track, index) {
@@ -483,7 +463,7 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
-			clearResults();
+			QueryFactory.clearResults($scope.trackArr, $scope.messages);
 			YouTubeFactory.getPlaylist(getPlaylistIdFromUrl(), function(items) {
 				for (var i = 0; i < items.length; i += 1) {
 					var newTrack = new Track(items[i].snippet.title);
@@ -503,11 +483,6 @@ angular.module('spotlistr.controllers', [])
 		        results = regex.exec($scope.playlistId);
 		    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
-
-		var clearResults = function() {
-			$scope.trackArr = [];
-			$scope.messages = [];
-		};
 
 		$scope.assignSelectedTrack = function(track, index) {
 			QueryFactory.assignSelectedTrack(track, index);
@@ -543,7 +518,7 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
-			clearResults();
+			QueryFactory.clearResults($scope.trackArr, $scope.messages);
 			var url = '/resolve.json?url=' + $scope.playlistId + '&client_id=' + $scope.soundCloudClientId;
 			SC.get(url, function(playlist) {
 				for (var i = 0; i < playlist.tracks.length; i++) {
@@ -568,11 +543,6 @@ angular.module('spotlistr.controllers', [])
 		}
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
-
-		var clearResults = function() {
-			$scope.trackArr = [];
-			$scope.messages = [];
-		};
 
 		$scope.assignSelectedTrack = function(track, index) {
 			QueryFactory.assignSelectedTrack(track, index);

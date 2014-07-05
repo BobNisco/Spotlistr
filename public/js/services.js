@@ -205,7 +205,12 @@ angular.module('spotlistr.services', [])
 				}
 				// TODO: Do something better with the ones that we couldn't find
 				return playlist;
-			}
+			},
+			clearResults: function(trackArr, messages) {
+				// Clear the arrays, but keep the references
+				trackArr.length = 0;
+				messages.length = 0;
+			},
 		}
 	})
 	.factory('RedditFactory', function($http) {
