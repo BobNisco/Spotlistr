@@ -39,23 +39,18 @@ angular.module('spotlistr.services', [])
 				$http.get('https://api.spotify.com/v1/me').success(function(response) {
 					// Update the stored data
 					_this.setCurrentUser(response);
-					_this.broadcastUserStateChanged();
 				});
 			},
 			clearUserData: function() {
 				window.localStorage.removeItem('currentUser');
 				window.localStorage.removeItem('access_token');
 				window.localStorage.removeItem('refresh_token');
-				this.broadcastUserStateChanged();
 			},
-			broadcastUserStateChanged: function() {
-				// Broadcast the event so that the menu can to consume it
-				// along with any other controllers that may be consuming it
-				$rootScope.$broadcast('userChanged', {
-					'currentUser': this.currentUser(),
-					'userLoggedIn': this.userLoggedIn()
-				});
-			}
+			setTokensAndPullUserInfo: function(accessToken, refreshToken) {
+				this.setAccessToken(accessToken);
+				this.setRefreshToken(refreshToken);
+				this.getSpotifyUserInfo();
+			},
 		}
 	})
 	.factory('SpotifySearchFactory', function($http) {

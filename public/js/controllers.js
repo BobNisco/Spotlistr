@@ -5,21 +5,13 @@
 angular.module('spotlistr.controllers', [])
 	.controller('Splash', ['$scope', '$routeParams', 'UserFactory', function($scope, $routeParams, UserFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
-			// Save the access token into local storage
-			UserFactory.setAccessToken($routeParams.access_token);
-			// Save the refresh token into local storage
-			UserFactory.setRefreshToken($routeParams.refresh_token);
-			UserFactory.getSpotifyUserInfo();
+			UserFactory.setTokensAndPullUserInfo($routeParams.access_token, $routeParams.refresh_token);
 		}
 		$scope.userFactory = UserFactory;
 	}])
 	.controller('Textbox', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
-			// Save the access token into local storage
-			UserFactory.setAccessToken($routeParams.access_token);
-			// Save the refresh token into local storage
-			UserFactory.setRefreshToken($routeParams.refresh_token);
-			UserFactory.getSpotifyUserInfo();
+			UserFactory.setTokensAndPullUserInfo($routeParams.access_token, $routeParams.refresh_token);
 		}
 		$scope.userFactory = UserFactory;
 		// The data in the text area
@@ -469,11 +461,7 @@ angular.module('spotlistr.controllers', [])
 	}])
 	.controller('YouTube', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'YouTubeFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, YouTubeFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
-			// Save the access token into local storage
-			UserFactory.setAccessToken($routeParams.access_token);
-			// Save the refresh token into local storage
-			UserFactory.setRefreshToken($routeParams.refresh_token);
-			UserFactory.getSpotifyUserInfo();
+			UserFactory.setTokensAndPullUserInfo($routeParams.access_token, $routeParams.refresh_token);
 		}
 		$scope.userFactory = UserFactory;
 		// The tracks
@@ -531,11 +519,7 @@ angular.module('spotlistr.controllers', [])
 	}])
 	.controller('SoundCloud', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'SoundCloudFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, SoundCloudFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
-			// Save the access token into local storage
-			UserFactory.setAccessToken($routeParams.access_token);
-			// Save the refresh token into local storage
-			UserFactory.setRefreshToken($routeParams.refresh_token);
-			UserFactory.getSpotifyUserInfo();
+			UserFactory.setTokensAndPullUserInfo($routeParams.access_token, $routeParams.refresh_token);
 		}
 		$scope.userFactory = UserFactory;
 		// The tracks
