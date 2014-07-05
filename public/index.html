@@ -52,13 +52,13 @@
 					<li><a href="#/search/soundcloud">SoundCloud</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right" ng-cloak>
-        			<li ng-if="userLoggedIn === true" class="dropdown">
-        				<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Sup, {{ currentUser.display_name }} <b class="caret"></b></a>
+        			<li ng-if="userFactory.userLoggedIn() === true" class="dropdown">
+        				<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Sup, {{ userFactory.currentUser().display_name }} <b class="caret"></b></a>
 	        			<ul class="dropdown-menu">
 							<li><a href="#/users/log-out">Log out</a></li>
 						</ul>
 					</li>
-					<li ng-if="userLoggedIn === false"><a href="/login">Log in with Spotify</a></li>
+					<li ng-if="userFactory.userLoggedIn() === false"><a href="/login">Log in with Spotify</a></li>
         		</ul>
 			</div>
 		</div>

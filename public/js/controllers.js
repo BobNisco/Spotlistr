@@ -11,13 +11,7 @@ angular.module('spotlistr.controllers', [])
 			UserFactory.setRefreshToken($routeParams.refresh_token);
 			UserFactory.getSpotifyUserInfo();
 		}
-		$scope.currentUser = UserFactory.currentUser();
-		$scope.userLoggedIn = UserFactory.userLoggedIn();
-		$scope.$on('userChanged', function(event, data) {
-			$scope.userLoggedIn = data.userLoggedIn;
-			$scope.currentUser = data.currentUser;
-		});
-
+		$scope.userFactory = UserFactory;
 	}])
 	.controller('Textbox', ['$scope', '$routeParams', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, $routeParams, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
 		if ($routeParams.access_token && $routeParams.refresh_token) {
@@ -27,12 +21,7 @@ angular.module('spotlistr.controllers', [])
 			UserFactory.setRefreshToken($routeParams.refresh_token);
 			UserFactory.getSpotifyUserInfo();
 		}
-		$scope.currentUser = UserFactory.currentUser();
-		$scope.userLoggedIn = UserFactory.userLoggedIn();
-		$scope.$on('userChanged', function(event, data) {
-			$scope.userLoggedIn = data.userLoggedIn;
-			$scope.currentUser = data.currentUser;
-		});
+		$scope.userFactory = UserFactory;
 		// The data in the text area
 		$scope.taData = '';
 		// The name of the playlist
@@ -72,12 +61,7 @@ angular.module('spotlistr.controllers', [])
 
 	}])
 	.controller('Subreddit', ['$scope', '$q', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'SoundCloudFactory', function($scope, $q, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, SoundCloudFactory) {
-		$scope.currentUser = UserFactory.currentUser();
-		$scope.userLoggedIn = UserFactory.userLoggedIn();
-		$scope.$on('userChanged', function(event, data) {
-			$scope.userLoggedIn = data.userLoggedIn;
-			$scope.currentUser = data.currentUser;
-		});
+		$scope.userFactory = UserFactory;
 
 		$scope.subredditSortBy = [
 			{name: 'hot', id: 'hot'},
@@ -378,12 +362,7 @@ angular.module('spotlistr.controllers', [])
 	}])
 	.controller('LastfmSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
 
-		$scope.currentUser = UserFactory.currentUser();
-		$scope.userLoggedIn = UserFactory.userLoggedIn();
-		$scope.$on('userChanged', function(event, data) {
-			$scope.userLoggedIn = data.userLoggedIn;
-			$scope.currentUser = data.currentUser;
-		});
+		$scope.userFactory = UserFactory;
 		// The tracks
 		$scope.trackArr = [];
 		// The data in the text area
@@ -430,12 +409,7 @@ angular.module('spotlistr.controllers', [])
 	}])
 .controller('LastfmToptracksSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
 
-		$scope.currentUser = UserFactory.currentUser();
-		$scope.userLoggedIn = UserFactory.userLoggedIn();
-		$scope.$on('userChanged', function(event, data) {
-			$scope.userLoggedIn = data.userLoggedIn;
-			$scope.currentUser = data.currentUser;
-		});
+		$scope.userFactory = UserFactory;
 		// The tracks
 		$scope.trackArr = [];
 		// The name of the playlist
@@ -501,12 +475,7 @@ angular.module('spotlistr.controllers', [])
 			UserFactory.setRefreshToken($routeParams.refresh_token);
 			UserFactory.getSpotifyUserInfo();
 		}
-		$scope.currentUser = UserFactory.currentUser();
-		$scope.userLoggedIn = UserFactory.userLoggedIn();
-		$scope.$on('userChanged', function(event, data) {
-			$scope.userLoggedIn = data.userLoggedIn;
-			$scope.currentUser = data.currentUser;
-		});
+		$scope.userFactory = UserFactory;
 		// The tracks
 		$scope.trackArr = [];
 		// The selected indexes of the review tracks
@@ -568,12 +537,7 @@ angular.module('spotlistr.controllers', [])
 			UserFactory.setRefreshToken($routeParams.refresh_token);
 			UserFactory.getSpotifyUserInfo();
 		}
-		$scope.currentUser = UserFactory.currentUser();
-		$scope.userLoggedIn = UserFactory.userLoggedIn();
-		$scope.$on('userChanged', function(event, data) {
-			$scope.userLoggedIn = data.userLoggedIn;
-			$scope.currentUser = data.currentUser;
-		});
+		$scope.userFactory = UserFactory;
 		// The tracks
 		$scope.trackArr = [];
 		// The selected indexes of the review tracks
@@ -635,13 +599,7 @@ angular.module('spotlistr.controllers', [])
 		};
 	}])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {
-		$scope.currentUser = UserFactory.currentUser();
-		$scope.userLoggedIn = UserFactory.userLoggedIn();
-		$scope.$on('userChanged', function(event, data) {
-			$scope.userLoggedIn = data.userLoggedIn;
-			$scope.currentUser = data.currentUser;
-		});
-
+		$scope.userFactory = UserFactory;
 	}])
 	.controller('UsersLogOut', ['$scope', '$location', 'UserFactory', function($scope, $location, UserFactory) {
 		UserFactory.clearUserData();
