@@ -196,10 +196,10 @@ angular.module('spotlistr.services', [])
 					currentItem = trackArr[i];
 					if (currentItem.spotifyMatches.length === 1) {
 						// Exact match
-						playlist.push(currentItem.createSpotifyUriFromTrackId(currentItem.spotifyMatches[0].id));
+						playlist.push(this.createSpotifyUriFromTrackId(currentItem.spotifyMatches[0].id));
 					} else if (currentItem.spotifyMatches.length > 1) {
 						// Push the selected match of the multiple matches
-						playlist.push(currentItem.createSpotifyUriFromTrackId(currentItem.spotifyMatches[currentItem.selectedMatch].id));
+						playlist.push(this.createSpotifyUriFromTrackId(currentItem.spotifyMatches[currentItem.selectedMatch].id));
 					}
 					// Do not push the given track if we did not find any matches on Spotify
 				}
