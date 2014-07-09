@@ -52,5 +52,9 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/splash.html',
     controller: 'UsersLogOut'
   });
+  $routeProvider.when('/export/spotify-playlist', {
+    templateUrl: 'partials/export-spotify-playlist.html',
+    controller: 'ExportSpotifyPlaylist'
+  });
   $routeProvider.otherwise({redirectTo: '/splash'});
 }]);

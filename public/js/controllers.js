@@ -546,6 +546,43 @@ angular.module('spotlistr.controllers', [])
 			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
 	}])
+	.controller('ExportSpotifyPlaylist', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
+		$scope.userFactory = UserFactory;
+		// Messages to the user
+		$scope.messages = [];
+		// Bool flag for if search is running
+		$scope.searching = false;
+		// The Spotify URI
+		$scope.spotifyUri = '';
+
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			// Reset the messages array
+			$scope.messages.length = 0;
+			var playlistData = extractUserIdAndPlaylistIdFromSpotifyUri($scope.spotifyUri);
+			if (playlistData === null) {
+				SpotifyPlaylistFactory.addError($scope.messages, 'Please input a valid Spotify URI. Example: spotify:user:bobnisco:playlist:2prZEZ7nNZf9xeikRqB4NG');
+				$scope.searching = false;
+				return false;
+			}
+			SpotifyPlaylistFactory.getPlaylistTracks(playlistData.userId, playlistData.playlistId, function(response) {
+				console.log(response);
+				$scope.searching = false;
+			});
+		};
+
+		var extractUserIdAndPlaylistIdFromSpotifyUri = function(uri) {
+			var spotifyUriRegex = /spotify:user:(\w*):playlist:(\w*)/gi,
+				regExGroups = spotifyUriRegex.exec(uri);
+			if (regExGroups.length > 1) {
+				return {
+					userId: regExGroups[1],
+					playlistId: regExGroups[2],
+				};
+			}
+			return null;
+		};
+	}])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {
 		$scope.userFactory = UserFactory;
 	}])

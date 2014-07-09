@@ -113,22 +113,27 @@ angular.module('spotlistr.services', [])
 						}
 					},
 					errorCallback = function(data, status, headers, config) {
-						if (status === 401) {
-							// 401 unauthorized
-							// The token needs to be refreshed
-							UserFactory.getNewAccessToken(function(newTokenResponse) {
-								UserFactory.setAccessToken(newTokenResponse.access_token);
-								// Call the create new playlist function again
-								// since we now have the proper access token
-								_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
-							}, function(data, status, headers, config) {
-								_this.addError(messages, data.error.message);
-							});
-						} else {
-							_this.addError(messages, data.error.message);
-						}
+						_this.handleErrorResponse(data, status, headers, config, _this, function() {
+							// Call the create new playlist function again
+							// since we now have the proper access token
+							_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
+						});
 					};
 				_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
+			},
+			handleErrorResponse: function(data, status, headers, config, _this, onReauthCallback) {
+				if (status === 401) {
+					// 401 unauthorized
+					// The token needs to be refreshed
+					UserFactory.getNewAccessToken(function(newTokenResponse) {
+						UserFactory.setAccessToken(newTokenResponse.access_token);
+						onReauthCallback();
+					}, function(data, status, headers, config) {
+						_this.addError(messages, data.error.message);
+					});
+				} else {
+					_this.addError(messages, data.error.message);
+				}
 			},
 			addError: function(messages, message) {
 				messages.push({
@@ -141,7 +146,25 @@ angular.module('spotlistr.services', [])
 					'status': 'success',
 					'message': message
 				});
-			}
+			},
+			getPlaylistTracks: function(userId, playlistId, callback) {
+				// https://developer.spotify.com/web-api/get-playlists-tracks/
+				// GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
+				var _this = this,
+					errorCallback = function(data, status, headers, config) {
+						_this.handleErrorResponse(data, status, headers, config, _this, function() {
+							// Call the get playlist tracks again
+							_this.handleGetPlaylistTracks(userId, playlistId, UserFactory.getAccessToken(), callback, errorCallback);
+						});
+					};
+
+				_this.handleGetPlaylistTracks(userId, playlistId, UserFactory.getAccessToken(), callback, errorCallback);
+			},
+			handleGetPlaylistTracks: function(userId, playlistId, accessToken, successCallback, errorCallback) {
+				$http.defaults.headers.common.Authorization = 'Bearer ' + accessToken;
+				$http.get('https://api.spotify.com/v1/users/' + encodeURIComponent(userId) + '/playlists/' + encodeURIComponent(playlistId) + '/tracks')
+					.success(successCallback).error(errorCallback);
+			},
 		}
 	})
 	.factory('QueryFactory', function(SpotifySearchFactory) {
