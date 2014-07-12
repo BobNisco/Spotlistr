@@ -554,11 +554,12 @@ angular.module('spotlistr.controllers', [])
 		$scope.searching = false;
 		// The Spotify URI
 		$scope.spotifyUri = '';
-		// The result array
-		$scope.tracks = [];
+		// The tracks
+		$scope.trackArr = [];
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
+			QueryFactory.clearResults($scope.trackArr, $scope.messages);
 			// Reset the messages array
 			$scope.messages.length = 0;
 			var playlistData = extractUserIdAndPlaylistIdFromSpotifyUri($scope.spotifyUri);
@@ -567,7 +568,7 @@ angular.module('spotlistr.controllers', [])
 				$scope.searching = false;
 				return false;
 			}
-			SpotifyPlaylistFactory.getPlaylistTracks(playlistData.userId, playlistData.playlistId, $scope.tracks, function(response) {
+			SpotifyPlaylistFactory.getPlaylistTracks(playlistData.userId, playlistData.playlistId, $scope.trackArr, $scope.messages, function(response) {
 				$scope.searching = false;
 			});
 		};
@@ -575,7 +576,7 @@ angular.module('spotlistr.controllers', [])
 		var extractUserIdAndPlaylistIdFromSpotifyUri = function(uri) {
 			var spotifyUriRegex = /spotify:user:(\w*):playlist:(\w*)/gi,
 				regExGroups = spotifyUriRegex.exec(uri);
-			if (regExGroups.length > 1) {
+			if (regExGroups !== null && regExGroups.length > 1) {
 				return {
 					userId: regExGroups[1],
 					playlistId: regExGroups[2],

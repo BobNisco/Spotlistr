@@ -113,7 +113,7 @@ angular.module('spotlistr.services', [])
 						}
 					},
 					errorCallback = function(data, status, headers, config) {
-						_this.handleErrorResponse(data, status, headers, config, _this, function() {
+						_this.handleErrorResponse(data, status, headers, config, messages, _this, function() {
 							// Call the create new playlist function again
 							// since we now have the proper access token
 							_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
@@ -121,7 +121,7 @@ angular.module('spotlistr.services', [])
 					};
 				_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
 			},
-			handleErrorResponse: function(data, status, headers, config, _this, onReauthCallback) {
+			handleErrorResponse: function(data, status, headers, config, messages, _this, onReauthCallback) {
 				if (status === 401) {
 					// 401 unauthorized
 					// The token needs to be refreshed
@@ -147,36 +147,39 @@ angular.module('spotlistr.services', [])
 					'message': message
 				});
 			},
-			getPlaylistTracks: function(userId, playlistId, tracks, callback) {
+			getPlaylistTracks: function(userId, playlistId, trackArr, messages, callback) {
 				// https://developer.spotify.com/web-api/get-playlists-tracks/
 				// GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
 				var _this = this,
 					getUrl = 'https://api.spotify.com/v1/users/' + encodeURIComponent(userId) + '/playlists/' + encodeURIComponent(playlistId) + '/tracks',
 					errorCallback = function(data, status, headers, config) {
-						_this.handleErrorResponse(data, status, headers, config, _this, function() {
+						_this.handleErrorResponse(data, status, headers, config, messages, _this, function() {
 							// Call the get playlist tracks again
-							_this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), tracks, callback, errorCallback);
+							_this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), trackArr, callback, errorCallback);
 						});
 					};
 
-				_this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), tracks, callback, errorCallback);
+				_this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), trackArr, callback, errorCallback);
 			},
-			handleGetPlaylistTracks: function(getUrl, accessToken, tracks, successCallback, errorCallback) {
+			handleGetPlaylistTracks: function(getUrl, accessToken, trackArr, successCallback, errorCallback) {
 				var _this = this;
 				$http.defaults.headers.common.Authorization = 'Bearer ' + accessToken;
 
 				$http.get(getUrl).success(function(response) {
 					for (var i = 0; i < response.items.length; i += 1) {
 						var newTrack = new Track(response.items[i].track.name);
+						// Manually put the result in the array
 						newTrack.spotifyMatches.push(response.items[i].track);
+						// We know that there is only 1 result from the response,
+						// so we can set the selected track match to the 0th element
 						newTrack.selectedMatch = 0;
-						tracks.push(newTrack);
+						trackArr.push(newTrack);
 					}
 					if (response.next) {
-						_this.handleGetPlaylistTracks(response.next, accessToken, tracks, successCallback, errorCallback);
+						_this.handleGetPlaylistTracks(response.next, accessToken, trackArr, successCallback, errorCallback);
 					}
 				}).error(errorCallback);
-				successCallback(tracks);
+				successCallback(trackArr);
 			},
 		}
 	})
