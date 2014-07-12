@@ -24,5 +24,11 @@
 		</div>
 	</div>
 
-	<div result-module></div>
+	<div class="row">
+		<div class="col-md-12">
+			<ul class="list-unstyled">
+				<li ng-repeat="track in tracks">{{ track.createDisplayNameForSelectedSong() }}</li>
+			</ul>
+		</div>
+	</div>
 </div>

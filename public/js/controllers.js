@@ -554,6 +554,8 @@ angular.module('spotlistr.controllers', [])
 		$scope.searching = false;
 		// The Spotify URI
 		$scope.spotifyUri = '';
+		// The result array
+		$scope.tracks = [];
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
@@ -565,8 +567,7 @@ angular.module('spotlistr.controllers', [])
 				$scope.searching = false;
 				return false;
 			}
-			SpotifyPlaylistFactory.getPlaylistTracks(playlistData.userId, playlistData.playlistId, function(response) {
-				console.log(response);
+			SpotifyPlaylistFactory.getPlaylistTracks(playlistData.userId, playlistData.playlistId, $scope.tracks, function(response) {
 				$scope.searching = false;
 			});
 		};

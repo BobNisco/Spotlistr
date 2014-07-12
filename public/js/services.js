@@ -147,23 +147,36 @@ angular.module('spotlistr.services', [])
 					'message': message
 				});
 			},
-			getPlaylistTracks: function(userId, playlistId, callback) {
+			getPlaylistTracks: function(userId, playlistId, tracks, callback) {
 				// https://developer.spotify.com/web-api/get-playlists-tracks/
 				// GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
 				var _this = this,
+					getUrl = 'https://api.spotify.com/v1/users/' + encodeURIComponent(userId) + '/playlists/' + encodeURIComponent(playlistId) + '/tracks',
 					errorCallback = function(data, status, headers, config) {
 						_this.handleErrorResponse(data, status, headers, config, _this, function() {
 							// Call the get playlist tracks again
-							_this.handleGetPlaylistTracks(userId, playlistId, UserFactory.getAccessToken(), callback, errorCallback);
+							_this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), tracks, callback, errorCallback);
 						});
 					};
 
-				_this.handleGetPlaylistTracks(userId, playlistId, UserFactory.getAccessToken(), callback, errorCallback);
+				_this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), tracks, callback, errorCallback);
 			},
-			handleGetPlaylistTracks: function(userId, playlistId, accessToken, successCallback, errorCallback) {
+			handleGetPlaylistTracks: function(getUrl, accessToken, tracks, successCallback, errorCallback) {
+				var _this = this;
 				$http.defaults.headers.common.Authorization = 'Bearer ' + accessToken;
-				$http.get('https://api.spotify.com/v1/users/' + encodeURIComponent(userId) + '/playlists/' + encodeURIComponent(playlistId) + '/tracks')
-					.success(successCallback).error(errorCallback);
+
+				$http.get(getUrl).success(function(response) {
+					for (var i = 0; i < response.items.length; i += 1) {
+						var newTrack = new Track(response.items[i].track.name);
+						newTrack.spotifyMatches.push(response.items[i].track);
+						newTrack.selectedMatch = 0;
+						tracks.push(newTrack);
+					}
+					if (response.next) {
+						_this.handleGetPlaylistTracks(response.next, accessToken, tracks, successCallback, errorCallback);
+					}
+				}).error(errorCallback);
+				successCallback(tracks);
 			},
 		}
 	})
