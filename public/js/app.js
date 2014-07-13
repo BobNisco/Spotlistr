@@ -7,14 +7,24 @@ angular.module('spotlistr', [
   'spotlistr.filters',
   'spotlistr.services',
   'spotlistr.directives',
-  'spotlistr.controllers'
+  'spotlistr.controllers',
+  'angulartics',
+  'angulartics.google.analytics'
 ]).
 config(['$routeProvider', function($routeProvider) {
+  $routeProvider.when('/splash/', {
+    templateUrl: 'partials/splash.html',
+    controller: 'Splash'
+  });
+  $routeProvider.when('/splash/:accessToken/:refreshToken', {
+    templateUrl: 'partials/splash.html',
+    controller: 'Splash'
+  });
   $routeProvider.when('/search/textbox', {
   	templateUrl: 'partials/textbox.html',
   	controller: 'Textbox'
   });
-  $routeProvider.when('/search/textbox/:access_token/:refresh_token', {
+  $routeProvider.when('/search/textbox/:accessToken/:refreshToken', {
   	templateUrl: 'partials/textbox.html',
   	controller: 'Textbox'
   });
@@ -34,5 +44,25 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/lastfm-similar.html',
     controller: 'LastfmSimilar'
   });
-  $routeProvider.otherwise({redirectTo: '/search/textbox'});
+  $routeProvider.when('/search/lastfm-toptracks-similar', {
+    templateUrl: 'partials/lastfm-toptracks-similar.html',
+    controller: 'LastfmToptracksSimilar'
+  });
+  $routeProvider.when('/search/youtube', {
+    templateUrl: 'partials/youtube.html',
+    controller: 'YouTube'
+  });
+  $routeProvider.when('/search/soundcloud', {
+    templateUrl: 'partials/soundcloud.html',
+    controller: 'SoundCloud'
+  });
+  $routeProvider.when('/users/log-out', {
+    templateUrl: 'partials/splash.html',
+    controller: 'UsersLogOut'
+  });
+  $routeProvider.when('/export/spotify-playlist', {
+    templateUrl: 'partials/export-spotify-playlist.html',
+    controller: 'ExportSpotifyPlaylist'
+  });
+  $routeProvider.otherwise({redirectTo: '/splash'});
 }]);

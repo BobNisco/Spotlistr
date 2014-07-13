@@ -1,0 +1,25 @@
+{
+  "name": "public",
+  "version": "0.0.0",
+  "homepage": "https://github.com/BobNisco/Spotlistr",
+  "authors": [
+    "Bob Nisco <BobNisco@gmail.com>"
+  ],
+  "license": "Apache2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-loader": "1.2.x",
+    "angular-mocks": "~1.2.x",
+    "angular-route": "1.2.x",
+    "bootstrap": "~3.2.0",
+    "font-awesome": "~4.1.0",
+    "bootswatch": "~3.2.0",
+    "angulartics": "~0.15.19"
+  }
+}

@@ -2,7 +2,7 @@
 
 /* Services */
 angular.module('spotlistr.services', [])
-	.value('version', '0.1')
+	.value('version', '1.2')
 	.factory('UserFactory', function($http, $rootScope) {
 		return {
 			currentUser: function() {
@@ -21,14 +21,14 @@ angular.module('spotlistr.services', [])
 			getAccessToken: function() {
 				return window.localStorage.getItem('access_token');
 			},
-			setAccessToken: function(access_token) {
-				window.localStorage.setItem('access_token', access_token);
+			setAccessToken: function(accessToken) {
+				window.localStorage.setItem('access_token', accessToken);
 			},
 			getRefreshToken: function() {
 				return window.localStorage.getItem('refresh_token');
 			},
-			setRefreshToken: function(refresh_token) {
-				window.localStorage.setItem('refresh_token', refresh_token);
+			setRefreshToken: function(refreshToken) {
+				window.localStorage.setItem('refresh_token', refreshToken);
 			},
 			getNewAccessToken: function(successCallback, errorCallback) {
 				$http.get('/refresh_token?refresh_token=' + this.getRefreshToken()).success(successCallback).error(errorCallback);
@@ -39,22 +39,28 @@ angular.module('spotlistr.services', [])
 				$http.get('https://api.spotify.com/v1/me').success(function(response) {
 					// Update the stored data
 					_this.setCurrentUser(response);
-					// Broadcast the event so that the menu can to consume it
-					// along with any other controllers that may be consuming it
-					$rootScope.$broadcast('userChanged', {
-						'currentUser': _this.currentUser(),
-						'userLoggedIn': _this.userLoggedIn()
-					});
 				});
-			}
+			},
+			clearUserData: function() {
+				window.localStorage.removeItem('currentUser');
+				window.localStorage.removeItem('access_token');
+				window.localStorage.removeItem('refresh_token');
+			},
+			setTokensAndPullUserInfo: function(accessToken, refreshToken) {
+				this.setAccessToken(accessToken);
+				this.setRefreshToken(refreshToken);
+				this.getSpotifyUserInfo();
+			},
 		}
 	})
 	.factory('SpotifySearchFactory', function($http) {
 		return {
-			search: function(query, callback) {
+			search: function(track) {
 				// https://developer.spotify.com/web-api/search-item/
-				var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(query);
-				$http.get(req).success(callback);
+				var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(track.cleanedQuery);
+				$http.get(req).success(function(response) {
+					track.addSpotifyMatches(response.tracks.items);
+				});
 			}
 		}
 	})
@@ -91,11 +97,11 @@ angular.module('spotlistr.services', [])
 			handleSubmitTracksToPlaylist: function(arr, user_id, playlist_id, callback) {
 				$http.post('https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(callback);
 			},
-			createPlaylist: function(name, isPublic, matches, selectedReviewedTracks, messages) {
+			createPlaylist: function(name, isPublic, trackArr, messages) {
 				// Clear the array, but keep the reference
 				messages.length = 0;
 				var _this = this,
-					playlist = QueryFactory.gatherPlaylist(matches, selectedReviewedTracks),
+					playlist = QueryFactory.gatherPlaylist(trackArr),
 					successCallback = function(response) {
 						if (response.id) {
 							var playlistId = response.id;
@@ -107,22 +113,27 @@ angular.module('spotlistr.services', [])
 						}
 					},
 					errorCallback = function(data, status, headers, config) {
-						if (status === 401) {
-							// 401 unauthorized
-							// The token needs to be refreshed
-							UserFactory.getNewAccessToken(function(newTokenResponse) {
-								UserFactory.setAccessToken(newTokenResponse.access_token);
-								// Call the create new playlist function again
-								// since we now have the proper access token
-								_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
-							}, function(data, status, headers, config) {
-								_this.addError(messages, data.error.message);
-							});
-						} else {
-							_this.addError(messages, data.error.message);
-						}
+						_this.handleErrorResponse(data, status, headers, config, messages, _this, function() {
+							// Call the create new playlist function again
+							// since we now have the proper access token
+							_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
+						});
 					};
 				_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
+			},
+			handleErrorResponse: function(data, status, headers, config, messages, _this, onReauthCallback) {
+				if (status === 401) {
+					// 401 unauthorized
+					// The token needs to be refreshed
+					UserFactory.getNewAccessToken(function(newTokenResponse) {
+						UserFactory.setAccessToken(newTokenResponse.access_token);
+						onReauthCallback();
+					}, function(data, status, headers, config) {
+						_this.addError(messages, data.error.message);
+					});
+				} else {
+					_this.addError(messages, data.error.message);
+				}
 			},
 			addError: function(messages, message) {
 				messages.push({
@@ -135,7 +146,41 @@ angular.module('spotlistr.services', [])
 					'status': 'success',
 					'message': message
 				});
-			}
+			},
+			getPlaylistTracks: function(userId, playlistId, trackArr, messages, callback) {
+				// https://developer.spotify.com/web-api/get-playlists-tracks/
+				// GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
+				var _this = this,
+					getUrl = 'https://api.spotify.com/v1/users/' + encodeURIComponent(userId) + '/playlists/' + encodeURIComponent(playlistId) + '/tracks',
+					errorCallback = function(data, status, headers, config) {
+						_this.handleErrorResponse(data, status, headers, config, messages, _this, function() {
+							// Call the get playlist tracks again
+							_this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), trackArr, callback, errorCallback);
+						});
+					};
+
+				_this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), trackArr, callback, errorCallback);
+			},
+			handleGetPlaylistTracks: function(getUrl, accessToken, trackArr, successCallback, errorCallback) {
+				var _this = this;
+				$http.defaults.headers.common.Authorization = 'Bearer ' + accessToken;
+
+				$http.get(getUrl).success(function(response) {
+					for (var i = 0; i < response.items.length; i += 1) {
+						var newTrack = new Track(response.items[i].track.name);
+						// Manually put the result in the array
+						newTrack.spotifyMatches.push(response.items[i].track);
+						// We know that there is only 1 result from the response,
+						// so we can set the selected track match to the 0th element
+						newTrack.selectedMatch = 0;
+						trackArr.push(newTrack);
+					}
+					if (response.next) {
+						_this.handleGetPlaylistTracks(response.next, accessToken, trackArr, successCallback, errorCallback);
+					}
+				}).error(errorCallback);
+				successCallback(trackArr);
+			},
 		}
 	})
 	.factory('QueryFactory', function(SpotifySearchFactory) {
@@ -151,7 +196,6 @@ angular.module('spotlistr.services', [])
 				normalized = normalized.replace(/(\[|\()+\d*(\]|\))+/, '');
 				// Remove all the extraneous stuff
 				normalized = normalized.replace(/[^\w\s]/gi, '');
-				console.log(normalized);
 				return normalized;
 			},
 			normalizeSearchArray: function(arr) {
@@ -176,45 +220,46 @@ angular.module('spotlistr.services', [])
 			createSpotifyUriFromTrackId: function(id) {
 				return 'spotify:track:' + id;
 			},
-			performSearch: function(inputByLine, matches, toBeReviewed, selectedReviewedTracks, noMatches) {
-				for (var i = 0; i < inputByLine.length; i += 1) {
-					SpotifySearchFactory.search(inputByLine[i], function(response) {
-						if (response.tracks.items.length > 1) {
-							toBeReviewed.push(response);
-							selectedReviewedTracks[response.tracks.href] = response.tracks.items[0].id;
-						} else if (response.tracks.items.length === 1) {
-							matches.push(response);
-						} else {
-							noMatches.push(response);
-						}
-					});
+			performSearch: function(trackArr) {
+				for (var i = 0; i < trackArr.length; i += 1) {
+					SpotifySearchFactory.search(trackArr[i]);
 				}
 			},
-			assignSelectedTrack: function(trackUrl, trackId, selectedReviewedTracks) {
-				selectedReviewedTracks[trackUrl] = trackId;
+			assignSelectedTrack: function(track, index) {
+				track.setSelectedMatch(index);
 			},
-			gatherPlaylist: function (matches, selectedReviewedTracks) {
-				var playlist = [];
-				// Add all of the 100% matches
-				for (var i = 0; i < matches.length; i += 1) {
-					playlist.push(this.createSpotifyUriFromTrackId(matches[i].tracks.items[0].id));
-				}
-				// Add the selected songs for the to-be-reviewed songs
-				for (var prop in selectedReviewedTracks) {
-					if (selectedReviewedTracks.hasOwnProperty(prop)) {
-						playlist.push(this.createSpotifyUriFromTrackId(selectedReviewedTracks[prop]));
+			gatherPlaylist: function(trackArr) {
+				var playlist = [],
+					currentItem;
+				for (var i = 0; i < trackArr.length; i += 1) {
+					currentItem = trackArr[i];
+					if (currentItem.spotifyMatches.length === 1) {
+						// Exact match
+						playlist.push(this.createSpotifyUriFromTrackId(currentItem.spotifyMatches[0].id));
+					} else if (currentItem.spotifyMatches.length > 1) {
+						// Push the selected match of the multiple matches
+						playlist.push(this.createSpotifyUriFromTrackId(currentItem.spotifyMatches[currentItem.selectedMatch].id));
 					}
+					// Do not push the given track if we did not find any matches on Spotify
 				}
 				// TODO: Do something better with the ones that we couldn't find
 				return playlist;
-			}
+			},
+			clearResults: function(trackArr, messages) {
+				// Clear the arrays, but keep the references
+				trackArr.length = 0;
+				messages.length = 0;
+			},
 		}
 	})
 	.factory('RedditFactory', function($http) {
 		return {
-			getSubreddit: function(subreddit, sort, fetchAmount, callback) {
+			getSubreddit: function(subreddit, sort, t, fetchAmount, callback) {
 				// http://www.reddit.com/r/trap/hot.json
 				var req = 'http://www.reddit.com/r/' + subreddit + '/' + sort + '.json?limit=' + fetchAmount;
+				if (t) {
+					req += '&' + t;
+				}
 				console.log(req);
 				$http.get(req).success(callback);
 			},
@@ -245,6 +290,7 @@ angular.module('spotlistr.services', [])
 	})
 	.factory('LastfmFactory', function($http, $q) {
 		return {
+			apiKey: '0fa55d46c0a036a3f785cdd768fadbba',
 			getSimilarTracksAndExtractInfo: function(inputByLine, similarCount, callback) {
 				var _this = this,
 					lastfmSimilarTracks = [],
@@ -255,7 +301,7 @@ angular.module('spotlistr.services', [])
 					// We are expecting input to be in the format Arist - Track Title
 					splitTrack = value.split('-');
 					// Async task
-					var req = 'http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' + encodeURIComponent(splitTrack[0]) + '&track=' + encodeURIComponent(splitTrack[1]) + '&api_key=0fa55d46c0a036a3f785cdd768fadbba&limit=' + similarCount + '&format=json';
+					var req = 'http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' + encodeURIComponent(splitTrack[0]) + '&track=' + encodeURIComponent(splitTrack[1]) + '&api_key=' + _this.apiKey + '&limit=' + similarCount + '&format=json';
 					$http.get(req).success(function(response) {
 						deferred.resolve(response);
 					}).error(function() {
@@ -265,6 +311,72 @@ angular.module('spotlistr.services', [])
 				});
 
 				$q.all(promises).then(callback);
-			}
+			},
+			getUserTopTracks: function(username, period, callback) {
+				// http://www.last.fm/api/show/user.getTopTracks
+				// http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=rj&api_key=0fa55d46c0a036a3f785cdd768fadbba&format=json
+				var _this = this;
+
+				var req = 'http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user='+ encodeURIComponent(username) + '&api_key=' + _this.apiKey + '&period=' + period + '&format=json';
+
+				$http.get(req).success(callback);
+			},
+			extractInfoFromLastfmResults: function(results) {
+				var extracted = [];
+				if (results.track instanceof Array) {
+					for (var j = 0; j < results.track.length; j++) {
+						extracted.push(results.track[j].artist.name + ' - ' + results.track[j].name);
+					}
+				}
+				return extracted;
+			},
+			extractQueriesFromLastfmSimilarTracks: function(lastfmSimilarTracks, trackArr) {
+				var _this = this;
+				for (var i = 0; i < lastfmSimilarTracks.length; i += 1) {
+					if (lastfmSimilarTracks[i].similartracks.track instanceof Array) {
+						var found = _this.extractInfoFromLastfmResults(lastfmSimilarTracks[i].similartracks);
+						for (var j = 0; j < found.length; j++) {
+							trackArr.push(new Track(found[j]));
+						}
+					}
+				}
+			},
+		}
+	})
+	.factory('YouTubeFactory', function($http, $q) {
+		return {
+			apiKey: 'AIzaSyDh-yB1krW7TFjW30TYhLJLL-dZ90zOraY',
+			getPlaylist: function(playlistId, callback) {
+				var _this = this,
+					results = [];
+
+				_this.getVideosFromPlaylist(playlistId, results, null, callback);
+			},
+			getVideosFromPlaylist: function(playlistId, results, nextPageToken, callback) {
+				// Docs: https://developers.google.com/youtube/v3/docs/playlistItems/list
+				// endpoint: GET https://www.googleapis.com/youtube/v3/playlistItems
+				var _this = this,
+					req = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=' + playlistId + '&maxResults=50&key=' + _this.apiKey;
+
+				if (nextPageToken) {
+					req += '&pageToken=' + nextPageToken;
+				}
+				$http.get(req).success(function(res) {
+					for (var i = 0; i < res.items.length; i += 1) {
+						results.push(res.items[i]);
+					}
+
+					if (res.nextPageToken) {
+						_this.getVideosFromPlaylist(playlistId, results, res.nextPageToken, callback);
+					} else {
+						callback(results);
+					}
+				});
+			},
+		}
+	})
+	.factory('SoundCloudFactory', function($http) {
+		return {
+			apiKey: '88434bd865d117fd3f098ca6c2c7ad38',
 		}
 	});

@@ -1,16 +1,24 @@
 # [Spotlistr](http://spotlistr.herokuapp.com)
-### http://spotlistr.herokuapp.com
-Spotlistr is the easiest way to create playlists for Spotify!
+Spotlistr - Convert Anything to a Spotify Playlist!
 
 ## Features
 * Multi-line textbox search! Input a huge list of tracks into the textbox and enjoy the must intuitive way to build a playlist!
 * Subreddit playlist creation! Input your favorite subreddit and select the sorting criteria (hot/new/top) and easily create a playlist!
+* Last.fm similar track search! Input a list of tracks and create a playlist based on Last.fm's similar tracks!
+* Last.fm top tracks similar search! Input a Last.fm username, select the period criteria (7 days / 1 month / 3 months / 6 months / 12 months / overall) and create a playlist based on Last.fm's similar tracks!
+* YouTube playlist search! Paste in a YouTube playlist URL and generate a playlist on the songs!
+* SoundCloud playlist/set search! Paste in a SoundCloud playlist/set URL and generate a playlist on the songs!
+* If a song is not found but it has a download available on SoundCloud, the link will be shown!
 * Name your own playlists and set the visibility (public or private)
 
 ## Technologies Used
 * [NodeJS](http://nodejs.org/)
 * [AngularJS](https://angularjs.org/)
 * [Spotify Web API](https://developer.spotify.com/web-api/)
+* [Reddit API](http://www.reddit.com/dev/api)
+* [Last.fm API](http://www.last.fm/api)
+* [YouTube Data API (v3)](https://developers.google.com/youtube/v3/)
+* [SoundCloud API / JS SDK](http://developers.soundcloud.com/docs/api/sdks)
 * [Heroku](http://heroku.com)
 
 ## Want to contribute?
@@ -19,7 +27,7 @@ Here's how to easily spin up a development environment and get coding! Please en
 * `cd Spotlistr`
 * `npm install`
 * `node app.js` - this starts the Node backend (required for talking to Spotify Web API)
-* Point your browser to http://localhost:8888/ to view
+* Point your browser to `http://localhost:8888/` to view
 
 Code locally, then send a pull request! It's that easy!
 
