@@ -307,7 +307,7 @@ angular.module('spotlistr.services', [])
 	.factory('RedditUserFactory', function($http) {
 		return {
 			userLoggedIn: function() {
-				return this.getAccessToken() != null;
+				return this.getAccessToken() != null && this.getAccessToken !== undefined;
 			},
 			getAccessToken: function() {
 				return window.localStorage.getItem('reddit_access_token');
