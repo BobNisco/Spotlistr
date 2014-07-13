@@ -144,15 +144,42 @@ app.get('/reddit/api/multi/mine/:access_token', function(req, res) {
 
   // http://www.reddit.com/dev/api#GET_api_multi_mine
   var options = {
-        url: 'https://oauth.reddit.com/api/multi/mine.json',
-        headers: { 'Authorization': 'bearer ' + req.params.access_token }
-      };
+    url: 'https://oauth.reddit.com/api/multi/mine.json',
+    headers: { 'Authorization': 'bearer ' + req.params.access_token }
+  };
 
   // use the access token to access the Spotify Web API
   request.get(options, function(error, response, body) {
     res.send(body);
   });
+});
 
+app.get('/reddit/refresh_token/:access_token/:refresh_token', function(req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type");
+
+  var options = {
+    url: 'https://ssl.reddit.com/api/v1/access_token',
+    headers: { 'Authorization': 'Basic ' + (new Buffer(reddit_client_id + ':' + reddit_client_secret).toString('base64')) },
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: req.params.refresh_token
+    },
+    json: true,
+  };
+
+  console.log(options)
+
+  request.post(options, function(error, response, body) {
+    console.log(body);
+    if (!error && response.statusCode === 200) {
+      var access_token = body.access_token;
+      res.send({
+        'access_token': access_token
+      });
+    }
+  });
 });
 
 var port = Number(process.env.PORT || 8888);

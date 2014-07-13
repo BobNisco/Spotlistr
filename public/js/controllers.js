@@ -310,7 +310,7 @@ angular.module('spotlistr.controllers', [])
 			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
 	}])
-.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q) {
+.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', '$http', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q, $http) {
 		// Reddit Authentication Info
 		$scope.userRedditLoggedIn = RedditUserFactory.userLoggedIn();
 		$scope.$on('redditUserChanged', function(event, data) {
@@ -357,13 +357,28 @@ angular.module('spotlistr.controllers', [])
 		$scope.selectedFetchAmounts = $scope.fetchAmounts[0];
 		$scope.searchType = 'Multireddit';
 
-		$scope.usersMultireddits = RedditFactory.getUsersMultiReddits(RedditUserFactory.getAccessToken(), function(response) {
+		$scope.usersMultireddits = RedditFactory.getUsersMultiReddits(function(response) {
+			if (response.error === 401) {
+				// Need to get a new token
+				$http.get('/reddit/refresh_token/' +
+					RedditUserFactory.getAccessToken() + '/' +
+					RedditUserFactory.getRefreshToken()
+				).success(function(response) {
+					RedditUserFactory.setAccessToken(response.access_token);
+					RedditFactory.getUsersMultiReddits(onSuccessGetUsersMultiReddits);
+				});
+			} else {
+				onSuccessGetUsersMultiReddits(response);
+			}
+		});
+
+		var onSuccessGetUsersMultiReddits = function(response) {
 			$scope.multireddits = response;
 			if ($scope.multireddits.length > 0) {
 				$scope.selectedMultireddit = $scope.multireddits[0];
 			}
 			console.log($scope.selectedMultireddit);
-		});
+		}
 
 		$scope.performSearch = function() {
 			var _trackArr = $scope.trackArr;

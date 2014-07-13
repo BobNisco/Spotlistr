@@ -252,7 +252,7 @@ angular.module('spotlistr.services', [])
 			},
 		}
 	})
-	.factory('RedditFactory', function($http, $q, SoundCloudFactory) {
+	.factory('RedditFactory', function($http, $q, RedditUserFactory, SoundCloudFactory) {
 		return {
 			getSubreddit: function(subreddit, sort, t, fetchAmount, callback) {
 				// http://www.reddit.com/r/trap/hot.json
@@ -263,8 +263,8 @@ angular.module('spotlistr.services', [])
 				console.log(req);
 				$http.get(req).success(callback);
 			},
-			getUsersMultiReddits: function(access_token, callback) {
-				var req = '/reddit/api/multi/mine/' + access_token;
+			getUsersMultiReddits: function(callback) {
+				var req = '/reddit/api/multi/mine/' + RedditUserFactory.getAccessToken();
 				$http.get(req).success(callback);
 			},
 			putAllTracksIntoArray: function(response, listings, trackArr, subredditInput, callback) {
