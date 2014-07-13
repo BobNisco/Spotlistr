@@ -18,7 +18,7 @@ var redirect_uri = 'http://spotlistr.herokuapp.com/callback'; // Your redirect u
 // Reddit API settings
 var reddit_client_id = 'x_1EWGYnLKmEZA';
 var reddit_client_secret = 'N6csZ5eNC_js63V5GxxRXTEn2UY';
-var reddit_redirect_uri = 'http://127.0.0.1:8888/reddit-oauth-callback';
+var reddit_redirect_uri = 'http://spotlistr.herokuapp.com/reddit-oauth-callback';
 
 // Change the redirect URI if we are developing
 // To set NODE_ENV in Windows: SET NODE_ENV=development
