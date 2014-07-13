@@ -393,6 +393,9 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.usersMultireddits = RedditFactory.getUsersMultiReddits(RedditUserFactory.getAccessToken(), function(response) {
 			$scope.multireddits = response;
+			if ($scope.multireddits.length > 0) {
+				$scope.selectedMultireddit = $scope.multireddits[0];
+			}
 		});
 
 		$scope.performSearch = function() {
