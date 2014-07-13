@@ -307,7 +307,7 @@ angular.module('spotlistr.services', [])
 	.factory('RedditUserFactory', function($http) {
 		return {
 			userLoggedIn: function() {
-				return this.getAccessToken() != null && this.getAccessToken !== undefined;
+				return this.getAccessToken() != null && this.getAccessToken !== undefined && this.getAccessToken !== 'undefined';
 			},
 			getAccessToken: function() {
 				return window.localStorage.getItem('reddit_access_token');
@@ -320,6 +320,10 @@ angular.module('spotlistr.services', [])
 			},
 			setRefreshToken: function(refresh_token) {
 				window.localStorage.setItem('reddit_refresh_token', refresh_token);
+			},
+			clearUserData: function() {
+				window.localStorage.removeItem('reddit_access_token');
+				window.localStorage.removeItem('reddit_refresh_token');
 			},
 		}
 	})

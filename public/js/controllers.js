@@ -664,7 +664,8 @@ angular.module('spotlistr.controllers', [])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {
 		$scope.userFactory = UserFactory;
 	}])
-	.controller('UsersLogOut', ['$scope', '$location', 'UserFactory', function($scope, $location, UserFactory) {
+	.controller('UsersLogOut', ['$scope', '$location', 'UserFactory', function($scope, $location, UserFactory, RedditUserFactory) {
 		UserFactory.clearUserData();
+		RedditUserFactory.clearUserData();
 		$location.path('#/splash')
 	}]);
