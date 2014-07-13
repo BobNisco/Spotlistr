@@ -142,6 +142,7 @@ app.get('/reddit/api/multi/mine/:access_token', function(req, res) {
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type");
 
+  // http://www.reddit.com/dev/api#GET_api_multi_mine
   var options = {
         url: 'https://oauth.reddit.com/api/multi/mine.json',
         headers: { 'Authorization': 'bearer ' + req.params.access_token }

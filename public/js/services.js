@@ -219,13 +219,7 @@ angular.module('spotlistr.services', [])
 				$http.get(req).success(callback);
 			},
 			getUsersMultiReddits: function(access_token, callback) {
-				// http://www.reddit.com/dev/api#GET_api_multi_mine
 				var req = '/reddit/api/multi/mine/' + access_token;
-				console.log(access_token);
-				//$http.defaults.withCredentials = true;
-				//$http.defaults.headers.common.Authorization = 'bearer ' + access_token;
-				//$http.defaults.headers.get = {'Content-Type': 'text/plain'};
-				//console.log($http.defaults.headers);
 				$http.get(req).success(callback);
 			},
 		}

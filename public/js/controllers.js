@@ -367,7 +367,8 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.subredditSortBy = [{name: 'hot', id: 'hot'}, {name: 'top', id: 'top'}, {name: 'new', id: 'new'}];
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
-		$scope.subredditInput = '';
+		$scope.multireddits = [];
+		$scope.selectedMultireddit;
 
 		// The tracks that matched 100%
 		$scope.matches = [];
@@ -393,7 +394,7 @@ angular.module('spotlistr.controllers', [])
 		$scope.createDisplayName = QueryFactory.createDisplayName;
 
 		$scope.usersMultireddits = RedditFactory.getUsersMultiReddits(RedditUserFactory.getAccessToken(), function(response) {
-			console.log(response);
+			$scope.multireddits = response;
 		});
 
 		$scope.performSearch = function() {
