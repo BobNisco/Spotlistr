@@ -278,47 +278,15 @@ angular.module('spotlistr.controllers', [])
 		$scope.selectedPopularSubreddits = $scope.popularSubreddits[0];
 
 		$scope.searchType = 'Subreddit';
-		$scope.soundCloudClientId = SoundCloudFactory.apiKey;
 
 		$scope.performSearch = function() {
+			var _trackArr = $scope.trackArr,
+				_subredditInput = $scope.subredditInput;
 			$scope.searching = true;
 			QueryFactory.clearResults($scope.trackArr, $scope.messages);
 			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, $scope.selectedSortBy.sort, $scope.selectedFetchAmounts, function(response) {
-				var listings = response.data.children;
 
-				// 1. Take the title of each listing returned from Reddit
-				var promises = listings.map(function(value) {
-					var deferred = $q.defer();
-					// Async task
-					// 1.1. Filter out anything with a self-post
-                    //      Self posts have a "domain" of self.subreddit
-                   	if (value.data.domain === 'self.' + $scope.subredditInput) {
-                        deferred.resolve();
-                        return deferred.promise;
-                    }
-					var newTrack = new Track(value.data.title);
-					newTrack.sourceUrl = value.data.url;
-					// 1.2. If the domain is soundcloud, we will add some extra info
-					//      into the Track object so we can potentially show the free DL
-					if (value.data.domain === 'soundcloud.com') {
-						var url = '/resolve.json?url=' + value.data.url + '&client_id=' + $scope.soundCloudClientId;
-						SC.get(url, function(scResponse) {
-							if (scResponse.kind === 'track' && scResponse.downloadable) {
-								newTrack.downloadUrl = scResponse.download_url;
-							} else if (scResponse.kind === 'playlist') {
-								// TODO: Handle playlists
-							}
-							$scope.trackArr.push(newTrack);
-							deferred.resolve(response);
-						});
-					} else {
-						$scope.trackArr.push(newTrack);
-						deferred.resolve(response);
-					}
-					return deferred.promise;
-				});
-
-				$q.all(promises).then(function() {
+				RedditFactory.putAllTracksIntoArray(response, response.data.children, _trackArr, _subredditInput, function(e) {
 					// 2. Search Spotify
 					QueryFactory.performSearch($scope.trackArr);
 					$scope.searching = false;
@@ -342,7 +310,7 @@ angular.module('spotlistr.controllers', [])
 			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
 	}])
-.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams) {
+.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q) {
 		// Reddit Authentication Info
 		$scope.userRedditLoggedIn = RedditUserFactory.userLoggedIn();
 		$scope.$on('redditUserChanged', function(event, data) {
@@ -360,19 +328,21 @@ angular.module('spotlistr.controllers', [])
 		// The tracks
 		$scope.trackArr = [];
 
-		$scope.subredditSortBy = [{name: 'hot', id: 'hot'}, {name: 'top', id: 'top'}, {name: 'new', id: 'new'}];
+		$scope.subredditSortBy = [
+			{name: 'hot', id: 'hot'},
+			{name: 'top - hour', id: 'top', sort: 't=hour'},
+			{name: 'top - day', id: 'top', sort: 't=day'},
+			{name: 'top - week', id: 'top', sort: 't=week'},
+			{name: 'top - month', id: 'top', sort: 't=month'},
+			{name: 'top - year', id: 'top', sort: 't=year'},
+			{name: 'top - all', id: 'top', sort: 't=all'},
+			{name: 'new', id: 'new'}
+		];
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
+		$scope.subredditInput = '';
 		$scope.multireddits = [];
 		$scope.selectedMultireddit;
 
-		// The tracks that matched 100%
-		$scope.matches = [];
-		// The track that need review
-		$scope.toBeReviewed = [];
-		// The tracks with no matches
-		$scope.noMatches = [];
-		// The selected indexes of the review tracks
-		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
 		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
@@ -381,39 +351,46 @@ angular.module('spotlistr.controllers', [])
 		$scope.messages = [];
 		// Bool flag for if search is running
 		$scope.searching = false;
-		// How many results to fetch from Reddit (multiples of 25)
-		$scope.fetchAmounts = [25, 50, 75, 100];
+		// How many results to fetch per each subreddit
+		$scope.fetchAmounts = [5, 10, 25];
 		// The selected fetch amount
 		$scope.selectedFetchAmounts = $scope.fetchAmounts[0];
-
-		$scope.createDisplayName = QueryFactory.createDisplayName;
+		$scope.searchType = 'Multireddit';
 
 		$scope.usersMultireddits = RedditFactory.getUsersMultiReddits(RedditUserFactory.getAccessToken(), function(response) {
 			$scope.multireddits = response;
 			if ($scope.multireddits.length > 0) {
 				$scope.selectedMultireddit = $scope.multireddits[0];
 			}
+			console.log($scope.selectedMultireddit);
 		});
 
 		$scope.performSearch = function() {
+			var _trackArr = $scope.trackArr;
 			$scope.searching = true;
-			clearResults();
-			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, $scope.selectedFetchAmounts, function(response) {
-				var listings = response.data.children,
-					trackTitles = [];
+			QueryFactory.clearResults($scope.trackArr, $scope.messages);
+			// Get all of the subreddits to search through
+			var subreddits = [];
+			for (var i = 0; i < $scope.selectedMultireddit.data.subreddits.length; i += 1) {
+				subreddits.push($scope.selectedMultireddit.data.subreddits[i].name);
+			}
 
-				// 1. Take the title of each listing returned from Reddit
-				for (var i = 0; i < listings.length; i += 1) {
-					// 1.1. Filter out anything with a self-post
-					//      Self posts have a "domain" of self.subreddit
-					if (listings[i].data.domain !== 'self.' + $scope.subredditInput) {
-						trackTitles.push(listings[i].data.title);
-					}
-				}
+			// Map over each of the subreddits to fire the async event to get the data
+			var promises = subreddits.map(function(subreddit) {
+				var deferred = $q.defer();
+				// Async task
+				RedditFactory.getSubreddit(subreddit, $scope.selectedSortBy.id, $scope.selectedSortBy.sort, $scope.selectedFetchAmounts, function(response) {
+					RedditFactory.putAllTracksIntoArray(response, response.data.children, _trackArr, null, function(ev) {
+						deferred.resolve(response);
+					});
 
+				});
+				return deferred.promise;
+			});
+
+			$q.all(promises).then(function(e) {
 				// 2. Search Spotify
-				var inputByLine = QueryFactory.normalizeSearchArray(trackTitles);
-				QueryFactory.performSearch(inputByLine, $scope.matches, $scope.toBeReviewed, $scope.selectedReviewedTracks, $scope.noMatches);
+				QueryFactory.performSearch(_trackArr);
 				$scope.searching = false;
 			});
 		};

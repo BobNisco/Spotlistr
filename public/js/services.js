@@ -252,7 +252,7 @@ angular.module('spotlistr.services', [])
 			},
 		}
 	})
-	.factory('RedditFactory', function($http) {
+	.factory('RedditFactory', function($http, $q, SoundCloudFactory) {
 		return {
 			getSubreddit: function(subreddit, sort, t, fetchAmount, callback) {
 				// http://www.reddit.com/r/trap/hot.json
@@ -266,6 +266,41 @@ angular.module('spotlistr.services', [])
 			getUsersMultiReddits: function(access_token, callback) {
 				var req = '/reddit/api/multi/mine/' + access_token;
 				$http.get(req).success(callback);
+			},
+			putAllTracksIntoArray: function(response, listings, trackArr, subredditInput, callback) {
+				// 1. Take the title of each listing returned from Reddit
+				var promises = listings.map(function(value) {
+					var deferred = $q.defer();
+					// Async task
+					// 1.1. Filter out anything with a self-post
+                    //      Self posts have a "domain" of self.subreddit
+                   	if (value.data.domain === 'self.' + subredditInput) {
+                        deferred.resolve();
+                        return deferred.promise;
+                    }
+					var newTrack = new Track(value.data.title);
+					newTrack.sourceUrl = value.data.url;
+					// 1.2. If the domain is soundcloud, we will add some extra info
+					//      into the Track object so we can potentially show the free DL
+					if (value.data.domain === 'soundcloud.com') {
+						var url = '/resolve.json?url=' + value.data.url + '&client_id=' + SoundCloudFactory.apiKey;
+						SC.get(url, function(scResponse) {
+							if (scResponse.kind === 'track' && scResponse.downloadable) {
+								newTrack.downloadUrl = scResponse.download_url;
+							} else if (scResponse.kind === 'playlist') {
+								// TODO: Handle playlists
+							}
+							trackArr.push(newTrack);
+							deferred.resolve(response);
+						});
+					} else {
+						trackArr.push(newTrack);
+						deferred.resolve(response);
+					}
+					return deferred.promise;
+				});
+
+				$q.all(promises).then(callback);
 			},
 		}
 	})
