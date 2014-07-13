@@ -343,13 +343,6 @@ angular.module('spotlistr.controllers', [])
 		};
 	}])
 .controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams) {
-		$scope.currentUser = UserFactory.currentUser();
-		$scope.userLoggedIn = UserFactory.userLoggedIn();
-		$scope.$on('userChanged', function(event, data) {
-			$scope.userLoggedIn = data.userLoggedIn;
-			$scope.currentUser = data.currentUser;
-		});
-
 		// Reddit Authentication Info
 		$scope.userRedditLoggedIn = RedditUserFactory.userLoggedIn();
 		$scope.$on('redditUserChanged', function(event, data) {
@@ -362,6 +355,10 @@ angular.module('spotlistr.controllers', [])
 			// Save the refresh token into local storage
 			RedditUserFactory.setRefreshToken($routeParams.refresh_token);
 		}
+
+		$scope.userFactory = UserFactory;
+		// The tracks
+		$scope.trackArr = [];
 
 		$scope.subredditSortBy = [{name: 'hot', id: 'hot'}, {name: 'top', id: 'top'}, {name: 'new', id: 'new'}];
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
@@ -421,22 +418,13 @@ angular.module('spotlistr.controllers', [])
 			});
 		};
 
-		$scope.assignSelectedTrack = function(trackUrl, trackId) {
-			QueryFactory.assignSelectedTrack(trackUrl, trackId, $scope.selectedReviewedTracks);
-		};
-
-		var clearResults = function() {
-			$scope.matches = [];
-			$scope.toBeReviewed = [];
-			$scope.selectedReviewedTracks = {};
-			$scope.noMatches = [];
-			$scope.messages = [];
+		$scope.assignSelectedTrack = function(track, index) {
+			QueryFactory.assignSelectedTrack(track, index);
 		};
 
 		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.matches, $scope.selectedReviewedTracks, $scope.messages);
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
-
 	}])
 	.controller('LastfmSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
 
