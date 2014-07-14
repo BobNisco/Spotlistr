@@ -65,8 +65,6 @@ angular.module('spotlistr.controllers', [])
 
 		// The tracks
 		$scope.trackArr = [];
-		// The selected indexes of the review tracks
-		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
 		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
@@ -311,11 +309,6 @@ angular.module('spotlistr.controllers', [])
 		};
 	}])
 .controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', '$http', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q, $http) {
-		// Reddit Authentication Info
-		$scope.userRedditLoggedIn = RedditUserFactory.userLoggedIn();
-		$scope.$on('redditUserChanged', function(event, data) {
-			$scope.userRedditLoggedIn = data.userLoggedIn;
-		});
 
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			// Save the access token into local storage
@@ -323,7 +316,8 @@ angular.module('spotlistr.controllers', [])
 			// Save the refresh token into local storage
 			RedditUserFactory.setRefreshToken($routeParams.refresh_token);
 		}
-
+		// Reddit Authentication Info
+		$scope.redditUserFactory = RedditUserFactory;
 		$scope.userFactory = UserFactory;
 		// The tracks
 		$scope.trackArr = [];
@@ -341,7 +335,7 @@ angular.module('spotlistr.controllers', [])
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
 		$scope.subredditInput = '';
 		$scope.multireddits = [];
-		$scope.selectedMultireddit;
+		$scope.selectedMultireddit = 0;
 
 		// The name of the playlist
 		$scope.playlistName = '';
@@ -357,7 +351,7 @@ angular.module('spotlistr.controllers', [])
 		$scope.selectedFetchAmounts = $scope.fetchAmounts[0];
 		$scope.searchType = 'Multireddit';
 
-		$scope.usersMultireddits = RedditFactory.getUsersMultiReddits(function(response) {
+		RedditFactory.getUsersMultiReddits(function(response) {
 			if (response.error === 401) {
 				// Need to get a new token
 				$http.get('/reddit/refresh_token/' +
@@ -373,12 +367,13 @@ angular.module('spotlistr.controllers', [])
 		});
 
 		var onSuccessGetUsersMultiReddits = function(response) {
-			$scope.multireddits = response;
+			for (var i = 0; i < response.length; i += 1) {
+				$scope.multireddits.push(response[i]);
+			}
 			if ($scope.multireddits.length > 0) {
 				$scope.selectedMultireddit = $scope.multireddits[0];
 			}
-			console.log($scope.selectedMultireddit);
-		}
+		};
 
 		$scope.performSearch = function() {
 			var _trackArr = $scope.trackArr;
