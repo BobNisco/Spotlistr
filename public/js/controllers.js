@@ -277,6 +277,8 @@ angular.module('spotlistr.controllers', [])
 
 		$scope.searchType = 'Subreddit';
 
+		$scope.soundCloudClientId = SoundCloudFactory.apiKey;
+
 		$scope.performSearch = function() {
 			var _trackArr = $scope.trackArr,
 				_subredditInput = $scope.subredditInput;
@@ -308,7 +310,7 @@ angular.module('spotlistr.controllers', [])
 			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
 		};
 	}])
-.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', '$http', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q, $http) {
+.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', '$http', 'SoundCloudFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q, $http, SoundCloudFactory) {
 
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			// Save the access token into local storage
@@ -350,6 +352,8 @@ angular.module('spotlistr.controllers', [])
 		// The selected fetch amount
 		$scope.selectedFetchAmounts = $scope.fetchAmounts[0];
 		$scope.searchType = 'Multireddit';
+
+		$scope.soundCloudClientId = SoundCloudFactory.apiKey;
 
 		RedditFactory.getUsersMultiReddits(function(response) {
 			if (response.error === 401) {
