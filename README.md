@@ -19,10 +19,11 @@ Spotlistr - Convert Anything to a Spotify Playlist!
 * [Last.fm API](http://www.last.fm/api)
 * [YouTube Data API (v3)](https://developers.google.com/youtube/v3/)
 * [SoundCloud API / JS SDK](http://developers.soundcloud.com/docs/api/sdks)
+* [GulpJS](http://gulpjs.com/)
 * [Heroku](http://heroku.com)
 
 ## Want to contribute?
-Here's how to easily spin up a development environment and get coding! Please ensure you have [npm](https://www.npmjs.org/) installed first, then ensure you have [bower](http://bower.io/) installed through npm!
+Here's how to easily spin up a development environment and get coding! Please ensure you have [npm](https://www.npmjs.org/) installed first, then ensure you have [bower](http://bower.io/) and [GulpJS](http://gulpjs.com/) installed through npm!
 * `git clone git@github.com:BobNisco/Spotlistr.git`
 * `cd Spotlistr`
 * `npm install`
