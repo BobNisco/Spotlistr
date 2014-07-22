@@ -31,11 +31,13 @@ gulp.task('minify-html', function() {
 // CSS concat, auto prefix, minify, then rename output file
 gulp.task('minify-css', function() {
 	var cssPath = {
-		cssSrc: ['./public/css/*.css',
+		cssSrc: [
+			'./public/bower_components/bootswatch/yeti/bootstrap.css',
+			'./public/bower_components/font-awesome/css/font-awesome.css',
+			'./public/css/*.css',
 			'!*.min.css',
 			'!/**/*.min.css',
-			'./public/bower_components/bootswatch/yeti/bootstrap.css',
-			'./public/bower_components/font-awesome/css/font-awesome.css'],
+		],
 		cssDest: './public/dist/css'
 	};
 
@@ -73,7 +75,7 @@ gulp.task('bundle-scripts', function() {
 	};
 
 	gulp.src(jsPath.jsSrc)
-		.pipe(concat('ngscripts.js'))
+		.pipe(concat('spotlistr.js'))
 		.pipe(stripDebug())
 		.pipe(uglify({mangle: false}))
 		.pipe(rename({ suffix: '.min' }))
