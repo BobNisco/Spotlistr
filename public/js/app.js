@@ -13,55 +13,55 @@ angular.module('spotlistr', [
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/splash/', {
-    templateUrl: 'partials/splash.html',
+    templateUrl: 'dist/partials/splash.html',
     controller: 'Splash'
   });
   $routeProvider.when('/splash/:accessToken/:refreshToken', {
-    templateUrl: 'partials/splash.html',
+    templateUrl: 'dist/partials/splash.html',
     controller: 'Splash'
   });
   $routeProvider.when('/search/textbox', {
-  	templateUrl: 'partials/textbox.html',
+  	templateUrl: 'dist/partials/textbox.html',
   	controller: 'Textbox'
   });
   $routeProvider.when('/search/textbox/:accessToken/:refreshToken', {
-  	templateUrl: 'partials/textbox.html',
+  	templateUrl: 'dist/partials/textbox.html',
   	controller: 'Textbox'
   });
   $routeProvider.when('/search/subreddit', {
-  	templateUrl: 'partials/subreddit.html',
+  	templateUrl: 'dist/partials/subreddit.html',
   	controller: 'Subreddit'
   });
   $routeProvider.when('/search/multireddit', {
-    templateUrl: 'partials/multireddit.html',
+    templateUrl: 'dist/partials/multireddit.html',
     controller: 'Multireddit'
   });
   $routeProvider.when('/search/multireddit/:access_token/:refresh_token', {
-    templateUrl: 'partials/multireddit.html',
+    templateUrl: 'dist/partials/multireddit.html',
     controller: 'Multireddit'
   });
   $routeProvider.when('/search/lastfm-similar', {
-    templateUrl: 'partials/lastfm-similar.html',
+    templateUrl: 'dist/partials/lastfm-similar.html',
     controller: 'LastfmSimilar'
   });
   $routeProvider.when('/search/lastfm-toptracks-similar', {
-    templateUrl: 'partials/lastfm-toptracks-similar.html',
+    templateUrl: 'dist/partials/lastfm-toptracks-similar.html',
     controller: 'LastfmToptracksSimilar'
   });
   $routeProvider.when('/search/youtube', {
-    templateUrl: 'partials/youtube.html',
+    templateUrl: 'dist/partials/youtube.html',
     controller: 'YouTube'
   });
   $routeProvider.when('/search/soundcloud', {
-    templateUrl: 'partials/soundcloud.html',
+    templateUrl: 'dist/partials/soundcloud.html',
     controller: 'SoundCloud'
   });
   $routeProvider.when('/users/log-out', {
-    templateUrl: 'partials/splash.html',
+    templateUrl: 'dist/partials/splash.html',
     controller: 'UsersLogOut'
   });
   $routeProvider.when('/export/spotify-playlist', {
-    templateUrl: 'partials/export-spotify-playlist.html',
+    templateUrl: 'dist/partials/export-spotify-playlist.html',
     controller: 'ExportSpotifyPlaylist'
   });
   $routeProvider.otherwise({redirectTo: '/splash'});

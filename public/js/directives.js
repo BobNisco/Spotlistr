@@ -12,20 +12,20 @@ angular.module('spotlistr.directives', []).
 		return {
 			restrict: 'AE',
 			scope: false,
-			templateUrl : 'partials/results.html'
+			templateUrl : 'dist/partials/results.html'
 		};
 	})
 	.directive('card', function () {
 		return {
 			restrict: 'E',
 			scope: false,
-			templateUrl: 'partials/card.html'
+			templateUrl: 'dist/partials/card.html'
 		};
 	})
 	.directive('adblockWarning', function () {
 		return {
 			restrict: 'E',
 			scope: false,
-			templateUrl: 'partials/adblock-warning.html'
+			templateUrl: 'dist/partials/adblock-warning.html'
 		};
 	});
