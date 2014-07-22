@@ -35,7 +35,7 @@ gulp.task('minify-css', function() {
 			'!*.min.css',
 			'!/**/*.min.css',
 			'./public/bower_components/bootswatch/yeti/bootstrap.css',
-			'./public/bower_components/font-awesome/css/font-awesome.min.css'],
+			'./public/bower_components/font-awesome/css/font-awesome.css'],
 		cssDest: './public/dist/css'
 	};
 
@@ -47,6 +47,16 @@ gulp.task('minify-css', function() {
 		.pipe(gulp.dest(cssPath.cssDest));
 });
 
+gulp.task('copy-fonts', function() {
+	var fontPath = {
+		fontSrc: ['./public/bower_components/font-awesome/fonts/fontawesome-webfont.*'],
+		fontDest: './public/dist/fonts'
+	};
+
+	return gulp.src(fontPath.fontSrc)
+		.pipe(gulp.dest(fontPath.fontDest));
+});
+
 // JS concat, strip debugging code and minify
 gulp.task('bundle-scripts', function() {
 	var jsPath = {
@@ -56,7 +66,7 @@ gulp.task('bundle-scripts', function() {
 			'./public/bower_components/angulartics/dist/angulartics-ga.min.js',
 			'./public/bower_components/jquery/dist/jquery.min.js',
 			'./public/bower_components/angular-route/angular-route.js',
-			'./public/bower_components/bootstrap/dist/js/bootstrap.min.js',
+			'./public/bower_components/bootstrap/dist/js/bootstrap.js',
 			'./public/js/*.js',
 		],
 		jsDest:'./public/dist/js'
@@ -71,7 +81,7 @@ gulp.task('bundle-scripts', function() {
 });
 
 // default gulp task
-gulp.task('default', ['minify-html', 'bundle-scripts', 'minify-css'], function() {
+gulp.task('default', ['minify-html', 'copy-fonts', 'bundle-scripts', 'minify-css'], function() {
 	// watch for HTML changes
 	gulp.watch('./public/partials/*.html', ['minify-html']);
 	// watch for JS changes
