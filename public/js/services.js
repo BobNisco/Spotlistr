@@ -2,7 +2,7 @@
 
 /* Services */
 angular.module('spotlistr.services', [])
-	.value('version', '1.5')
+	.value('version', '1.5.1')
 	.factory('UserFactory', function($http, $rootScope) {
 		return {
 			currentUser: function() {

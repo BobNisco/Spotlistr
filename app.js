@@ -145,7 +145,10 @@ app.get('/reddit/api/multi/mine/:access_token', function(req, res) {
   // http://www.reddit.com/dev/api#GET_api_multi_mine
   var options = {
     url: 'https://oauth.reddit.com/api/multi/mine.json',
-    headers: { 'Authorization': 'bearer ' + req.params.access_token }
+    headers: {
+      'Authorization': 'bearer ' + req.params.access_token,
+      'user-agent': makeRedditApiUserHeader()
+    }
   };
 
   // use the access token to access the Spotify Web API
@@ -169,7 +172,7 @@ app.get('/reddit/refresh_token/:access_token/:refresh_token', function(req, res)
     json: true,
   };
 
-  console.log(options)
+  console.log(options);
 
   request.post(options, function(error, response, body) {
     console.log(body);
@@ -181,6 +184,10 @@ app.get('/reddit/refresh_token/:access_token/:refresh_token', function(req, res)
     }
   });
 });
+
+var makeRedditApiUserHeader = function() {
+  return 'Spotlistr/1.5.1';
+}
 
 var port = Number(process.env.PORT || 8888);
 app.listen(port, function() {
