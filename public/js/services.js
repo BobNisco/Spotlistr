@@ -256,7 +256,7 @@ angular.module('spotlistr.services', [])
 		return {
 			getSubreddit: function(subreddit, sort, t, fetchAmount, callback) {
 				// http://www.reddit.com/r/trap/hot.json
-				var req = 'http://www.reddit.com/r/' + subreddit + '/' + sort + '.json?limit=' + fetchAmount;
+				var req = 'https://www.reddit.com/r/' + subreddit + '/' + sort + '.json?limit=' + fetchAmount;
 				if (t) {
 					req += '&' + t;
 				}
