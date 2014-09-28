@@ -28,6 +28,7 @@ Here's how to easily spin up a development environment and get coding! Please en
 * `cd Spotlistr`
 * `npm install`
 * `node app.js` - this starts the Node backend (required for talking to Spotify Web API)
+* `gulp` - this starts the Gulp task runner and will stay running so it can watch for changes to files and run the Gulp tasks on them
 * Point your browser to `http://localhost:8888/` to view
 
 Code locally, then send a pull request! It's that easy!
