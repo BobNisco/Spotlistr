@@ -2,7 +2,7 @@
 // Bootswatch
 // -----------------------------------------------------
 
-@import url("//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700");
+@import url("//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700");
 
 // Navbar =====================================================================
 
@@ -19,11 +19,11 @@
 
 // Buttons ====================================================================
 
-.btn-lg {
-  padding-top: 19px;
-}
-
 // Typography =================================================================
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
 
 .text-primary,
 .text-primary:hover {
@@ -187,21 +187,8 @@ table,
 }
 
 .modal {
-
-  &-content {
-    border: none;
-  }
-
-  &-header {
-    background-color: @navbar-default-bg;
-    color: #fff;
-  }
-
-  &-body,
-  &-footer {
-    .close {
-      color: @text-color;
-    }
+  .close {
+    color: @text-color;
   }
 }
 

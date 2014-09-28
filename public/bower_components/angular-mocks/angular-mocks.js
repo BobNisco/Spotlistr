@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.2.20
+ * @license AngularJS v1.2.25
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -62,6 +62,8 @@ angular.mock.$Browser = function() {
 
     return listener;
   };
+
+  self.$$checkUrlChange = angular.noop;
 
   self.cookieHash = {};
   self.lastCookieHash = {};
@@ -1722,6 +1724,7 @@ angular.mock.$RootElementProvider = function() {
 /**
  * @ngdoc module
  * @name ngMock
+ * @packageName angular-mocks
  * @description
  *
  * # ngMock
@@ -1751,6 +1754,7 @@ angular.module('ngMock', ['ng']).provider({
  * @ngdoc module
  * @name ngMockE2E
  * @module ngMockE2E
+ * @packageName angular-mocks
  * @description
  *
  * The `ngMockE2E` is an angular module which contains mocks suitable for end-to-end testing.
@@ -1784,7 +1788,7 @@ angular.module('ngMockE2E', ['ng']).config(['$provide', function($provide) {
  * use the `passThrough` request handler of `when` instead of `respond`.
  *
  * Additionally, we don't want to manually have to flush mocked out requests like we do during unit
- * testing. For this reason the e2e $httpBackend automatically flushes mocked out requests
+ * testing. For this reason the e2e $httpBackend flushes mocked out requests
  * automatically, closely simulating the behavior of the XMLHttpRequest object.
  *
  * To setup the application to run with this http backend, you have to create a module that depends
@@ -2001,6 +2005,7 @@ if(window.jasmine || window.mocha) {
    * @description
    *
    * *NOTE*: This function is also published on window for easy access.<br>
+   * *NOTE*: This function is declared ONLY WHEN running tests with jasmine or mocha
    *
    * This function registers a module configuration code. It collects the configuration information
    * which will be used when the injector is created by {@link angular.mock.inject inject}.
@@ -2043,6 +2048,7 @@ if(window.jasmine || window.mocha) {
    * @description
    *
    * *NOTE*: This function is also published on window for easy access.<br>
+   * *NOTE*: This function is declared ONLY WHEN running tests with jasmine or mocha
    *
    * The inject function wraps a function into an injectable function. The inject() creates new
    * instance of {@link auto.$injector $injector} per test, which is then used for

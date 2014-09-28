@@ -1,6 +1,6 @@
 @import url("//fonts.googleapis.com/css?family=Lato:400,700,400italic");
 /*!
- * Bootswatch v3.2.0
+ * bootswatch v3.2.0
  * Homepage: http://bootswatch.com
  * Copyright 2012-2014 Thomas Park
  * Licensed under MIT
@@ -6389,12 +6389,6 @@ textarea:focus {
 .well {
   -webkit-box-shadow: none;
   box-shadow: none;
-}
-.modal {
-  color: #ffffff;
-}
-.modal-header {
-  background-color: #375a7f;
 }
 .popover {
   color: #ffffff;
