@@ -637,7 +637,7 @@ angular.module('spotlistr.controllers', [])
 			QueryFactory.clearResults($scope.trackArr, $scope.messages);
 			// Reset the messages array
 			$scope.messages.length = 0;
-			var playlistData = extractUserIdAndPlaylistIdFromSpotifyUri($scope.spotifyUri);
+			var playlistData = SpotifyPlaylistFactory.extractUserIdAndPlaylistIdFromSpotifyUri($scope.spotifyUri);
 			if (playlistData === null) {
 				SpotifyPlaylistFactory.addError($scope.messages, 'Please input a valid Spotify URI. Example: spotify:user:bobnisco:playlist:2prZEZ7nNZf9xeikRqB4NG');
 				$scope.searching = false;
@@ -647,17 +647,42 @@ angular.module('spotlistr.controllers', [])
 				$scope.searching = false;
 			});
 		};
+	}])
+	.controller('DedupePlaylist', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
+		$scope.userFactory = UserFactory;
+		// Messages to the user
+		$scope.messages = [];
+		// Bool flag for if search is running
+		$scope.searching = false;
+		// The Spotify URI
+		$scope.spotifyUri = '';
+		// The tracks
+		$scope.trackArr = [];
 
-		var extractUserIdAndPlaylistIdFromSpotifyUri = function(uri) {
-			var spotifyUriRegex = /spotify:user:(\w*):playlist:(\w*)/gi,
-				regExGroups = spotifyUriRegex.exec(uri);
-			if (regExGroups !== null && regExGroups.length > 1) {
-				return {
-					userId: regExGroups[1],
-					playlistId: regExGroups[2],
-				};
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			QueryFactory.clearResults($scope.trackArr, $scope.messages);
+			// Reset the messages array
+			$scope.messages.length = 0;
+			var playlistData = SpotifyPlaylistFactory.extractUserIdAndPlaylistIdFromSpotifyUri($scope.spotifyUri);
+			if (playlistData === null) {
+				SpotifyPlaylistFactory.addError($scope.messages, 'Please input a valid Spotify URI. Example: spotify:user:bobnisco:playlist:2prZEZ7nNZf9xeikRqB4NG');
+				$scope.searching = false;
+				return false;
 			}
-			return null;
+			SpotifyPlaylistFactory.getPlaylistTracks(playlistData.userId, playlistData.playlistId, $scope.trackArr, $scope.messages, function(response) {
+				$scope.searching = false;
+				var found = {};
+				for (var i = 0; i < $scope.trackArr.length; i++) {
+					var currentTrack = $scope.trackArr[i];
+					if (found[currentTrack.id]) {
+						// It's a dupe!
+						debugger;
+					} else {
+						found[currentTrack.id] = currentTrack;
+					}
+				}
+			});
 		};
 	}])
 	.controller('User', ['$scope', 'UserFactory', function($scope, UserFactory) {

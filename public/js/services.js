@@ -181,6 +181,17 @@ angular.module('spotlistr.services', [])
 				}).error(errorCallback);
 				successCallback(trackArr);
 			},
+			extractUserIdAndPlaylistIdFromSpotifyUri: function(uri) {
+				var spotifyUriRegex = /spotify:user:(\w*):playlist:(\w*)/gi,
+					regExGroups = spotifyUriRegex.exec(uri);
+				if (regExGroups !== null && regExGroups.length > 1) {
+					return {
+						userId: regExGroups[1],
+						playlistId: regExGroups[2],
+					};
+				}
+				return null;
+			},
 		}
 	})
 	.factory('QueryFactory', function(SpotifySearchFactory) {

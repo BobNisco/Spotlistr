@@ -64,5 +64,9 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'dist/partials/export-spotify-playlist.html',
     controller: 'ExportSpotifyPlaylist'
   });
+  $routeProvider.when('/manage/dedupe-playlist', {
+    templateUrl: 'dist/partials/dedupe-playlist.html',
+    controller: 'DedupePlaylist'
+  });
   $routeProvider.otherwise({redirectTo: '/splash'});
 }]);
