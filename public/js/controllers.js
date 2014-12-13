@@ -673,14 +673,40 @@ angular.module('spotlistr.controllers', [])
 			SpotifyPlaylistFactory.getPlaylistTracks(playlistData.userId, playlistData.playlistId, $scope.trackArr, $scope.messages, function(response) {
 				$scope.searching = false;
 				var found = {};
+				var dupes = {};
 				for (var i = 0; i < $scope.trackArr.length; i++) {
 					var currentTrack = $scope.trackArr[i];
-					if (found[currentTrack.id]) {
-						// It's a dupe!
-						debugger;
-					} else {
-						found[currentTrack.id] = currentTrack;
+					if (!currentTrack.spotifyMatches.length) {
+						return;
 					}
+					var trackId = currentTrack.spotifyMatches[0].id;
+					if (found[trackId]) {
+						// It's a dupe!
+						if (dupes[trackId]) {
+							dupes[trackId].positions.push(i);
+						} else {
+							dupes[trackId] = {
+								uri: QueryFactory.createSpotifyUriFromTrackId(trackId),
+								positions: [i]
+							};
+						}
+					} else {
+						found[trackId] = currentTrack;
+					}
+				}
+				var dupesArr = [];
+				for (var i in dupes) {
+					if (dupes.hasOwnProperty(i)) {
+						dupesArr.push(dupes[i]);
+					}
+				}
+				if (dupesArr.length) {
+					SpotifyPlaylistFactory.deleteTracks(playlistData.userId, playlistData.playlistId, UserFactory.getAccessToken(), dupesArr, function(response) {
+						$scope.searching = false;
+						SpotifyPlaylistFactory.addSuccess($scope.messages, 'Nice! Playlist has been removed of duplicates! Check it out in your Spotify client.');
+					});
+				} else {
+					SpotifyPlaylistFactory.addSuccess($scope.messages, 'Your playlist has no duplicates to remove! Sweet!');
 				}
 			});
 		};

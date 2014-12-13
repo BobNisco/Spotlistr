@@ -94,6 +94,16 @@ angular.module('spotlistr.services', [])
 					_this.handleSubmitTracksToPlaylist(arr, user_id, playlist_id, callback);
 				}
 			},
+			deleteTracks: function(user_id, playlist_id, access_token, arr, callback) {
+				var _this = this;
+				// DELETE https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
+				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
+				$http({
+						method: 'DELETE',
+						url: 'https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks',
+						data: {'tracks': arr}
+					}).success(callback);
+			},
 			handleSubmitTracksToPlaylist: function(arr, user_id, playlist_id, callback) {
 				$http.post('https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(callback);
 			},
@@ -177,9 +187,10 @@ angular.module('spotlistr.services', [])
 					}
 					if (response.next) {
 						_this.handleGetPlaylistTracks(response.next, accessToken, trackArr, successCallback, errorCallback);
+					} else {
+						successCallback(trackArr);
 					}
 				}).error(errorCallback);
-				successCallback(trackArr);
 			},
 			extractUserIdAndPlaylistIdFromSpotifyUri: function(uri) {
 				var spotifyUriRegex = /spotify:user:(\w*):playlist:(\w*)/gi,
