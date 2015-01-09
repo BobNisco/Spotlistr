@@ -394,7 +394,7 @@ angular.module('spotlistr.services', [])
 			extractQueriesFromLastfmSimilarTracks: function(lastfmSimilarTracks, trackArr) {
 				var _this = this;
 				for (var i = 0; i < lastfmSimilarTracks.length; i += 1) {
-					if (lastfmSimilarTracks[i].similartracks.track instanceof Array) {
+					if (lastfmSimilarTracks[i].similartracks && lastfmSimilarTracks[i].similartracks.track instanceof Array) {
 						var found = _this.extractInfoFromLastfmResults(lastfmSimilarTracks[i].similartracks);
 						for (var j = 0; j < found.length; j++) {
 							trackArr.push(new Track(found[j]));
