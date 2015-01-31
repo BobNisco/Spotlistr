@@ -76,8 +76,8 @@ gulp.task('bundle-scripts', function() {
 
 	gulp.src(jsPath.jsSrc)
 		.pipe(concat('spotlistr.js'))
-		//.pipe(stripDebug())
-		//.pipe(uglify({mangle: false}))
+		.pipe(stripDebug())
+		.pipe(uglify({mangle: false}))
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest(jsPath.jsDest));
 });
