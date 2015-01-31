@@ -10,7 +10,7 @@ angular.module('spotlistr.directives', []).
 	}])
 	.directive('resultModule', function() {
 		return {
-			restrict: 'AE',
+			restrict: 'AEC',
 			scope: false,
 			templateUrl : 'dist/partials/results.html'
 		};

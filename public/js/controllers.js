@@ -64,7 +64,7 @@ angular.module('spotlistr.controllers', [])
 		$scope.subredditInput = '';
 
 		// The tracks
-		$scope.trackArr = [];
+		$scope.trackSet = new TrackSet();
 		// The name of the playlist
 		$scope.playlistName = '';
 		// Boolean for if the playlist will be public or nah
@@ -280,15 +280,15 @@ angular.module('spotlistr.controllers', [])
 		$scope.soundCloudClientId = SoundCloudFactory.apiKey;
 
 		$scope.performSearch = function() {
-			var _trackArr = $scope.trackArr,
+			var _trackArr = $scope.trackSet.tracks,
 				_subredditInput = $scope.subredditInput;
 			$scope.searching = true;
-			QueryFactory.clearResults($scope.trackArr, $scope.messages);
+			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
 			RedditFactory.getSubreddit($scope.subredditInput, $scope.selectedSortBy.id, $scope.selectedSortBy.sort, $scope.selectedFetchAmounts, function(response) {
 
 				RedditFactory.putAllTracksIntoArray(response, response.data.children, _trackArr, _subredditInput, function(e) {
 					// 2. Search Spotify
-					QueryFactory.performSearch($scope.trackArr);
+					QueryFactory.performSearch($scope.trackSet.tracks);
 					$scope.searching = false;
 				});
 			});
@@ -307,7 +307,7 @@ angular.module('spotlistr.controllers', [])
 		};
 
 		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackArr, $scope.messages);
+			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackSet.tracks, $scope.messages);
 		};
 	}])
 .controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', '$http', 'SoundCloudFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q, $http, SoundCloudFactory) {
