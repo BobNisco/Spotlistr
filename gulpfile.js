@@ -44,7 +44,7 @@ gulp.task('minify-css', function() {
 	return gulp.src(cssPath.cssSrc)
 		.pipe(concat('styles.css'))
 		.pipe(autoprefix('last 2 versions'))
-		.pipe(minifyCSS())
+		.pipe(minifyCSS({ processImport: false }))
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest(cssPath.cssDest));
 });
