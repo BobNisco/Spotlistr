@@ -1,6 +1,8 @@
 # [Spotlistr](http://spotlistr.herokuapp.com)
 Spotlistr - Convert Anything to a Spotify Playlist!
 
+[![Dependency Status](https://david-dm.org/BobNisco/Spotlistr.svg)](https://david-dm.org/BobNisco/Spotlistr) [![devDependency Status](https://david-dm.org/BobNisco/Spotlistr/dev-status.svg)](https://david-dm.org/BobNisco/Spotlistr#info=devDependencies)
+
 ## Features
 * Multi-line textbox search! Input a huge list of tracks into the textbox and enjoy the must intuitive way to build a playlist!
 * Subreddit playlist creation! Input your favorite subreddit and select the sorting criteria (hot/new/top) and easily create a playlist!
