@@ -26,12 +26,12 @@
 		</div>
 	</div>
 
-	<div class="row" ng-if="trackset.tracks.length > 0">
+	<div class="row" ng-if="trackSet.tracks.length > 0">
 		<div class="col-md-12">
 			<h2>Plaintext listing</h2>
 			<hr />
 			<ul class="list-unstyled">
-				<li ng-repeat="track in trackset.tracks">{{ track.createDisplayNameForSelectedSong() }}</li>
+				<li ng-repeat="track in trackSet.tracks">{{ track.createDisplayNameForSelectedSong() }}</li>
 			</ul>
 		</div>
 	</div>
