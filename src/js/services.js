@@ -402,6 +402,14 @@ angular.module('spotlistr.services', [])
 					}
 				}
 			},
+			getTagTopTracks: function(tag, callback) {
+				// http://www.last.fm/api/show/tag.getTopTracks
+				var _this = this;
+
+				var req = 'http://ws.audioscrobbler.com/2.0/?method=tag.gettoptracks&tag=' + tag + '&api_key=' + _this.apiKey + '&format=json';
+
+				$http.get(req).success(callback);
+			},
 		}
 	})
 	.factory('YouTubeFactory', function($http, $q) {

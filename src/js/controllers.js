@@ -386,8 +386,6 @@ angular.module('spotlistr.controllers', [])
 		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 		// The data in the text area
 		$scope.taData = '';
-		// The name of the playlist
-		$scope.playlistName = '';
 		// Amount of similar tracks per track
 		$scope.similarCount = 10;
 		$scope.searchType = 'Last.fm Similar Tracks';
@@ -446,21 +444,21 @@ angular.module('spotlistr.controllers', [])
 		// Amount of tracks to return
 		$scope.limit = 50;
 		$scope.searchType = 'Last.fm Tag Top Tracks';
+		$scope.inputtedTag = '';
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
 			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
-
-			// 1. Grab the tracks from the Last.fm user's profile
-			LastfmFactory.getUserTopTracks($scope.lastfmUsername, $scope.selectedLastfmPeriodOption.id, function(response) {
+			// 1. Grab the top tracks for the given tag
+			LastfmFactory.getTagTopTracks($scope.inputtedTag, function(response) {
 				// 2. Extract the Artist - Track Title from the results
 				var topTracks = LastfmFactory.extractInfoFromLastfmResults(response.toptracks);
+				for (var i = 0; i < topTracks.length; i++) {
+					$scope.trackSet.tracks.push(new Track(topTracks[i]));
+				}
 				// 3. For each Top Track, find similar tracks and produce results
-				LastfmFactory.getSimilarTracksAndExtractInfo(topTracks, $scope.similarCount, function(lastfmSimilarTracks) {
-					LastfmFactory.extractQueriesFromLastfmSimilarTracks(lastfmSimilarTracks, $scope.trackSet.tracks);
-					QueryFactory.performSearch($scope.trackSet.tracks);
-					$scope.searching = false;
-				});
+				QueryFactory.performSearch($scope.trackSet.tracks);
+				$scope.searching = false;
 			});
 		};
 	}])
