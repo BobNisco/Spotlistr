@@ -1,3 +1,4 @@
+'use strict';
 // include gulp
 var gulp = require('gulp');
 
@@ -11,7 +12,43 @@ var rename = require('gulp-rename');
 var stripDebug = require('gulp-strip-debug');
 var uglify = require('gulp-uglify');
 var gulpif = require('gulp-if');
+var del = require('del');
 var argv = require('minimist')(process.argv.slice(2));
+
+var paths = {
+	dist: {
+		root: './dist',
+	},
+	html: {
+		src: './src/partials/*.html',
+		dest: './dist/partials',
+		index: './src/index.html',
+	},
+	css: {
+		src: [
+			'./bower_components/bootswatch/yeti/bootstrap.css',
+			'./bower_components/font-awesome/css/font-awesome.css',
+			'./src/css/*.css',
+			],
+		dest: './dist/css',
+	},
+	fonts: {
+		src: ['./bower_components/font-awesome/fonts/fontawesome-webfont.*'],
+		dest: './dist/fonts',
+	},
+	js: {
+		src: [
+			'./bower_components/angular/angular.js',
+			'./bower_components/angulartics/dist/angulartics.min.js',
+			'./bower_components/angulartics/dist/angulartics-ga.min.js',
+			'./bower_components/jquery/dist/jquery.min.js',
+			'./bower_components/angular-route/angular-route.js',
+			'./bower_components/bootstrap/dist/js/bootstrap.js',
+			'./src/js/*.js',
+		],
+		dest:'./dist/js',
+	},
+};
 
 // minify new or changed HTML pages
 gulp.task('minify-html', function() {
@@ -19,77 +56,54 @@ gulp.task('minify-html', function() {
 		empty: true,
 		quotes: true
 	};
-	var htmlPath = {
-		htmlSrc: './public/partials/*.html',
-		htmlDest: './public/dist/partials'
-	};
 
-	return gulp.src(htmlPath.htmlSrc)
-		.pipe(changed(htmlPath.htmlDest))
+	return gulp.src(paths.html.src)
+		.pipe(changed(paths.html.dest))
 		.pipe(minifyHTML(opts))
-		.pipe(gulp.dest(htmlPath.htmlDest));
+		.pipe(gulp.dest(paths.html.dest));
 });
 
 // CSS concat, auto prefix, minify, then rename output file
 gulp.task('minify-css', function() {
-	var cssPath = {
-		cssSrc: [
-			'./public/bower_components/bootswatch/yeti/bootstrap.css',
-			'./public/bower_components/font-awesome/css/font-awesome.css',
-			'./public/css/*.css',
-			'!*.min.css',
-			'!/**/*.min.css',
-		],
-		cssDest: './public/dist/css'
-	};
 
-	return gulp.src(cssPath.cssSrc)
+	return gulp.src(paths.css.src)
 		.pipe(concat('styles.css'))
 		.pipe(autoprefix('last 2 versions'))
 		.pipe(minifyCSS({ processImport: false }))
 		.pipe(rename({ suffix: '.min' }))
-		.pipe(gulp.dest(cssPath.cssDest));
+		.pipe(gulp.dest(paths.css.dest));
+});
+
+gulp.task('copy-static', function() {
+	return gulp.src(paths.html.index)
+		.pipe(gulp.dest(paths.dist.root));
 });
 
 gulp.task('copy-fonts', function() {
-	var fontPath = {
-		fontSrc: ['./public/bower_components/font-awesome/fonts/fontawesome-webfont.*'],
-		fontDest: './public/dist/fonts'
-	};
-
-	return gulp.src(fontPath.fontSrc)
-		.pipe(gulp.dest(fontPath.fontDest));
+	return gulp.src(paths.fonts.src)
+		.pipe(gulp.dest(paths.fonts.dest));
 });
 
 // JS concat, strip debugging code and minify
 gulp.task('bundle-scripts', function() {
-	var jsPath = {
-		jsSrc: [
-			'./public/bower_components/angular/angular.js',
-			'./public/bower_components/angulartics/dist/angulartics.min.js',
-			'./public/bower_components/angulartics/dist/angulartics-ga.min.js',
-			'./public/bower_components/jquery/dist/jquery.min.js',
-			'./public/bower_components/angular-route/angular-route.js',
-			'./public/bower_components/bootstrap/dist/js/bootstrap.js',
-			'./public/js/*.js',
-		],
-		jsDest:'./public/dist/js'
-	};
-
-	gulp.src(jsPath.jsSrc)
+	gulp.src(paths.js.src)
 		.pipe(concat('spotlistr.js'))
 		.pipe(gulpif(!!argv['release'], stripDebug()))
 		.pipe(gulpif(!!argv['release'], uglify({mangle: false})))
 		.pipe(rename({ suffix: '.min' }))
-		.pipe(gulp.dest(jsPath.jsDest));
+		.pipe(gulp.dest(paths.js.dest));
+});
+
+gulp.task('clean', function(cb) {
+	del(['./dist'], cb);
 });
 
 // default gulp task
-gulp.task('default', ['minify-html', 'copy-fonts', 'bundle-scripts', 'minify-css'], function() {
+gulp.task('default', ['minify-html', 'copy-fonts', 'bundle-scripts', 'minify-css', 'copy-static'], function() {
 	// watch for HTML changes
-	gulp.watch('./public/partials/*.html', ['minify-html']);
+	gulp.watch(paths.html.src, ['minify-html']);
 	// watch for JS changes
-	gulp.watch('./public/js/*.js', ['bundle-scripts']);
+	gulp.watch(paths.js.src, ['bundle-scripts']);
 	// watch for CSS changes
-	gulp.watch('./public/css/*.css', ['minify-css']);
+	gulp.watch(paths.css.src, ['minify-css']);
 });
