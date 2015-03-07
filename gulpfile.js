@@ -10,6 +10,8 @@ var minifyCSS = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var stripDebug = require('gulp-strip-debug');
 var uglify = require('gulp-uglify');
+var gulpif = require('gulp-if');
+var argv = require('minimist')(process.argv.slice(2));
 
 // minify new or changed HTML pages
 gulp.task('minify-html', function() {
@@ -76,8 +78,8 @@ gulp.task('bundle-scripts', function() {
 
 	gulp.src(jsPath.jsSrc)
 		.pipe(concat('spotlistr.js'))
-		.pipe(stripDebug())
-		.pipe(uglify({mangle: false}))
+		.pipe(gulpif(!!argv['release'], stripDebug()))
+		.pipe(gulpif(!!argv['release'], uglify({mangle: false})))
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest(jsPath.jsDest));
 });
