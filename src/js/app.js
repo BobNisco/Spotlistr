@@ -48,6 +48,10 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/lastfm-toptracks-similar.html',
     controller: 'LastfmToptracksSimilar'
   });
+  $routeProvider.when('/search/lastfm-tag-top-tracks', {
+    templateUrl: 'partials/lastfm-tag-top-tracks.html',
+    controller: 'LastfmTagTopTracks'
+  });
   $routeProvider.when('/search/youtube', {
     templateUrl: 'partials/youtube.html',
     controller: 'YouTube'

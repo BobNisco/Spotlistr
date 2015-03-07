@@ -2,6 +2,28 @@
 
 /* Controllers */
 
+var defaultSearch = function(UserFactory, QueryFactory, SpotifyPlaylistFactory) {
+	this.userFactory = UserFactory;
+	// The tracks
+	this.trackSet = new TrackSet();
+	// The name of the playlist
+	this.playlistName = '';
+	// Boolean for if the playlist will be public or nah
+	this.publicPlaylist = true;
+	// Messages to the user
+	this.messages = [];
+	// Bool flag for if search is running
+	this.searching = false;
+
+	this.assignSelectedTrack = function(track, index) {
+		QueryFactory.assignSelectedTrack(track, index);
+	};
+
+	this.createPlaylist = function(name, isPublic) {
+		SpotifyPlaylistFactory.createPlaylist(name, isPublic, this.trackSet.tracks, this.messages);
+	};
+};
+
 angular.module('spotlistr.controllers', [])
 	.controller('Splash', ['$scope', '$routeParams', 'UserFactory', function($scope, $routeParams, UserFactory) {
 		if ($routeParams.accessToken && $routeParams.refreshToken) {
@@ -13,19 +35,10 @@ angular.module('spotlistr.controllers', [])
 		if ($routeParams.accessToken && $routeParams.refreshToken) {
 			UserFactory.setTokensAndPullUserInfo($routeParams.accessToken, $routeParams.refreshToken);
 		}
-		$scope.userFactory = UserFactory;
 		// The data in the text area
 		$scope.taData = '';
-		// The name of the playlist
-		$scope.playlistName = '';
-		// Boolean for if the playlist will be public or nah
-		$scope.publicPlaylist = true;
-		// Messages to the user
-		$scope.messages = [];
-		// Bool flag for if search is running
-		$scope.searching = false;
-		// The tracks
-		$scope.trackSet = new TrackSet();
+
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
@@ -37,19 +50,9 @@ angular.module('spotlistr.controllers', [])
 			QueryFactory.performSearch($scope.trackSet.tracks);
 			$scope.searching = false;
 		};
-
-		$scope.assignSelectedTrack = function(track, index) {
-			QueryFactory.assignSelectedTrack(track, index);
-		};
-
-		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackSet.tracks, $scope.messages);
-		};
-
 	}])
 	.controller('Subreddit', ['$scope', '$q', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'SoundCloudFactory', function($scope, $q, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, SoundCloudFactory) {
-		$scope.userFactory = UserFactory;
-
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 		$scope.subredditSortBy = [
 			{name: 'hot', id: 'hot'},
 			{name: 'top - hour', id: 'top', sort: 't=hour'},
@@ -62,17 +65,6 @@ angular.module('spotlistr.controllers', [])
 		];
 		$scope.selectedSortBy = $scope.subredditSortBy[0];
 		$scope.subredditInput = '';
-
-		// The tracks
-		$scope.trackSet = new TrackSet();
-		// The name of the playlist
-		$scope.playlistName = '';
-		// Boolean for if the playlist will be public or nah
-		$scope.publicPlaylist = true;
-		// Messages to the user
-		$scope.messages = [];
-		// Bool flag for if search is running
-		$scope.searching = false;
 		// How many results to fetch from Reddit (multiples of 25)
 		$scope.fetchAmounts = [25, 50, 75, 100];
 		// The selected fetch amount
@@ -301,14 +293,6 @@ angular.module('spotlistr.controllers', [])
 				$scope.subredditInput = $scope.selectedPopularSubreddits;
 			}
 		}
-
-		$scope.assignSelectedTrack = function(track, index) {
-			QueryFactory.assignSelectedTrack(track, index);
-		};
-
-		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackSet.tracks, $scope.messages);
-		};
 	}])
 .controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', '$http', 'SoundCloudFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q, $http, SoundCloudFactory) {
 
@@ -318,11 +302,9 @@ angular.module('spotlistr.controllers', [])
 			// Save the refresh token into local storage
 			RedditUserFactory.setRefreshToken($routeParams.refresh_token);
 		}
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 		// Reddit Authentication Info
 		$scope.redditUserFactory = RedditUserFactory;
-		$scope.userFactory = UserFactory;
-		// The tracks
-		$scope.trackSet = new TrackSet();
 
 		$scope.subredditSortBy = [
 			{name: 'hot', id: 'hot'},
@@ -338,15 +320,6 @@ angular.module('spotlistr.controllers', [])
 		$scope.subredditInput = '';
 		$scope.multireddits = [];
 		$scope.selectedMultireddit = 0;
-
-		// The name of the playlist
-		$scope.playlistName = '';
-		// Boolean for if the playlist will be public or nah
-		$scope.publicPlaylist = true;
-		// Messages to the user
-		$scope.messages = [];
-		// Bool flag for if search is running
-		$scope.searching = false;
 		// How many results to fetch per each subreddit
 		$scope.fetchAmounts = [5, 10, 25];
 		// The selected fetch amount
@@ -408,32 +381,13 @@ angular.module('spotlistr.controllers', [])
 				$scope.searching = false;
 			});
 		};
-
-		$scope.assignSelectedTrack = function(track, index) {
-			QueryFactory.assignSelectedTrack(track, index);
-		};
-
-		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackSet.tracks, $scope.messages);
-		};
 	}])
 	.controller('LastfmSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
-
-		$scope.userFactory = UserFactory;
-		// The tracks
-		$scope.trackSet = new TrackSet();
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 		// The data in the text area
 		$scope.taData = '';
-		// The selected indexes of the review tracks
-		$scope.selectedReviewedTracks = {};
 		// The name of the playlist
 		$scope.playlistName = '';
-		// Boolean for if the playlist will be public or nah
-		$scope.publicPlaylist = true;
-		// Messages to the user
-		$scope.messages = [];
-		// Bool flag for if search is running
-		$scope.searching = false;
 		// Amount of similar tracks per track
 		$scope.similarCount = 10;
 		$scope.searchType = 'Last.fm Similar Tracks';
@@ -450,28 +404,9 @@ angular.module('spotlistr.controllers', [])
 				$scope.searching = false;
 			});
 		};
-
-		$scope.assignSelectedTrack = function(track, index) {
-			QueryFactory.assignSelectedTrack(track, index);
-		};
-
-		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackSet.tracks, $scope.messages);
-		};
 	}])
-.controller('LastfmToptracksSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
-
-		$scope.userFactory = UserFactory;
-		// The tracks
-		$scope.trackSet = new TrackSet();
-		// The name of the playlist
-		$scope.playlistName = '';
-		// Boolean for if the playlist will be public or nah
-		$scope.publicPlaylist = true;
-		// Messages to the user
-		$scope.messages = [];
-		// Bool flag for if search is running
-		$scope.searching = false;
+	.controller('LastfmToptracksSimilar', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 		// Amount of similar tracks per track
 		$scope.similarCount = 5;
 		// Inputted Last.fm username
@@ -505,29 +440,32 @@ angular.module('spotlistr.controllers', [])
 				});
 			});
 		};
+	}])
+	.controller('LastfmTagTopTracks', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
+		// Amount of tracks to return
+		$scope.limit = 50;
+		$scope.searchType = 'Last.fm Tag Top Tracks';
 
-		$scope.assignSelectedTrack = function(track, index) {
-			QueryFactory.assignSelectedTrack(track, index);
-		};
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
 
-		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackSet.tracks, $scope.messages);
+			// 1. Grab the tracks from the Last.fm user's profile
+			LastfmFactory.getUserTopTracks($scope.lastfmUsername, $scope.selectedLastfmPeriodOption.id, function(response) {
+				// 2. Extract the Artist - Track Title from the results
+				var topTracks = LastfmFactory.extractInfoFromLastfmResults(response.toptracks);
+				// 3. For each Top Track, find similar tracks and produce results
+				LastfmFactory.getSimilarTracksAndExtractInfo(topTracks, $scope.similarCount, function(lastfmSimilarTracks) {
+					LastfmFactory.extractQueriesFromLastfmSimilarTracks(lastfmSimilarTracks, $scope.trackSet.tracks);
+					QueryFactory.performSearch($scope.trackSet.tracks);
+					$scope.searching = false;
+				});
+			});
 		};
 	}])
 	.controller('YouTube', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'YouTubeFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, YouTubeFactory) {
-		$scope.userFactory = UserFactory;
-		// The tracks
-		$scope.trackSet = new TrackSet();
-		// The selected indexes of the review tracks
-		$scope.selectedReviewedTracks = {};
-		// The name of the playlist
-		$scope.playlistName = '';
-		// Boolean for if the playlist will be public or nah
-		$scope.publicPlaylist = true;
-		// Messages to the user
-		$scope.messages = [];
-		// Bool flag for if search is running
-		$scope.searching = false;
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 
 		$scope.playlistId = '';
 
@@ -555,29 +493,9 @@ angular.module('spotlistr.controllers', [])
 		        results = regex.exec($scope.playlistId);
 		    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
-
-		$scope.assignSelectedTrack = function(track, index) {
-			QueryFactory.assignSelectedTrack(track, index);
-		};
-
-		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackSet.tracks, $scope.messages);
-		};
 	}])
 	.controller('SoundCloud', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'SoundCloudFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, SoundCloudFactory) {
-		$scope.userFactory = UserFactory;
-		// The tracks
-		$scope.trackSet = new TrackSet();
-		// The selected indexes of the review tracks
-		$scope.selectedReviewedTracks = {};
-		// The name of the playlist
-		$scope.playlistName = '';
-		// Boolean for if the playlist will be public or nah
-		$scope.publicPlaylist = true;
-		// Messages to the user
-		$scope.messages = [];
-		// Bool flag for if search is running
-		$scope.searching = false;
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 
 		$scope.playlistId = '';
 
@@ -612,25 +530,11 @@ angular.module('spotlistr.controllers', [])
 		}
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
-
-		$scope.assignSelectedTrack = function(track, index) {
-			QueryFactory.assignSelectedTrack(track, index);
-		};
-
-		$scope.createPlaylist = function(name, isPublic) {
-			SpotifyPlaylistFactory.createPlaylist(name, isPublic, $scope.trackSet.tracks, $scope.messages);
-		};
 	}])
 	.controller('ExportSpotifyPlaylist', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
-		$scope.userFactory = UserFactory;
-		// Messages to the user
-		$scope.messages = [];
-		// Bool flag for if search is running
-		$scope.searching = false;
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 		// The Spotify URI
 		$scope.spotifyUri = '';
-		// The tracks
-		$scope.trackSet = new TrackSet();
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
@@ -649,15 +553,9 @@ angular.module('spotlistr.controllers', [])
 		};
 	}])
 	.controller('DedupePlaylist', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory) {
-		$scope.userFactory = UserFactory;
-		// Messages to the user
-		$scope.messages = [];
-		// Bool flag for if search is running
-		$scope.searching = false;
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 		// The Spotify URI
 		$scope.spotifyUri = '';
-		// The tracks
-		$scope.trackSet = new TrackSet();
 
 		$scope.performSearch = function() {
 			$scope.searching = true;
