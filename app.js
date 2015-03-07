@@ -186,7 +186,7 @@ app.get('/reddit/refresh_token/:access_token/:refresh_token', function(req, res)
 });
 
 var makeRedditApiUserHeader = function() {
-  return 'Spotlistr/1.5.1';
+  return 'Spotlistr/1.8.0';
 }
 
 var port = Number(process.env.PORT || 8888);
