@@ -28,4 +28,15 @@ angular.module('spotlistr.directives', []).
 			scope: false,
 			templateUrl: 'partials/adblock-warning.html'
 		};
+	})
+	.directive('searchButton', function() {
+		return {
+			restrict: 'AEC',
+			scope: {
+				userFactory: '=userFactory',
+				performSearch: '=performSearch',
+				searching: '=searching',
+			},
+			templateUrl: 'partials/search-button.html'
+		}
 	});

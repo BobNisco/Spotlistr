@@ -1,0 +1,2 @@
+<button ng-if="userFactory.userLoggedIn()" type="submit" ng-click="performSearch()" class="btn btn-success btn-lg" ng-disabled="searching===true"><span ng-if="searching===true">Searching...</span><span ng-if="searching===false">Search!</span></button>
+<a href="/login" ng-if="!userFactory.userLoggedIn()" class="btn btn-success btn-lg">Log in with Spotify to Begin!</a>
