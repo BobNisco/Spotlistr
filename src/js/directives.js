@@ -36,6 +36,7 @@ angular.module('spotlistr.directives', []).
 				userFactory: '=userFactory',
 				performSearch: '=performSearch',
 				searching: '=searching',
+				buttonText: '=buttonText',
 			},
 			templateUrl: 'partials/search-button.html'
 		}

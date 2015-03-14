@@ -203,6 +203,20 @@ angular.module('spotlistr.services', [])
 				}
 				return null;
 			},
+			extractUserIdAndPlaylistIdFromSpotifyUrl: function(url) {
+				var spotifyUrlRegex = /spotify.com\/user\/(.*)\/playlist\/(.*)\/?/,
+					regExGroups = spotifyUrlRegex.exec(url);
+				if (regExGroups !== null && regExGroups.length > 1) {
+					return {
+						userId: regExGroups[1],
+						playlistId: regExGroups[2],
+					};
+				}
+				return null;
+			},
+			extractUserIdAndPlaylistIdFromSpotifyLink: function(url) {
+				return this.extractUserIdAndPlaylistIdFromSpotifyUrl(url) || this.extractUserIdAndPlaylistIdFromSpotifyUri(url);
+			},
 		}
 	})
 	.factory('QueryFactory', function(SpotifySearchFactory) {

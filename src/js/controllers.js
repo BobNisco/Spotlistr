@@ -539,9 +539,9 @@ angular.module('spotlistr.controllers', [])
 			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
 			// Reset the messages array
 			$scope.messages.length = 0;
-			var playlistData = SpotifyPlaylistFactory.extractUserIdAndPlaylistIdFromSpotifyUri($scope.spotifyUri);
+			var playlistData = SpotifyPlaylistFactory.extractUserIdAndPlaylistIdFromSpotifyLink($scope.spotifyUri);
 			if (playlistData === null) {
-				SpotifyPlaylistFactory.addError($scope.messages, 'Please input a valid Spotify URI. Example: spotify:user:bobnisco:playlist:2prZEZ7nNZf9xeikRqB4NG');
+				SpotifyPlaylistFactory.addError($scope.messages, 'Please input a valid Spotify Playlist URL.');
 				$scope.searching = false;
 				return false;
 			}
@@ -560,9 +560,9 @@ angular.module('spotlistr.controllers', [])
 			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
 			// Reset the messages array
 			$scope.messages.length = 0;
-			var playlistData = SpotifyPlaylistFactory.extractUserIdAndPlaylistIdFromSpotifyUri($scope.spotifyUri);
+			var playlistData = SpotifyPlaylistFactory.extractUserIdAndPlaylistIdFromSpotifyLink($scope.spotifyUri);
 			if (playlistData === null) {
-				SpotifyPlaylistFactory.addError($scope.messages, 'Please input a valid Spotify URI. Example: spotify:user:bobnisco:playlist:2prZEZ7nNZf9xeikRqB4NG');
+				SpotifyPlaylistFactory.addError($scope.messages, 'Please input a valid Spotify URL.');
 				$scope.searching = false;
 				return false;
 			}
