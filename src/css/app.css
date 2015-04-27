@@ -103,3 +103,7 @@
 .mouse-click {
   cursor: pointer;
 }
+
+.export-spotify-playlist form div {
+  padding-right: 8px;
+}

@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container export-spotify-playlist">
 	<div class="row">
 		<div class="col-md-12">
 			<h1>Export Spotify Playlist as Plaintext</h1>
@@ -29,8 +29,39 @@
 		<div class="col-md-12">
 			<h2>Plaintext listing</h2>
 			<hr />
+			<form class="form-inline">
+				<div class="checkbox">
+					<label>Track title:
+						<input type="checkbox" ng-model="exportOptions.title">
+					</label>
+				</div>
+				<div class="checkbox">
+					<label>Artist:
+						<input type="checkbox" ng-model="exportOptions.artist">
+					</label>
+				</div>
+				<div class="checkbox">
+					<label>Album:
+						<input type="checkbox" ng-model="exportOptions.album">
+					</label>
+				</div>
+				<div class="checkbox">
+					<label>Length:
+						<input type="checkbox" ng-model="exportOptions.length">
+					</label>
+				</div>
+				<div class="checkbox">
+					<label>SpotifyID:
+						<input type="checkbox" ng-model="exportOptions.spotifyId">
+					</label>
+				</div>
+				<label>
+					Separator:
+					<select class="form-control" data-ng-options="separator for separator in separators" data-ng-model="exportOptions.separator"></select>
+				</label>
+			</form>
 			<ul class="list-unstyled">
-				<li ng-repeat="track in trackSet.tracks">{{ track.createDisplayNameForSelectedSong() }}</li>
+				<li ng-repeat="track in trackSet.tracks">{{ track.createExportText(exportOptions) }}</li>
 			</ul>
 		</div>
 	</div>

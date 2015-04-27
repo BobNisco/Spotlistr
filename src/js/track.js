@@ -93,3 +93,44 @@ Track.prototype.addSpotifyMatches = function(matches) {
 		this.selectedMatch = 0;
 	}
 };
+
+Track.prototype.createExportText = function(options) {
+	var result = [];
+	var track = this.spotifyMatches[0] || null;
+	if (!track) {
+		return result;
+	}
+
+	if (options.title) {
+		result.push(track.name);
+	}
+	if (options.artist) {
+		result.push(track.artists.map(function(artist) { return artist.name; }).join(';'));
+	}
+	if (options.album) {
+		result.push(track.album.name);
+	}
+	if (options.length) {
+		function msToTime(s) {
+
+			function addZ(n) {
+				return (n < 10 ? '0' : '') + n;
+			}
+
+			var ms = s % 1000;
+			s = (s - ms) / 1000;
+			var secs = s % 60;
+			s = (s - secs) / 60;
+			var mins = s % 60;
+			var hrs = (s - mins) / 60;
+			var result = '';
+
+			return addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs);
+		}
+		result.push(msToTime(track.duration_ms));
+	}
+	if (options.spotifyId) {
+		result.push(track.id);
+	}
+	return result.join(' ' + options.separator + ' ');
+}
