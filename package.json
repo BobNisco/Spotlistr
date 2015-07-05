@@ -36,7 +36,7 @@
     "heroku"
   ],
   "author": "Bob Nisco",
-  "license": "Apache2",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/BobNisco/Spotlistr/issues"
   },
