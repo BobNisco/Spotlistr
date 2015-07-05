@@ -290,14 +290,14 @@ angular.module('spotlistr.services', [])
 	})
 	.factory('RedditFactory', function($http, $q, RedditUserFactory, SoundCloudFactory) {
 		return {
-			getSubreddit: function(subreddit, sort, t, fetchAmount, callback) {
+			getSubreddit: function(subreddit, sort, t, fetchAmount, callback, errorCallback) {
 				// http://www.reddit.com/r/trap/hot.json
 				var req = 'https://www.reddit.com/r/' + subreddit + '/' + sort + '.json?limit=' + fetchAmount;
 				if (t) {
 					req += '&' + t;
 				}
 				console.log(req);
-				$http.get(req).success(callback);
+				$http.get(req).success(callback).error(errorCallback);
 			},
 			getUsersMultiReddits: function(callback) {
 				var req = '/reddit/api/multi/mine/' + RedditUserFactory.getAccessToken();

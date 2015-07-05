@@ -283,6 +283,9 @@ angular.module('spotlistr.controllers', [])
 					QueryFactory.performSearch($scope.trackSet.tracks);
 					$scope.searching = false;
 				});
+			}, function(error) {
+				SpotifyPlaylistFactory.addError($scope.messages, 'Uh oh, Reddit seems to not be responding :( Wait a few seconds and try your request again.');
+				$scope.searching = false;
 			});
 		};
 
