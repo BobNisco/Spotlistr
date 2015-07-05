@@ -97,6 +97,8 @@ Track.prototype.addSpotifyMatches = function(matches) {
 Track.prototype.createExportText = function(options) {
 	var result = [];
 	var track = this.spotifyMatches[0] || null;
+	var separator = options.separator === ';' ? ',' : ';';
+
 	if (!track) {
 		return result;
 	}
@@ -105,7 +107,7 @@ Track.prototype.createExportText = function(options) {
 		result.push(track.name);
 	}
 	if (options.artist) {
-		result.push(track.artists.map(function(artist) { return artist.name; }).join(';'));
+		result.push(track.artists.map(function(artist) { return artist.name; }).join(separator));
 	}
 	if (options.album) {
 		result.push(track.album.name);

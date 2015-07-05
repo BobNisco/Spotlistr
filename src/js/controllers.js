@@ -533,7 +533,7 @@ angular.module('spotlistr.controllers', [])
 		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 		// The Spotify URI
 		$scope.spotifyUri = '';
-		$scope.separators = ['-', ',', ' '];
+		$scope.separators = ['-', ',', ';', '|', ' '];
 		// Options that the user wants to export
 		$scope.exportOptions = {
 			title: true,
