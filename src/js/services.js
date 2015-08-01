@@ -321,6 +321,10 @@ angular.module('spotlistr.services', [])
 					if (value.data.domain === 'soundcloud.com') {
 						var url = '/resolve.json?url=' + value.data.url + '&client_id=' + SoundCloudFactory.apiKey;
 						SC.get(url, function(scResponse) {
+							if (!scResponse) {
+								return deferred.resolve(response);
+							}
+
 							if (scResponse.kind === 'track' && scResponse.downloadable) {
 								newTrack.downloadUrl = scResponse.download_url;
 							} else if (scResponse.kind === 'playlist') {
