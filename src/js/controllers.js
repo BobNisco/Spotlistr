@@ -544,6 +544,7 @@ angular.module('spotlistr.controllers', [])
 			album: false,
 			length: false,
 			spotifyId: false,
+			isrc: false,
 			separator: $scope.separators[0],
 		};
 

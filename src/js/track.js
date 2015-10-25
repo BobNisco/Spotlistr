@@ -112,6 +112,9 @@ Track.prototype.createExportText = function(options) {
 	if (options.album) {
 		result.push(track.album.name);
 	}
+	if (options.isrc) {
+		result.push(track.external_ids.isrc);
+	}
 	if (options.length) {
 		function msToTime(s) {
 
