@@ -455,7 +455,7 @@ angular.module('spotlistr.controllers', [])
 			// 1. Grab the top tracks for the given tag
 			LastfmFactory.getTagTopTracks($scope.inputtedTag, function(response) {
 				// 2. Extract the Artist - Track Title from the results
-				var topTracks = LastfmFactory.extractInfoFromLastfmResults(response.toptracks);
+				var topTracks = LastfmFactory.extractInfoFromLastfmResults(response.tracks);
 				for (var i = 0; i < topTracks.length; i++) {
 					$scope.trackSet.tracks.push(new Track(topTracks[i]));
 				}

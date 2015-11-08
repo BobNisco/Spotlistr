@@ -2,7 +2,7 @@
 
 /* Services */
 angular.module('spotlistr.services', [])
-	.value('version', '1.9.3')
+	.value('version', '1.9.4')
 	.factory('UserFactory', function($http, $rootScope) {
 		return {
 			currentUser: function() {
@@ -380,7 +380,7 @@ angular.module('spotlistr.services', [])
 					// We are expecting input to be in the format Arist - Track Title
 					splitTrack = value.split('-');
 					// Async task
-					var req = 'http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' + encodeURIComponent(splitTrack[0]) + '&track=' + encodeURIComponent(splitTrack[1]) + '&api_key=' + _this.apiKey + '&limit=' + similarCount + '&format=json';
+					var req = 'http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' + encodeURIComponent(splitTrack[0].trim()) + '&track=' + encodeURIComponent(splitTrack[1].trim()) + '&api_key=' + _this.apiKey + '&limit=' + similarCount + '&format=json';
 					$http.get(req).success(function(response) {
 						deferred.resolve(response);
 					}).error(function() {
