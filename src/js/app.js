@@ -40,6 +40,10 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/multireddit.html',
     controller: 'Multireddit'
   });
+  $routeProvider.when('/search/reddit-comments', {
+    templateUrl: 'partials/reddit-comments.html',
+    controller: 'RedditComments'
+  });
   $routeProvider.when('/search/lastfm-similar', {
     templateUrl: 'partials/lastfm-similar.html',
     controller: 'LastfmSimilar'

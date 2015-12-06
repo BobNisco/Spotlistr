@@ -297,7 +297,7 @@ angular.module('spotlistr.controllers', [])
 			}
 		}
 	}])
-.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', '$http', 'SoundCloudFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q, $http, SoundCloudFactory) {
+	.controller('Multireddit', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', '$http', 'SoundCloudFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q, $http, SoundCloudFactory) {
 
 		if ($routeParams.access_token && $routeParams.refresh_token) {
 			// Save the access token into local storage
@@ -381,6 +381,26 @@ angular.module('spotlistr.controllers', [])
 			$q.all(promises).then(function(e) {
 				// 2. Search Spotify
 				QueryFactory.performSearch(_trackArr);
+				$scope.searching = false;
+			});
+		};
+	}])
+	.controller('RedditComments', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'RedditFactory', 'QueryFactory', 'RedditUserFactory', '$routeParams', '$q', '$http', 'SoundCloudFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, RedditFactory, QueryFactory, RedditUserFactory, $routeParams, $q, $http, SoundCloudFactory) {
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
+		// The Reddit thread URL
+		$scope.threadUrl = '';
+
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
+
+			RedditFactory.getCommentsForThread($scope.threadUrl, function(comments) {
+				$scope.trackSet.tracks = comments.map(function(comment) {
+					return new Track(comment);
+				});
+				QueryFactory.performSearch($scope.trackSet.tracks);
+				$scope.searching = false;
+			}, function(error) {
 				$scope.searching = false;
 			});
 		};

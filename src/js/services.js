@@ -303,6 +303,46 @@ angular.module('spotlistr.services', [])
 				var req = '/reddit/api/multi/mine/' + RedditUserFactory.getAccessToken();
 				$http.get(req).success(callback);
 			},
+			getCommentsForThread: function(threadUrl, callback, errorCallback) {
+				if (threadUrl.charAt(threadUrl.length - 1) === '/') {
+					threadUrl = threadUrl + 'comments.json';
+				} else {
+					threadUrl = threadUrl + '/comments.json';
+				}
+				$http.get(threadUrl).success(function(response) {
+					var comments = response[1] && response[1].data && response[1].data.children;
+					var commentText = [];
+					var markdownUrlRegex = /\[(.*)\]/gi;
+					if (comments) {
+						for (var i = 0; i < comments.length; i++) {
+							var body = comments[i].data.body;
+							if (body) {
+								// Comments can be in literally any format anyone wants. We're going to take
+								// a bit of a naive approach here and try to extract out some song titles
+
+								var bodyLines;
+								var markdownGroups;
+								var sentences;
+								if ((markdownGroups = markdownUrlRegex.exec(body)) !== null) {
+									// First assumption: if there is a link, it's probably a link to the song
+									commentText.push(markdownGroups[1]);
+								} else if ((sentences = body.split('.')).length > 1) {
+									// Second assumption: if there are multiple sentences, the song is the first one
+									commentText.push(sentences[0]);
+								} else if ((bodyLines = body.split('\n')).length > 1) {
+									// Third assumption: if there are multiple lines to a comment, then the song
+									// will be on the first line with a user's comments on other lines after it
+									commentText.push(bodyLines[0])
+								} else {
+									// Fall back case
+									commentText.push(comments[i].data.body);
+								}
+							}
+						}
+					}
+					callback(commentText);
+				}).error(errorCallback);
+			},
 			putAllTracksIntoArray: function(response, listings, trackArr, subredditInput, callback) {
 				// 1. Take the title of each listing returned from Reddit
 				var promises = listings.map(function(value) {
@@ -310,7 +350,7 @@ angular.module('spotlistr.services', [])
 					// Async task
 					// 1.1. Filter out anything with a self-post
                     //      Self posts have a "domain" of self.subreddit
-                   	if (value.data.domain === 'self.' + subredditInput) {
+                    if (value.data.domain === 'self.' + subredditInput) {
                         deferred.resolve();
                         return deferred.promise;
                     }
