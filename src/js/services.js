@@ -272,7 +272,7 @@ angular.module('spotlistr.services', [])
 					if (currentItem.spotifyMatches.length === 1) {
 						// Exact match
 						playlist.push(this.createSpotifyUriFromTrackId(currentItem.spotifyMatches[0].id));
-					} else if (currentItem.spotifyMatches.length > 1) {
+					} else if (currentItem.spotifyMatches.length > 1 && currentItem.selectedMatch !== -1) {
 						// Push the selected match of the multiple matches
 						playlist.push(this.createSpotifyUriFromTrackId(currentItem.spotifyMatches[currentItem.selectedMatch].id));
 					}

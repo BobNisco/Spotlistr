@@ -15,13 +15,6 @@ angular.module('spotlistr.directives', []).
 			templateUrl : 'partials/results.html'
 		};
 	})
-	.directive('card', function () {
-		return {
-			restrict: 'E',
-			scope: false,
-			templateUrl: 'partials/card.html'
-		};
-	})
 	.directive('adblockWarning', function () {
 		return {
 			restrict: 'E',

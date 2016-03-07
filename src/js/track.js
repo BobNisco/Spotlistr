@@ -21,16 +21,11 @@ Track.prototype.generateSoundcloudDownloadUrl = function(client_id) {
 };
 
 Track.prototype.trackLength = function() {
-	var track = this.getSelectedSong(),
-		totalSeconds = track.duration_ms / 1000,
-		seconds = parseInt(totalSeconds % 60),
-		minutes = parseInt((totalSeconds - seconds) / 60);
-
-	return ('00' + minutes).slice(-2) + ':' + ('00' + seconds).slice(-2);
+	return Track.getTrackLength(this.getSelectedSong());
 };
 
 Track.prototype.setSelectedMatch = function(index) {
-	if (index < 0 || index > this.spotifyMatches.length - 1) {
+	if (index > this.spotifyMatches.length - 1) {
 		throw new Error('Selected Match out of bounds');
 	}
 	this.selectedMatch = index;
@@ -41,6 +36,8 @@ Track.prototype.getSelectedSong = function() {
 		return null;
 	} else if (this.spotifyMatches.length === 1) {
 		return this.spotifyMatches[0];
+	} else if (this.selectedMatch === -1) {
+		return null;
 	} else {
 		return this.spotifyMatches[this.selectedMatch];
 	}
@@ -69,16 +66,7 @@ Track.prototype.createDisplayName = function(track) {
 };
 
 Track.prototype.artist = function() {
-	var track = this.getSelectedSong(),
-		result = '';
-	for (var i = 0; i < track.artists.length; i += 1) {
-		if (i < track.artists.length - 1) {
-			result += track.artists[i].name + ', ';
-		} else {
-			result += track.artists[i].name;
-		}
-	}
-	return result;
+	return Track.getArtist(this.getSelectedSong());
 };
 
 Track.prototype.createSpotifyUriForTrack = function(index) {
@@ -138,4 +126,18 @@ Track.prototype.createExportText = function(options) {
 		result.push(track.id);
 	}
 	return result.join(' ' + options.separator + ' ');
+};
+
+Track.getArtist = function(track) {
+	return track.artists.map(function(artist) {
+		return artist.name
+	}).join(', ');
+};
+
+Track.getTrackLength = function(track) {
+	var totalSeconds = track.duration_ms / 1000,
+		seconds = parseInt(totalSeconds % 60),
+		minutes = parseInt((totalSeconds - seconds) / 60);
+
+	return ('00' + minutes).slice(-2) + ':' + ('00' + seconds).slice(-2);
 }

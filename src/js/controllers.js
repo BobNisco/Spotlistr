@@ -22,6 +22,8 @@ var defaultSearch = function(UserFactory, QueryFactory, SpotifyPlaylistFactory) 
 	this.createPlaylist = function(name, isPublic) {
 		SpotifyPlaylistFactory.createPlaylist(name, isPublic, this.trackSet.tracks, this.messages);
 	};
+
+	this.Track = Track;
 };
 
 angular.module('spotlistr.controllers', [])
