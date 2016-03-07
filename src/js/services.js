@@ -2,7 +2,7 @@
 
 /* Services */
 angular.module('spotlistr.services', [])
-	.value('version', '1.10.0')
+	.value('version', '1.11.0')
 	.factory('UserFactory', function($http, $rootScope) {
 		return {
 			currentUser: function() {
@@ -465,6 +465,19 @@ angular.module('spotlistr.services', [])
 				var _this = this;
 
 				var req = 'http://ws.audioscrobbler.com/2.0/?method=tag.gettoptracks&tag=' + tag + '&api_key=' + _this.apiKey + '&format=json';
+
+				$http.get(req).success(callback);
+			},
+			getTopTracksForTimePeriod: function(username, from, to, callback) {
+				// http://www.last.fm/api/show/user.getWeeklyTrackChart
+				var _this = this;
+				var req = 'http://ws.audioscrobbler.com/2.0/?method=user.getweeklytrackchart&user=' + username + '&api_key=' + _this.apiKey + '&format=json';
+				if (from) {
+					req += '&from=' + from;
+				}
+				if (to) {
+					req += '&to=' + to;
+				}
 
 				$http.get(req).success(callback);
 			},

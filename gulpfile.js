@@ -28,17 +28,22 @@ var paths = {
 		src: [
 			'./bower_components/bootswatch/yeti/bootstrap.css',
 			'./bower_components/font-awesome/css/font-awesome.css',
+			'./bower_components/angular-bootstrap/ui-bootstrap-csp.css',
 			'./src/css/*.css',
-			],
+		],
 		dest: './dist/css',
 	},
 	fonts: {
-		src: ['./bower_components/font-awesome/fonts/fontawesome-webfont.*'],
+		src: [
+			'./bower_components/font-awesome/fonts/fontawesome-webfont.*',
+			'./bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.*',
+		],
 		dest: './dist/fonts',
 	},
 	js: {
 		src: [
 			'./bower_components/angular/angular.js',
+			'./bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
 			'./bower_components/angulartics/dist/angulartics.min.js',
 			'./bower_components/angulartics/dist/angulartics-ga.min.js',
 			'./bower_components/jquery/dist/jquery.min.js',

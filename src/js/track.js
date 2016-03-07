@@ -53,7 +53,8 @@ Track.prototype.normalizeSearchQuery = function(query) {
 	// Remove the year tags in the format [yyyy] or (yyyy)
 	normalized = normalized.replace(/(\[|\()+\d*(\]|\))+/, '');
 	// Remove all the extraneous stuff
-	normalized = normalized.replace(/[^\w\s]/gi, '');
+	// This was causing problems with non-english characters
+	// normalized = normalized.replace(/[^\w\s]/gi, '');
 	return normalized;
 };
 

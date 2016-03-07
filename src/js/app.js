@@ -4,6 +4,7 @@
 // Declare app level module which depends on filters, and services
 angular.module('spotlistr', [
   'ngRoute',
+  'ui.bootstrap',
   'spotlistr.filters',
   'spotlistr.services',
   'spotlistr.directives',
@@ -55,6 +56,10 @@ config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/search/lastfm-tag-top-tracks', {
     templateUrl: 'partials/lastfm-tag-top-tracks.html',
     controller: 'LastfmTagTopTracks'
+  });
+  $routeProvider.when('/search/lastfm-top-for-time-period', {
+    templateUrl: 'partials/lastfm-top-for-time-period.html',
+    controller: 'LastfmTopForTimePeriod'
   });
   $routeProvider.when('/search/youtube', {
     templateUrl: 'partials/youtube.html',

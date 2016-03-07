@@ -1,0 +1,44 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Last.fm Top Tracks for Time Period</h1>
+			<p class="lead">Want to time travel through your music taste? Put in your Last.fm user name, select a date range and we'll generate a playlist for your top tracks from that time period!</p>
+			<adblock-warning></adblock-warning>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<form role="form" class="form-horizontal">
+				<div class="form-group">
+					<label for="sortBy" class="col-sm-2 control-label">Last.fm Username</label>
+					<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+						<input type="text" class="form-control" data-ng-model="lastfmUsername" />
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<div class="form-group">
+					<label for="sortBy" class="col-sm-2 control-label">From</label>
+					<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+						<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="fromTimestamp" is-open="fromPopup.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" ng-click="openFromPopup()" />
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<div class="form-group">
+					<label for="sortBy" class="col-sm-2 control-label">To</label>
+					<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+						<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="toTimestamp" is-open="toPopup.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" ng-click="openToPopup()" />
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<div class="form-group" ng-cloak>
+					<div class="col-sm-offset-2 col-sm-10">
+						<search-button perform-search="performSearch" user-factory="userFactory" searching="searching"></search-button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div result-module></div>
+</div>

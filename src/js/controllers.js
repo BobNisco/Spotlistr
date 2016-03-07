@@ -487,6 +487,58 @@ angular.module('spotlistr.controllers', [])
 			});
 		};
 	}])
+	.controller('LastfmTopForTimePeriod', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
+
+		$scope.lastfmUsername = '';
+		$scope.fromTimestamp = '';
+		$scope.toTimestamp = '';
+
+		// Date pickers
+		$scope.format = 'yyyy/MM/dd';
+		$scope.fromPopup = {
+			opened: false
+		};
+
+		$scope.toPopup = {
+			opened: false
+		};
+
+		$scope.openFromPopup = function() {
+			$scope.fromPopup.opened = true;
+		};
+
+		$scope.openToPopup = function() {
+			$scope.toPopup.opened = true;
+		};
+
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
+
+			LastfmFactory.getTopTracksForTimePeriod($scope.lastfmUsername,
+				$scope.fromTimestamp.getTime() / 1000,
+				$scope.toTimestamp.getTime() / 1000,
+				function(result) {
+					debugger;
+
+					if (!result.weeklytrackchart || !result.weeklytrackchart.track) {
+						return;
+					}
+
+					var maxResults = Math.min(result.weeklytrackchart.track.length, 50);
+
+					for (var i = 0; i < maxResults; i++) {
+						var currentTrack = result.weeklytrackchart.track[i];
+						var newTrack = new Track(currentTrack.artist['#text'] + ' - ' + currentTrack.name);
+						$scope.trackSet.tracks.push(newTrack);
+					}
+
+					QueryFactory.performSearch($scope.trackSet.tracks);
+					$scope.searching = false;
+				});
+		}
+	}])
 	.controller('YouTube', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'YouTubeFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, YouTubeFactory) {
 		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 
