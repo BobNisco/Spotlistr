@@ -81,5 +81,9 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/dedupe-playlist.html',
     controller: 'DedupePlaylist'
   });
+  $routeProvider.when('/manage/shuffle-playlist', {
+    templateUrl: 'partials/shuffle-playlist.html',
+    controller: 'ShufflePlaylist'
+  });
   $routeProvider.otherwise({redirectTo: '/splash'});
 }]);

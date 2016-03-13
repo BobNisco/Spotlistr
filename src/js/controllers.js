@@ -520,8 +520,6 @@ angular.module('spotlistr.controllers', [])
 				$scope.fromTimestamp.getTime() / 1000,
 				$scope.toTimestamp.getTime() / 1000,
 				function(result) {
-					debugger;
-
 					if (!result.weeklytrackchart || !result.weeklytrackchart.track) {
 						return;
 					}
@@ -692,6 +690,37 @@ angular.module('spotlistr.controllers', [])
 				} else {
 					SpotifyPlaylistFactory.addSuccess($scope.messages, 'Your playlist has no duplicates to remove! Sweet!');
 				}
+			});
+		};
+	}])
+	.controller('ShufflePlaylist', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'Utilities', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, Utilities) {
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
+		// The Spotify URI
+		$scope.spotifyUri = '';
+
+
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
+			// Reset the messages array
+			$scope.messages.length = 0;
+			var playlistData = SpotifyPlaylistFactory.extractUserIdAndPlaylistIdFromSpotifyLink($scope.spotifyUri);
+			if (playlistData === null) {
+				SpotifyPlaylistFactory.addError($scope.messages, 'Please input a valid Spotify URL.');
+				$scope.searching = false;
+				return false;
+			}
+
+			SpotifyPlaylistFactory.getPlaylistTracks(playlistData.userId, playlistData.playlistId, $scope.trackSet.tracks, $scope.messages, function(response) {
+				$scope.searching = false;
+
+				Utilities.shuffleArray($scope.trackSet.tracks);
+
+				SpotifyPlaylistFactory.replaceTracks(playlistData.userId, playlistData.playlistId, UserFactory.getAccessToken(), $scope.trackSet.tracks, function(response) {
+					SpotifyPlaylistFactory.addSuccess($scope.messages, 'Nice! Your playlist has been shuffled! Check it out in your Spotify client.');
+				}, function(error) {
+					SpotifyPlaylistFactory.addError($scope.messages, 'Hmm something went wrong when trying to shuffle your playlist :(');
+				});
 			});
 		};
 	}])

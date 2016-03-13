@@ -66,6 +66,7 @@ angular.module('spotlistr.services', [])
 	})
 	.factory('SpotifyPlaylistFactory', function($http, UserFactory, QueryFactory) {
 		return {
+			SPOTIFY_TRACK_LIMIT: 100,
 			create: function(name, user_id, access_token, is_public, callback, errorCallback) {
 				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
 				// https://developer.spotify.com/web-api/create-playlist/
@@ -78,9 +79,9 @@ angular.module('spotlistr.services', [])
 					}
 				).success(callback).error(errorCallback);
 			},
-			addTracks: function(user_id, playlist_id, access_token, arr, callback) {
+			addTracks: function(user_id, playlist_id, access_token, arr, successCallback, errorCallback) {
 				var _this = this,
-					SPOTIFY_TRACK_LIMIT = 100;
+					SPOTIFY_TRACK_LIMIT = _this.SPOTIFY_TRACK_LIMIT;
 				// https://developer.spotify.com/web-api/add-tracks-to-playlist/
 				// POST https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
 				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
@@ -88,10 +89,10 @@ angular.module('spotlistr.services', [])
 					// Spotify limits to adding 100 songs at a time
 					// So we'll batch submit in 100 track subsets
 					for (var i = 0; i * SPOTIFY_TRACK_LIMIT < arr.length; i += 1) {
-						_this.handleSubmitTracksToPlaylist(arr.slice(i * SPOTIFY_TRACK_LIMIT, (i + 1) * SPOTIFY_TRACK_LIMIT), user_id, playlist_id, callback);
+						_this.handleSubmitTracksToPlaylist(arr.slice(i * SPOTIFY_TRACK_LIMIT, (i + 1) * SPOTIFY_TRACK_LIMIT), user_id, playlist_id, successCallback, errorCallback);
 					}
 				} else {
-					_this.handleSubmitTracksToPlaylist(arr, user_id, playlist_id, callback);
+					_this.handleSubmitTracksToPlaylist(arr, user_id, playlist_id, successCallback, errorCallback);
 				}
 			},
 			deleteTracks: function(user_id, playlist_id, access_token, arr, callback) {
@@ -104,8 +105,8 @@ angular.module('spotlistr.services', [])
 						data: {'tracks': arr}
 					}).success(callback);
 			},
-			handleSubmitTracksToPlaylist: function(arr, user_id, playlist_id, callback) {
-				$http.post('https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(callback);
+			handleSubmitTracksToPlaylist: function(arr, user_id, playlist_id, successCallback, errorCallback) {
+				$http.post('https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(successCallback).error(errorCallback);
 			},
 			createPlaylist: function(name, isPublic, trackArr, messages) {
 				// Clear the array, but keep the reference
@@ -130,6 +131,30 @@ angular.module('spotlistr.services', [])
 						});
 					};
 				_this.create(name, UserFactory.getUserId(), UserFactory.getAccessToken(), isPublic, successCallback, errorCallback);
+			},
+			replaceTracks: function(user_id, playlist_id, access_token, trackArr, successCallback, errorCallback) {
+				// https://developer.spotify.com/web-api/replace-playlists-tracks/
+				// PUT https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
+				var _this = this;
+				var playlist = QueryFactory.gatherPlaylist(trackArr);
+				var doReplaceRequest = function(user_id, playlist_id, playlist, successCallback, errorCallback) {
+					$http({
+						method: 'PUT',
+						url: 'https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks',
+						data: {'uris': playlist}
+					}).success(successCallback).error(errorCallback);
+				}
+
+				if (playlist.length > _this.SPOTIFY_TRACK_LIMIT) {
+					// First, replace all of the existing tracks
+					var firstBatch = playlist.slice(0, _this.SPOTIFY_TRACK_LIMIT);
+					doReplaceRequest(user_id, playlist_id, firstBatch, function() {
+						// Then, add the rest and hand off the batching logic.
+						_this.addTracks(user_id, playlist_id, access_token, playlist.slice(_this.SPOTIFY_TRACK_LIMIT), successCallback, errorCallback);
+					}, errorCallback);
+				} else {
+					doReplaceRequest(user_id, playlist_id, playlist, successCallback, errorCallback);
+				}
 			},
 			handleErrorResponse: function(data, status, headers, config, messages, _this, onReauthCallback) {
 				if (status === 401) {
@@ -518,5 +543,29 @@ angular.module('spotlistr.services', [])
 	.factory('SoundCloudFactory', function($http) {
 		return {
 			apiKey: '88434bd865d117fd3f098ca6c2c7ad38',
+		}
+	})
+	.factory('Utilities', function() {
+		return {
+			shuffleArray: function(array) {
+				// Fisher-Yates shuffle
+				// http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+				var currentIndex = array.length, temporaryValue, randomIndex;
+
+				// While there remain elements to shuffle...
+				while (0 !== currentIndex) {
+
+					// Pick a remaining element...
+					randomIndex = Math.floor(Math.random() * currentIndex);
+					currentIndex -= 1;
+
+					// And swap it with the current element.
+					temporaryValue = array[currentIndex];
+					array[currentIndex] = array[randomIndex];
+					array[randomIndex] = temporaryValue;
+				}
+
+				return array;
+			}
 		}
 	});
