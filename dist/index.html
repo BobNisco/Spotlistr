@@ -55,8 +55,14 @@
 					</li>
 					<li><a href="#/search/youtube">YouTube</a></li>
 					<li><a href="#/search/soundcloud">SoundCloud</a></li>
-					<li><a href="#/export/spotify-playlist">Export Playlist</a></li>
-					<li><a href="#/manage/dedupe-playlist">Dedupe Playlist</a></li>
+					<li class="dropdown">
+						<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Playlist Tools <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#/export/spotify-playlist">Export Playlist</a></li>
+							<li><a href="#/manage/dedupe-playlist">Dedupe Playlist</a></li>
+							<li><a href="#/manage/shuffle-playlist">Shuffle Playlist</a></li>
+						</ul>
+					</li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right" ng-cloak>
 					<li ng-if="userFactory.userLoggedIn() === true" class="dropdown">
