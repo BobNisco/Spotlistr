@@ -92,11 +92,11 @@ Track.prototype.createExportText = function(options) {
 		return result;
 	}
 
-	if (options.title) {
-		result.push(track.name);
-	}
 	if (options.artist) {
 		result.push(track.artists.map(function(artist) { return artist.name; }).join(separator));
+	}
+	if (options.title) {
+		result.push(track.name);
 	}
 	if (options.album) {
 		result.push(track.album.name);

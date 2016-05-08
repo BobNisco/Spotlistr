@@ -611,8 +611,8 @@ angular.module('spotlistr.controllers', [])
 		$scope.separators = ['-', ',', ';', '|', ' '];
 		// Options that the user wants to export
 		$scope.exportOptions = {
-			title: true,
 			artist: true,
+			title: true,
 			album: false,
 			length: false,
 			spotifyId: false,
