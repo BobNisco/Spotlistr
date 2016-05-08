@@ -1,6 +1,6 @@
 {
   "name": "Spotlistr",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "description": "Spotlistr is the easiest way to create playlists for Spotify!",
   "main": "app.js",
   "dependencies": {
