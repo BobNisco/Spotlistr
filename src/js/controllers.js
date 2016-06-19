@@ -376,6 +376,9 @@ angular.module('spotlistr.controllers', [])
 						deferred.resolve(response);
 					});
 
+				}, function(error) {
+					SpotifyPlaylistFactory.addError($scope.messages, 'Uh oh, Reddit seems to not be responding :( Wait a few seconds and try your request again.');
+					$scope.searching = false;
 				});
 				return deferred.promise;
 			});
