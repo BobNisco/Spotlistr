@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "del": "^2.1.0",
+    "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-changed": "^1.0.0",
     "gulp-concat": "^2.4.1",
@@ -18,7 +19,7 @@
     "gulp-minify-html": "^1.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-strip-debug": "^1.0.1",
-    "gulp-uglify": "^1.0.1",
+    "gulp-uglify": "^2.0.0",
     "minimist": "^1.1.0"
   },
   "scripts": {
