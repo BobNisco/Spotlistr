@@ -56,10 +56,18 @@ angular.module('spotlistr.services', [])
 	.factory('SpotifySearchFactory', function($http) {
 		return {
 			search: function(track) {
+				var _this = this;
 				// https://developer.spotify.com/web-api/search-item/
 				var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(track.cleanedQuery);
 				$http.get(req).success(function(response) {
 					track.addSpotifyMatches(response.tracks.items);
+				}).error(function(response, status, headers, config) {
+					if (status === 429) {
+						// If we are exceeding max requests, try this request again after a period of time
+						window.setTimeout(function() {
+							_this.search(track);
+						}, 3000);
+					}
 				});
 			}
 		}
@@ -85,15 +93,22 @@ angular.module('spotlistr.services', [])
 				// https://developer.spotify.com/web-api/add-tracks-to-playlist/
 				// POST https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
 				$http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
-				if (arr.length > SPOTIFY_TRACK_LIMIT) {
-					// Spotify limits to adding 100 songs at a time
-					// So we'll batch submit in 100 track subsets
-					for (var i = 0; i * SPOTIFY_TRACK_LIMIT < arr.length; i += 1) {
-						_this.handleSubmitTracksToPlaylist(arr.slice(i * SPOTIFY_TRACK_LIMIT, (i + 1) * SPOTIFY_TRACK_LIMIT), user_id, playlist_id, successCallback, errorCallback);
-					}
-				} else {
-					_this.handleSubmitTracksToPlaylist(arr, user_id, playlist_id, successCallback, errorCallback);
+
+				// Spotify limits to adding 100 songs at a time
+				// So we'll batch submit in 100 track subsets
+				var batches = [];
+
+				for (var i = 0; i < arr.length; i += 1) {
+					var batchIndex = Math.floor((i + 1) / SPOTIFY_TRACK_LIMIT);
+
+					if (!batches[batchIndex]) { batches[batchIndex] = []; };
+
+					batches[batchIndex].push(arr[i]);
 				}
+
+				batches.map(function(batch) {
+					_this.handleSubmitTracksToPlaylist(batch, user_id, playlist_id, successCallback, errorCallback);
+				});
 			},
 			deleteTracks: function(user_id, playlist_id, access_token, arr, callback) {
 				var _this = this;
@@ -106,6 +121,7 @@ angular.module('spotlistr.services', [])
 					}).success(callback);
 			},
 			handleSubmitTracksToPlaylist: function(arr, user_id, playlist_id, successCallback, errorCallback) {
+				if (!errorCallback) { errorCallback = function() { return void 0 }; }
 				$http.post('https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists/' + encodeURIComponent(playlist_id) + '/tracks?uris=' + arr.join(",")).success(successCallback).error(errorCallback);
 			},
 			createPlaylist: function(name, isPublic, trackArr, messages) {
@@ -118,6 +134,8 @@ angular.module('spotlistr.services', [])
 							var playlistId = response.id;
 							_this.addTracks(UserFactory.getUserId(), response.id, UserFactory.getAccessToken(), playlist, function(response) {
 								_this.addSuccess(messages, 'Successfully created your playlist! Check your Spotify client to view it!');
+							}, function(response) {
+								_this.addError(messages, 'Error while adding songs to playlist on Spotify');
 							});
 						} else {
 							_this.addError(messages, 'Error while creating playlist on Spotify');
@@ -282,9 +300,16 @@ angular.module('spotlistr.services', [])
 				return 'spotify:track:' + id;
 			},
 			performSearch: function(trackArr) {
-				for (var i = 0; i < trackArr.length; i += 1) {
-					SpotifySearchFactory.search(trackArr[i]);
-				}
+				var _this = this;
+
+				trackArr.map(function(track, i) {
+					// Initially batch these requests out a bit to overload the client and Spotify API
+					var wait = Math.floor(i / 50) * 1000;
+
+					return window.setTimeout(function() {
+						SpotifySearchFactory.search(track);
+					}.bind(_this), wait);
+				});
 			},
 			assignSelectedTrack: function(track, index) {
 				track.setSelectedMatch(index);
