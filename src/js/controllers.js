@@ -540,6 +540,24 @@ angular.module('spotlistr.controllers', [])
 				});
 		}
 	}])
+	.controller('LastfmLovedTracks', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory){
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
+		$scope.lastfmUsername = '';
+		$scope.tracksCount = ''
+
+		$scope.performSearch = function(){
+			$scope.searching = true;
+			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
+			LastfmFactory.getLovedTracks($scope.lastfmUsername, $scope.tracksCount, function(response){
+				var lovedTracks = LastfmFactory.extractInfoFromLastfmResults(response.lovedtracks);
+				for (var i = 0; i < lovedTracks.length; i++) {
+					$scope.trackSet.tracks.push(new Track(lovedTracks[i]));
+				}
+				QueryFactory.performSearch($scope.trackSet.tracks);
+				$scope.searching = false;
+			});
+		}
+	}])
 	.controller('YouTube', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'YouTubeFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, YouTubeFactory) {
 		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 
@@ -565,9 +583,9 @@ angular.module('spotlistr.controllers', [])
 			var name = 'list';
 			// http://stackoverflow.com/a/901144/877117
 			name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-		    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-		        results = regex.exec($scope.playlistId);
-		    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+			var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+				results = regex.exec($scope.playlistId);
+			return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
 	}])
 	.controller('SoundCloud', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'SoundCloudFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, SoundCloudFactory) {
@@ -600,9 +618,9 @@ angular.module('spotlistr.controllers', [])
 			var name = 'list';
 			// http://stackoverflow.com/a/901144/877117
 			name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-		    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-		        results = regex.exec($scope.playlistId);
-		    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+			var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+				results = regex.exec($scope.playlistId);
+			return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
 
 		$scope.createDisplayName = QueryFactory.createDisplayName;
