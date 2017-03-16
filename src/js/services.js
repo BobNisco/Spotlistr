@@ -531,6 +531,12 @@ angular.module('spotlistr.services', [])
 
 				$http.get(req).success(callback);
 			},
+			getLovedTracks: function(username, count, callback){
+				//http://www.last.fm/api/show/user.getLovedTracks
+				var _this = this;
+				var req = 'http://ws.audioscrobbler.com/2.0/?method=user.getLovedTracks&user=' + encodeURIComponent(username) + '&limit=' + count + '&api_key=' + _this.apiKey + '&format=json';
+				$http.get(req).success(callback);
+			}
 		}
 	})
 	.factory('YouTubeFactory', function($http, $q) {

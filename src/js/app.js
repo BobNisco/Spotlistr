@@ -61,6 +61,10 @@ config(['$routeProvider', function($routeProvider) {
     templateUrl: 'partials/lastfm-top-for-time-period.html',
     controller: 'LastfmTopForTimePeriod'
   });
+  $routeProvider.when('/search/lastfm-loved-tracks', {
+    templateUrl: 'partials/lastfm-loved-tracks.html',
+    controller: 'LastfmLovedTracks'
+  })
   $routeProvider.when('/search/youtube', {
     templateUrl: 'partials/youtube.html',
     controller: 'YouTube'
