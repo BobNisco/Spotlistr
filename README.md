@@ -28,9 +28,9 @@ Spotlistr - Convert Anything to a Spotify Playlist!
 Here's how to easily spin up a development environment and get coding! Please ensure you have [npm](https://www.npmjs.org/) installed first, then ensure you have [bower](http://bower.io/) and [GulpJS](http://gulpjs.com/) installed through npm!
 * `git clone git@github.com:BobNisco/Spotlistr.git`
 * `cd Spotlistr`
-* `npm install`
-* `node app.js` - this starts the Node backend (required for talking to Spotify Web API)
-* `gulp` - this starts the Gulp task runner and will stay running so it can watch for changes to files and run the Gulp tasks on them
+* `npm install` - Also has a postinstall hook to install `bower` components
+* `npm run dev-server` - this starts an auto-reloading Node backend (required for talking to Spotify Web API and to serve assets)
+* `npm run dev-client` - this starts the Gulp task runner and will stay running so it can watch for changes to files and run the Gulp tasks on them
 * Point your browser to `http://localhost:8888/` to view
 
 Code locally, then send a pull request! It's that easy!

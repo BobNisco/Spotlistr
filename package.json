@@ -9,6 +9,7 @@
     "request": "^2.47.0"
   },
   "devDependencies": {
+    "bower": "^1.8.0",
     "del": "^2.1.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
@@ -20,10 +21,14 @@
     "gulp-rename": "^1.2.0",
     "gulp-strip-debug": "^1.0.1",
     "gulp-uglify": "^2.0.0",
-    "minimist": "^1.1.0"
+    "minimist": "^1.1.0",
+    "nodemon": "^1.11.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "bower install",
+    "dev-client": "gulp",
+    "dev-server": "nodemon ./app.js"
   },
   "repository": {
     "type": "git",
