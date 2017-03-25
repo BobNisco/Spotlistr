@@ -41,6 +41,9 @@
     "music",
     "heroku"
   ],
+  "engines": {
+    "node": "6.10.0"
+  },
   "author": "Bob Nisco",
   "license": "Apache-2.0",
   "bugs": {
