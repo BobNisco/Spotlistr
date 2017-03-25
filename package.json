@@ -28,7 +28,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "bower install",
     "dev-client": "gulp",
-    "dev-server": "nodemon ./app.js"
+    "dev-server": "nodemon ./app.js",
+    "release": "gulp clean && gulp --release"
   },
   "repository": {
     "type": "git",
