@@ -467,6 +467,29 @@ angular.module('spotlistr.controllers', [])
 			});
 		};
 	}])
+	.controller('LastfmLovedTracks', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
+		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
+		// Inputted Last.fm username
+		$scope.lastfmUsername = '';
+		$scope.searchType = 'Last.fm Loved Tracks';
+
+		$scope.performSearch = function() {
+			$scope.searching = true;
+			QueryFactory.clearResults($scope.trackSet.tracks, $scope.messages);
+
+			// 1. Grab the tracks from the Last.fm user's profile
+			LastfmFactory.getUserLovedTracks($scope.lastfmUsername, function(response) {
+				// 2. Extract the Artist - Track Title from the results
+				var lovedTracks = LastfmFactory.extractInfoFromLastfmResults(response.lovedtracks);
+				for (var i = 0; i < lovedTracks.length; i++) {
+					$scope.trackSet.tracks.push(new Track(lovedTracks[i]));
+				}
+				// 3. For each Top Track, find similar tracks and produce results
+				QueryFactory.performSearch($scope.trackSet.tracks);
+				$scope.searching = false;
+			});
+		};
+	}])
 	.controller('LastfmTagTopTracks', ['$scope', 'UserFactory', 'SpotifySearchFactory', 'SpotifyPlaylistFactory', 'QueryFactory', 'LastfmFactory', function($scope, UserFactory, SpotifySearchFactory, SpotifyPlaylistFactory, QueryFactory, LastfmFactory) {
 		defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 		// Amount of tracks to return

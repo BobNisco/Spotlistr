@@ -531,6 +531,12 @@ angular.module('spotlistr.services', [])
 
 				$http.get(req).success(callback);
 			},
+			getUserLovedTracks: function(username, callback) {
+				var _this = this;
+				var req = 'http://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks&limit=500&user=' + username + '&api_key=' + _this.apiKey + '&format=json';
+
+				$http.get(req).success(callback);
+			},
 		}
 	})
 	.factory('YouTubeFactory', function($http, $q) {
