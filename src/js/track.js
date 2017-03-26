@@ -44,7 +44,29 @@ Track.prototype.getSelectedSong = function() {
 };
 
 Track.prototype.normalizeSearchQuery = function(query) {
-	var normalized = query;
+	var removeableTags = ["official music video", "lyric video",  "out now",  "cover art",  "official video", "hd", "hq", "lyrics", "radio edit", "radio mix"];
+
+	var normalized = query.toLowerCase(); // let's convert the title to lowercase for a better beginning
+
+	angular.forEach(removeableTags, function(value, key) {
+		normalized = normalized.replace(value, ''); // remove founded tag
+	});
+
+	normalized = normalized.replace(/((ft. |& |feat. |and |&amp; |vs | [xX] )(.*?)(?=-))/, ''); // remove featuring artist at the beginning
+	normalized = normalized.replace(/((ft. |& |feat. |and |&amp; |vs | [xX] )(.*))/,'') // remove featuring artist and everything after at the end
+	//normalized = normalized.replace(/['"]+/g, ""); // remove quotation marks
+
+	splitParentheses = normalized.split(/\(([^)]+)\) \(([^)]+)\)/); // split matches like (ft.) (prod.)
+
+	if(splitParentheses.length >= 3) {
+		angular.forEach(splitParentheses, function(value, key) {
+			if(key >= 2) { // remove everything after the second hit
+				normalized = normalized.replace(value, '');
+			}
+		});
+	}
+
+
 	// Remove any genre tags in the formation [genre]
 	// NOTE: This is pretty naive
 	normalized = normalized.replace(/\[(\w*|\s*|\/|-)+\]/gi, '');
