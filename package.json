@@ -1,6 +1,6 @@
 {
   "name": "Spotlistr",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "Spotlistr is the easiest way to create playlists for Spotify!",
   "main": "app.js",
   "dependencies": {
@@ -50,7 +50,7 @@
     "heroku"
   ],
   "engines": {
-    "node": "6.10.0"
+    "node": "6.10.3"
   },
   "author": "Bob Nisco",
   "license": "Apache-2.0",
