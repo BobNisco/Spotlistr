@@ -14,14 +14,12 @@ TrackSet.prototype.getDownloadableTracksUrl = function(soundCloudClientId) {
 
 TrackSet.prototype.downloadAllAvailableTracks = function(soundCloudClientId) {
   alert(
-    "This will open up a bunch of windows and automatically close them as the downloads start. Please be sure to allow popups from this website."
+    'This will open up a bunch of windows and automatically close them as the downloads start. Please be sure to allow popups from this website.'
   );
   var downloadableTracksUrl = this.getDownloadableTracksUrl(soundCloudClientId);
-  var body = document.getElementsByTagName("body")[0];
+  var body = document.getElementsByTagName('body')[0];
 
   for (var i = 0; i < downloadableTracksUrl.length; i++) {
-    window.open(
-      downloadableTracksUrl[i].generateSoundcloudDownloadUrl(soundCloudClientId)
-    );
+    window.open(downloadableTracksUrl[i].generateSoundcloudDownloadUrl(soundCloudClientId));
   }
 };

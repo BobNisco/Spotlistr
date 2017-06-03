@@ -9,13 +9,13 @@ function Track(query) {
 	*/
   this.spotifyMatches = [];
   this.selectedMatch = -1;
-  this.downloadUrl = "";
-  this.sourceUrl = "";
+  this.downloadUrl = '';
+  this.sourceUrl = '';
 }
 
 Track.prototype.generateSoundcloudDownloadUrl = function(client_id) {
   if (this.downloadUrl) {
-    return this.downloadUrl + "?client_id=" + client_id;
+    return this.downloadUrl + '?client_id=' + client_id;
   }
   return null;
 };
@@ -26,7 +26,7 @@ Track.prototype.trackLength = function() {
 
 Track.prototype.setSelectedMatch = function(index) {
   if (index > this.spotifyMatches.length - 1) {
-    throw new Error("Selected Match out of bounds");
+    throw new Error('Selected Match out of bounds');
   }
   this.selectedMatch = index;
 };
@@ -47,11 +47,11 @@ Track.prototype.normalizeSearchQuery = function(query) {
   var normalized = query;
   // Remove any genre tags in the formation [genre]
   // NOTE: This is pretty naive
-  normalized = normalized.replace(/\[(\w*|\s*|\/|-)+\]/gi, "");
+  normalized = normalized.replace(/\[(\w*|\s*|\/|-)+\]/gi, '');
   // Remove the time listings in the format [hh:mm:ss]
-  normalized = normalized.replace(/(\[(\d*)?:?\d+:\d+\])/, "");
+  normalized = normalized.replace(/(\[(\d*)?:?\d+:\d+\])/, '');
   // Remove the year tags in the format [yyyy] or (yyyy)
-  normalized = normalized.replace(/(\[|\()+\d*(\]|\))+/, "");
+  normalized = normalized.replace(/(\[|\()+\d*(\]|\))+/, '');
   // Remove all the extraneous stuff
   // This was causing problems with non-english characters
   // normalized = normalized.replace(/[^\w\s]/gi, '');
@@ -63,7 +63,7 @@ Track.prototype.createDisplayNameForSelectedSong = function() {
 };
 
 Track.prototype.createDisplayName = function(track) {
-  return this.artist() + " - " + track.name;
+  return this.artist() + ' - ' + track.name;
 };
 
 Track.prototype.artist = function() {
@@ -71,7 +71,7 @@ Track.prototype.artist = function() {
 };
 
 Track.prototype.createSpotifyUriForTrack = function(index) {
-  return "spotify:track:" + this.spotifyMatches[index];
+  return 'spotify:track:' + this.spotifyMatches[index];
 };
 
 Track.prototype.addSpotifyMatches = function(matches) {
@@ -86,7 +86,7 @@ Track.prototype.addSpotifyMatches = function(matches) {
 Track.prototype.createExportText = function(options) {
   var result = [];
   var track = this.spotifyMatches[0] || null;
-  var separator = options.separator === ";" ? "," : ";";
+  var separator = options.separator === ';' ? ',' : ';';
 
   if (!track) {
     return result;
@@ -113,7 +113,7 @@ Track.prototype.createExportText = function(options) {
   if (options.length) {
     function msToTime(s) {
       function addZ(n) {
-        return (n < 10 ? "0" : "") + n;
+        return (n < 10 ? '0' : '') + n;
       }
 
       var ms = s % 1000;
@@ -122,16 +122,16 @@ Track.prototype.createExportText = function(options) {
       s = (s - secs) / 60;
       var mins = s % 60;
       var hrs = (s - mins) / 60;
-      var result = "";
+      var result = '';
 
-      return addZ(hrs) + ":" + addZ(mins) + ":" + addZ(secs);
+      return addZ(hrs) + ':' + addZ(mins) + ':' + addZ(secs);
     }
     result.push(msToTime(track.duration_ms));
   }
   if (options.spotifyId) {
     result.push(track.id);
   }
-  return result.join(" " + options.separator + " ");
+  return result.join(' ' + options.separator + ' ');
 };
 
 Track.getArtist = function(track) {
@@ -139,7 +139,7 @@ Track.getArtist = function(track) {
     .map(function(artist) {
       return artist.name;
     })
-    .join(", ");
+    .join(', ');
 };
 
 Track.getTrackLength = function(track) {
@@ -147,5 +147,5 @@ Track.getTrackLength = function(track) {
     seconds = parseInt(totalSeconds % 60),
     minutes = parseInt((totalSeconds - seconds) / 60);
 
-  return ("00" + minutes).slice(-2) + ":" + ("00" + seconds).slice(-2);
+  return ('00' + minutes).slice(-2) + ':' + ('00' + seconds).slice(-2);
 };

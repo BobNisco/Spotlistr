@@ -1,40 +1,40 @@
-"use strict";
+'use strict';
 
 /* Directives */
 
 angular
-  .module("spotlistr.directives", [])
-  .directive("appVersion", [
-    "version",
+  .module('spotlistr.directives', [])
+  .directive('appVersion', [
+    'version',
     function(version) {
       return function(scope, elm, attrs) {
         elm.text(version);
       };
     }
   ])
-  .directive("resultModule", function() {
+  .directive('resultModule', function() {
     return {
-      restrict: "AEC",
+      restrict: 'AEC',
       scope: false,
-      templateUrl: "partials/results.html"
+      templateUrl: 'partials/results.html'
     };
   })
-  .directive("adblockWarning", function() {
+  .directive('adblockWarning', function() {
     return {
-      restrict: "E",
+      restrict: 'E',
       scope: false,
-      templateUrl: "partials/adblock-warning.html"
+      templateUrl: 'partials/adblock-warning.html'
     };
   })
-  .directive("searchButton", function() {
+  .directive('searchButton', function() {
     return {
-      restrict: "AEC",
+      restrict: 'AEC',
       scope: {
-        userFactory: "=userFactory",
-        performSearch: "=performSearch",
-        searching: "=searching",
-        buttonText: "=buttonText"
+        userFactory: '=userFactory',
+        performSearch: '=performSearch',
+        searching: '=searching',
+        buttonText: '=buttonText'
       },
-      templateUrl: "partials/search-button.html"
+      templateUrl: 'partials/search-button.html'
     };
   });

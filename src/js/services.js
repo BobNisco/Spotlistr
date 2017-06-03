@@ -1,59 +1,54 @@
-"use strict";
+'use strict';
 
 /* Services */
 angular
-  .module("spotlistr.services", [])
-  .value("version", "1.13.0")
-  .factory("UserFactory", function($http, $rootScope) {
+  .module('spotlistr.services', [])
+  .value('version', '1.13.0')
+  .factory('UserFactory', function($http, $rootScope) {
     return {
       currentUser: function() {
-        return JSON.parse(window.localStorage.getItem("currentUser"));
+        return JSON.parse(window.localStorage.getItem('currentUser'));
       },
       setCurrentUser: function(userJson) {
-        window.localStorage.setItem("currentUser", JSON.stringify(userJson));
+        window.localStorage.setItem('currentUser', JSON.stringify(userJson));
       },
       getUserId: function() {
         var user = this.currentUser();
         return user.id;
       },
       userLoggedIn: function() {
-        return (
-          this.currentUser() !== null &&
-          this.currentUser() !== undefined &&
-          this.currentUser() != "null"
-        );
+        return this.currentUser() !== null && this.currentUser() !== undefined && this.currentUser() != 'null';
       },
       getAccessToken: function() {
-        return window.localStorage.getItem("access_token");
+        return window.localStorage.getItem('access_token');
       },
       setAccessToken: function(accessToken) {
-        window.localStorage.setItem("access_token", accessToken);
+        window.localStorage.setItem('access_token', accessToken);
       },
       getRefreshToken: function() {
-        return window.localStorage.getItem("refresh_token");
+        return window.localStorage.getItem('refresh_token');
       },
       setRefreshToken: function(refreshToken) {
-        window.localStorage.setItem("refresh_token", refreshToken);
+        window.localStorage.setItem('refresh_token', refreshToken);
       },
       getNewAccessToken: function(successCallback, errorCallback) {
         $http
-          .get("/refresh_token?refresh_token=" + this.getRefreshToken())
+          .get('/refresh_token?refresh_token=' + this.getRefreshToken())
           .success(successCallback)
           .error(errorCallback);
       },
       getSpotifyUserInfo: function() {
         var _this = this;
-        $http.defaults.headers.common.Authorization =
-          "Bearer " + this.getAccessToken();
-        $http.get("https://api.spotify.com/v1/me").success(function(response) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + this.getAccessToken();
+        $http.get('https://api.spotify.com/v1/me').success(function(response) {
           // Update the stored data
           _this.setCurrentUser(response);
         });
       },
       clearUserData: function() {
-        window.localStorage.removeItem("currentUser");
-        window.localStorage.removeItem("access_token");
-        window.localStorage.removeItem("refresh_token");
+        window.localStorage.removeItem('currentUser');
+        window.localStorage.removeItem('access_token');
+        window.localStorage.removeItem('refresh_token');
       },
       setTokensAndPullUserInfo: function(accessToken, refreshToken) {
         this.setAccessToken(accessToken);
@@ -62,14 +57,12 @@ angular
       }
     };
   })
-  .factory("SpotifySearchFactory", function($http) {
+  .factory('SpotifySearchFactory', function($http) {
     return {
       search: function(track) {
         var _this = this;
         // https://developer.spotify.com/web-api/search-item/
-        var req =
-          "https://api.spotify.com/v1/search?type=track&limit=8&q=" +
-          encodeURIComponent(track.cleanedQuery);
+        var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(track.cleanedQuery);
         $http
           .get(req)
           .success(function(response) {
@@ -86,50 +79,27 @@ angular
       }
     };
   })
-  .factory("SpotifyPlaylistFactory", function(
-    $http,
-    UserFactory,
-    QueryFactory
-  ) {
+  .factory('SpotifyPlaylistFactory', function($http, UserFactory, QueryFactory) {
     return {
       SPOTIFY_TRACK_LIMIT: 100,
-      create: function(
-        name,
-        user_id,
-        access_token,
-        is_public,
-        callback,
-        errorCallback
-      ) {
-        $http.defaults.headers.common.Authorization = "Bearer " + access_token;
+      create: function(name, user_id, access_token, is_public, callback, errorCallback) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
         // https://developer.spotify.com/web-api/create-playlist/
         // Endpoint: POST https://api.spotify.com/v1/users/{user_id}/playlists
         $http
-          .post(
-            "https://api.spotify.com/v1/users/" +
-              encodeURIComponent(user_id) +
-              "/playlists",
-            {
-              name: name,
-              public: is_public
-            }
-          )
+          .post('https://api.spotify.com/v1/users/' + encodeURIComponent(user_id) + '/playlists', {
+            name: name,
+            public: is_public
+          })
           .success(callback)
           .error(errorCallback);
       },
-      addTracks: function(
-        user_id,
-        playlist_id,
-        access_token,
-        arr,
-        successCallback,
-        errorCallback
-      ) {
+      addTracks: function(user_id, playlist_id, access_token, arr, successCallback, errorCallback) {
         var _this = this,
           SPOTIFY_TRACK_LIMIT = _this.SPOTIFY_TRACK_LIMIT;
         // https://developer.spotify.com/web-api/add-tracks-to-playlist/
         // POST https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
-        $http.defaults.headers.common.Authorization = "Bearer " + access_token;
+        $http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
 
         // Spotify limits to adding 100 songs at a time
         // So we'll batch submit in 100 track subsets
@@ -146,43 +116,25 @@ angular
         }
 
         batches.map(function(batch) {
-          _this.handleSubmitTracksToPlaylist(
-            batch,
-            user_id,
-            playlist_id,
-            successCallback,
-            errorCallback
-          );
+          _this.handleSubmitTracksToPlaylist(batch, user_id, playlist_id, successCallback, errorCallback);
         });
       },
-      deleteTracks: function(
-        user_id,
-        playlist_id,
-        access_token,
-        arr,
-        callback
-      ) {
+      deleteTracks: function(user_id, playlist_id, access_token, arr, callback) {
         var _this = this;
         // DELETE https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
-        $http.defaults.headers.common.Authorization = "Bearer " + access_token;
+        $http.defaults.headers.common.Authorization = 'Bearer ' + access_token;
         $http({
-          method: "DELETE",
+          method: 'DELETE',
           url:
-            "https://api.spotify.com/v1/users/" +
+            'https://api.spotify.com/v1/users/' +
               encodeURIComponent(user_id) +
-              "/playlists/" +
+              '/playlists/' +
               encodeURIComponent(playlist_id) +
-              "/tracks",
+              '/tracks',
           data: { tracks: arr }
         }).success(callback);
       },
-      handleSubmitTracksToPlaylist: function(
-        arr,
-        user_id,
-        playlist_id,
-        successCallback,
-        errorCallback
-      ) {
+      handleSubmitTracksToPlaylist: function(arr, user_id, playlist_id, successCallback, errorCallback) {
         if (!errorCallback) {
           errorCallback = function() {
             return void 0;
@@ -190,12 +142,12 @@ angular
         }
         $http
           .post(
-            "https://api.spotify.com/v1/users/" +
+            'https://api.spotify.com/v1/users/' +
               encodeURIComponent(user_id) +
-              "/playlists/" +
+              '/playlists/' +
               encodeURIComponent(playlist_id) +
-              "/tracks?uris=" +
-              arr.join(",")
+              '/tracks?uris=' +
+              arr.join(',')
           )
           .success(successCallback)
           .error(errorCallback);
@@ -216,44 +168,30 @@ angular
                 function(response) {
                   _this.addSuccess(
                     messages,
-                    "Successfully created your playlist! Check your Spotify client to view it!"
+                    'Successfully created your playlist! Check your Spotify client to view it!'
                   );
                 },
                 function(response) {
-                  _this.addError(
-                    messages,
-                    "Error while adding songs to playlist on Spotify"
-                  );
+                  _this.addError(messages, 'Error while adding songs to playlist on Spotify');
                 }
               );
             } else {
-              _this.addError(
-                messages,
-                "Error while creating playlist on Spotify"
-              );
+              _this.addError(messages, 'Error while creating playlist on Spotify');
             }
           },
           errorCallback = function(data, status, headers, config) {
-            _this.handleErrorResponse(
-              data,
-              status,
-              headers,
-              config,
-              messages,
-              _this,
-              function() {
-                // Call the create new playlist function again
-                // since we now have the proper access token
-                _this.create(
-                  name,
-                  UserFactory.getUserId(),
-                  UserFactory.getAccessToken(),
-                  isPublic,
-                  successCallback,
-                  errorCallback
-                );
-              }
-            );
+            _this.handleErrorResponse(data, status, headers, config, messages, _this, function() {
+              // Call the create new playlist function again
+              // since we now have the proper access token
+              _this.create(
+                name,
+                UserFactory.getUserId(),
+                UserFactory.getAccessToken(),
+                isPublic,
+                successCallback,
+                errorCallback
+              );
+            });
           };
         _this.create(
           name,
@@ -264,33 +202,20 @@ angular
           errorCallback
         );
       },
-      replaceTracks: function(
-        user_id,
-        playlist_id,
-        access_token,
-        trackArr,
-        successCallback,
-        errorCallback
-      ) {
+      replaceTracks: function(user_id, playlist_id, access_token, trackArr, successCallback, errorCallback) {
         // https://developer.spotify.com/web-api/replace-playlists-tracks/
         // PUT https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
         var _this = this;
         var playlist = QueryFactory.gatherPlaylist(trackArr);
-        var doReplaceRequest = function(
-          user_id,
-          playlist_id,
-          playlist,
-          successCallback,
-          errorCallback
-        ) {
+        var doReplaceRequest = function(user_id, playlist_id, playlist, successCallback, errorCallback) {
           $http({
-            method: "PUT",
+            method: 'PUT',
             url:
-              "https://api.spotify.com/v1/users/" +
+              'https://api.spotify.com/v1/users/' +
                 encodeURIComponent(user_id) +
-                "/playlists/" +
+                '/playlists/' +
                 encodeURIComponent(playlist_id) +
-                "/tracks",
+                '/tracks',
             data: { uris: playlist }
           })
             .success(successCallback)
@@ -318,24 +243,10 @@ angular
             errorCallback
           );
         } else {
-          doReplaceRequest(
-            user_id,
-            playlist_id,
-            playlist,
-            successCallback,
-            errorCallback
-          );
+          doReplaceRequest(user_id, playlist_id, playlist, successCallback, errorCallback);
         }
       },
-      handleErrorResponse: function(
-        data,
-        status,
-        headers,
-        config,
-        messages,
-        _this,
-        onReauthCallback
-      ) {
+      handleErrorResponse: function(data, status, headers, config, messages, _this, onReauthCallback) {
         if (status === 401) {
           // 401 unauthorized
           // The token needs to be refreshed
@@ -354,70 +265,38 @@ angular
       },
       addError: function(messages, message) {
         messages.push({
-          status: "error",
+          status: 'error',
           message: message
         });
       },
       addSuccess: function(messages, message) {
         messages.push({
-          status: "success",
+          status: 'success',
           message: message
         });
       },
-      getPlaylistTracks: function(
-        userId,
-        playlistId,
-        trackArr,
-        messages,
-        callback
-      ) {
+      getPlaylistTracks: function(userId, playlistId, trackArr, messages, callback) {
         // https://developer.spotify.com/web-api/get-playlists-tracks/
         // GET https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks
         var _this = this,
           getUrl =
-            "https://api.spotify.com/v1/users/" +
+            'https://api.spotify.com/v1/users/' +
             encodeURIComponent(userId) +
-            "/playlists/" +
+            '/playlists/' +
             encodeURIComponent(playlistId) +
-            "/tracks",
+            '/tracks',
           errorCallback = function(data, status, headers, config) {
-            _this.handleErrorResponse(
-              data,
-              status,
-              headers,
-              config,
-              messages,
-              _this,
-              function() {
-                // Call the get playlist tracks again
-                _this.handleGetPlaylistTracks(
-                  getUrl,
-                  UserFactory.getAccessToken(),
-                  trackArr,
-                  callback,
-                  errorCallback
-                );
-              }
-            );
+            _this.handleErrorResponse(data, status, headers, config, messages, _this, function() {
+              // Call the get playlist tracks again
+              _this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), trackArr, callback, errorCallback);
+            });
           };
 
-        _this.handleGetPlaylistTracks(
-          getUrl,
-          UserFactory.getAccessToken(),
-          trackArr,
-          callback,
-          errorCallback
-        );
+        _this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), trackArr, callback, errorCallback);
       },
-      handleGetPlaylistTracks: function(
-        getUrl,
-        accessToken,
-        trackArr,
-        successCallback,
-        errorCallback
-      ) {
+      handleGetPlaylistTracks: function(getUrl, accessToken, trackArr, successCallback, errorCallback) {
         var _this = this;
-        $http.defaults.headers.common.Authorization = "Bearer " + accessToken;
+        $http.defaults.headers.common.Authorization = 'Bearer ' + accessToken;
 
         $http
           .get(getUrl)
@@ -432,13 +311,7 @@ angular
               trackArr.push(newTrack);
             }
             if (response.next) {
-              _this.handleGetPlaylistTracks(
-                response.next,
-                accessToken,
-                trackArr,
-                successCallback,
-                errorCallback
-              );
+              _this.handleGetPlaylistTracks(response.next, accessToken, trackArr, successCallback, errorCallback);
             } else {
               successCallback(trackArr);
             }
@@ -468,26 +341,23 @@ angular
         return null;
       },
       extractUserIdAndPlaylistIdFromSpotifyLink: function(url) {
-        return (
-          this.extractUserIdAndPlaylistIdFromSpotifyUrl(url) ||
-          this.extractUserIdAndPlaylistIdFromSpotifyUri(url)
-        );
+        return this.extractUserIdAndPlaylistIdFromSpotifyUrl(url) || this.extractUserIdAndPlaylistIdFromSpotifyUri(url);
       }
     };
   })
-  .factory("QueryFactory", function(SpotifySearchFactory) {
+  .factory('QueryFactory', function(SpotifySearchFactory) {
     return {
       normalizeSearchQuery: function(query) {
         var normalized = query;
         // Remove any genre tags in the formation [genre]
         // NOTE: This is pretty naive
-        normalized = normalized.replace(/\[(\w*|\s*|\/|-)+\]/gi, "");
+        normalized = normalized.replace(/\[(\w*|\s*|\/|-)+\]/gi, '');
         // Remove the time listings in the format [hh:mm:ss]
-        normalized = normalized.replace(/(\[(\d*)?:?\d+:\d+\])/, "");
+        normalized = normalized.replace(/(\[(\d*)?:?\d+:\d+\])/, '');
         // Remove the year tags in the format [yyyy] or (yyyy)
-        normalized = normalized.replace(/(\[|\()+\d*(\]|\))+/, "");
+        normalized = normalized.replace(/(\[|\()+\d*(\]|\))+/, '');
         // Remove all the extraneous stuff
-        normalized = normalized.replace(/[^\w\s]/gi, "");
+        normalized = normalized.replace(/[^\w\s]/gi, '');
         return normalized;
       },
       normalizeSearchArray: function(arr) {
@@ -498,19 +368,19 @@ angular
         return normalizedArray;
       },
       createDisplayName: function(track) {
-        var result = "";
+        var result = '';
         for (var i = 0; i < track.artists.length; i += 1) {
           if (i < track.artists.length - 1) {
-            result += track.artists[i].name + ", ";
+            result += track.artists[i].name + ', ';
           } else {
             result += track.artists[i].name;
           }
         }
-        result += " - " + track.name;
+        result += ' - ' + track.name;
         return result;
       },
       createSpotifyUriFromTrackId: function(id) {
-        return "spotify:track:" + id;
+        return 'spotify:track:' + id;
       },
       performSearch: function(trackArr) {
         var _this = this;
@@ -537,19 +407,10 @@ angular
           currentItem = trackArr[i];
           if (currentItem.spotifyMatches.length === 1) {
             // Exact match
-            playlist.push(
-              this.createSpotifyUriFromTrackId(currentItem.spotifyMatches[0].id)
-            );
-          } else if (
-            currentItem.spotifyMatches.length > 1 &&
-            currentItem.selectedMatch !== -1
-          ) {
+            playlist.push(this.createSpotifyUriFromTrackId(currentItem.spotifyMatches[0].id));
+          } else if (currentItem.spotifyMatches.length > 1 && currentItem.selectedMatch !== -1) {
             // Push the selected match of the multiple matches
-            playlist.push(
-              this.createSpotifyUriFromTrackId(
-                currentItem.spotifyMatches[currentItem.selectedMatch].id
-              )
-            );
+            playlist.push(this.createSpotifyUriFromTrackId(currentItem.spotifyMatches[currentItem.selectedMatch].id));
           }
           // Do not push the given track if we did not find any matches on Spotify
         }
@@ -563,51 +424,31 @@ angular
       }
     };
   })
-  .factory("RedditFactory", function(
-    $http,
-    $q,
-    RedditUserFactory,
-    SoundCloudFactory
-  ) {
+  .factory('RedditFactory', function($http, $q, RedditUserFactory, SoundCloudFactory) {
     return {
-      getSubreddit: function(
-        subreddit,
-        sort,
-        t,
-        fetchAmount,
-        callback,
-        errorCallback
-      ) {
+      getSubreddit: function(subreddit, sort, t, fetchAmount, callback, errorCallback) {
         // http://www.reddit.com/r/trap/hot.json
-        var req =
-          "https://www.reddit.com/r/" +
-          subreddit +
-          "/" +
-          sort +
-          ".json?limit=" +
-          fetchAmount;
+        var req = 'https://www.reddit.com/r/' + subreddit + '/' + sort + '.json?limit=' + fetchAmount;
         if (t) {
-          req += "&" + t;
+          req += '&' + t;
         }
         console.log(req);
         $http.get(req).success(callback).error(errorCallback);
       },
       getUsersMultiReddits: function(callback) {
-        var req =
-          "/reddit/api/multi/mine/" + RedditUserFactory.getAccessToken();
+        var req = '/reddit/api/multi/mine/' + RedditUserFactory.getAccessToken();
         $http.get(req).success(callback);
       },
       getCommentsForThread: function(threadUrl, callback, errorCallback) {
-        if (threadUrl.charAt(threadUrl.length - 1) === "/") {
-          threadUrl = threadUrl + "comments.json";
+        if (threadUrl.charAt(threadUrl.length - 1) === '/') {
+          threadUrl = threadUrl + 'comments.json';
         } else {
-          threadUrl = threadUrl + "/comments.json";
+          threadUrl = threadUrl + '/comments.json';
         }
         $http
           .get(threadUrl)
           .success(function(response) {
-            var comments =
-              response[1] && response[1].data && response[1].data.children;
+            var comments = response[1] && response[1].data && response[1].data.children;
             var commentText = [];
             var markdownUrlRegex = /\[(.*)\]/gi;
             if (comments) {
@@ -623,10 +464,10 @@ angular
                   if ((markdownGroups = markdownUrlRegex.exec(body)) !== null) {
                     // First assumption: if there is a link, it's probably a link to the song
                     commentText.push(markdownGroups[1]);
-                  } else if ((sentences = body.split(".")).length > 1) {
+                  } else if ((sentences = body.split('.')).length > 1) {
                     // Second assumption: if there are multiple sentences, the song is the first one
                     commentText.push(sentences[0]);
-                  } else if ((bodyLines = body.split("\n")).length > 1) {
+                  } else if ((bodyLines = body.split('\n')).length > 1) {
                     // Third assumption: if there are multiple lines to a comment, then the song
                     // will be on the first line with a user's comments on other lines after it
                     commentText.push(bodyLines[0]);
@@ -641,20 +482,14 @@ angular
           })
           .error(errorCallback);
       },
-      putAllTracksIntoArray: function(
-        response,
-        listings,
-        trackArr,
-        subredditInput,
-        callback
-      ) {
+      putAllTracksIntoArray: function(response, listings, trackArr, subredditInput, callback) {
         // 1. Take the title of each listing returned from Reddit
         var promises = listings.map(function(value) {
           var deferred = $q.defer();
           // Async task
           // 1.1. Filter out anything with a self-post
           //      Self posts have a "domain" of self.subreddit
-          if (value.data.domain === "self." + subredditInput) {
+          if (value.data.domain === 'self.' + subredditInput) {
             deferred.resolve();
             return deferred.promise;
           }
@@ -662,20 +497,16 @@ angular
           newTrack.sourceUrl = value.data.url;
           // 1.2. If the domain is soundcloud, we will add some extra info
           //      into the Track object so we can potentially show the free DL
-          if (value.data.domain === "soundcloud.com") {
-            var url =
-              "/resolve.json?url=" +
-              value.data.url +
-              "&client_id=" +
-              SoundCloudFactory.apiKey;
+          if (value.data.domain === 'soundcloud.com') {
+            var url = '/resolve.json?url=' + value.data.url + '&client_id=' + SoundCloudFactory.apiKey;
             SC.get(url, function(scResponse) {
               if (!scResponse) {
                 return deferred.resolve(response);
               }
 
-              if (scResponse.kind === "track" && scResponse.downloadable) {
+              if (scResponse.kind === 'track' && scResponse.downloadable) {
                 newTrack.downloadUrl = scResponse.download_url;
-              } else if (scResponse.kind === "playlist") {
+              } else if (scResponse.kind === 'playlist') {
                 // TODO: Handle playlists
               }
               trackArr.push(newTrack);
@@ -692,41 +523,35 @@ angular
       }
     };
   })
-  .factory("RedditUserFactory", function($http) {
+  .factory('RedditUserFactory', function($http) {
     return {
       userLoggedIn: function() {
         return (
-          this.getAccessToken() != null &&
-          this.getAccessToken !== undefined &&
-          this.getAccessToken !== "undefined"
+          this.getAccessToken() != null && this.getAccessToken !== undefined && this.getAccessToken !== 'undefined'
         );
       },
       getAccessToken: function() {
-        return window.localStorage.getItem("reddit_access_token");
+        return window.localStorage.getItem('reddit_access_token');
       },
       setAccessToken: function(access_token) {
-        window.localStorage.setItem("reddit_access_token", access_token);
+        window.localStorage.setItem('reddit_access_token', access_token);
       },
       getRefreshToken: function() {
-        return window.localStorage.getItem("reddit_refresh_token");
+        return window.localStorage.getItem('reddit_refresh_token');
       },
       setRefreshToken: function(refresh_token) {
-        window.localStorage.setItem("reddit_refresh_token", refresh_token);
+        window.localStorage.setItem('reddit_refresh_token', refresh_token);
       },
       clearUserData: function() {
-        window.localStorage.removeItem("reddit_access_token");
-        window.localStorage.removeItem("reddit_refresh_token");
+        window.localStorage.removeItem('reddit_access_token');
+        window.localStorage.removeItem('reddit_refresh_token');
       }
     };
   })
-  .factory("LastfmFactory", function($http, $q) {
+  .factory('LastfmFactory', function($http, $q) {
     return {
-      apiKey: "0fa55d46c0a036a3f785cdd768fadbba",
-      getSimilarTracksAndExtractInfo: function(
-        inputByLine,
-        similarCount,
-        callback
-      ) {
+      apiKey: '0fa55d46c0a036a3f785cdd768fadbba',
+      getSimilarTracksAndExtractInfo: function(inputByLine, similarCount, callback) {
         var _this = this,
           lastfmSimilarTracks = [],
           splitTrack = [];
@@ -734,18 +559,18 @@ angular
         var promises = inputByLine.map(function(value) {
           var deferred = $q.defer();
           // We are expecting input to be in the format Arist - Track Title
-          splitTrack = value.split("-");
+          splitTrack = value.split('-');
           // Async task
           var req =
-            "http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=" +
+            'http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' +
             encodeURIComponent(splitTrack[0].trim()) +
-            "&track=" +
+            '&track=' +
             encodeURIComponent(splitTrack[1].trim()) +
-            "&api_key=" +
+            '&api_key=' +
             _this.apiKey +
-            "&limit=" +
+            '&limit=' +
             similarCount +
-            "&format=json";
+            '&format=json';
           $http
             .get(req)
             .success(function(response) {
@@ -765,13 +590,13 @@ angular
         var _this = this;
 
         var req =
-          "http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=" +
+          'http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=' +
           encodeURIComponent(username) +
-          "&api_key=" +
+          '&api_key=' +
           _this.apiKey +
-          "&period=" +
+          '&period=' +
           period +
-          "&format=json";
+          '&format=json';
 
         $http.get(req).success(callback);
       },
@@ -779,26 +604,16 @@ angular
         var extracted = [];
         if (results.track instanceof Array) {
           for (var j = 0; j < results.track.length; j++) {
-            extracted.push(
-              results.track[j].artist.name + " - " + results.track[j].name
-            );
+            extracted.push(results.track[j].artist.name + ' - ' + results.track[j].name);
           }
         }
         return extracted;
       },
-      extractQueriesFromLastfmSimilarTracks: function(
-        lastfmSimilarTracks,
-        trackArr
-      ) {
+      extractQueriesFromLastfmSimilarTracks: function(lastfmSimilarTracks, trackArr) {
         var _this = this;
         for (var i = 0; i < lastfmSimilarTracks.length; i += 1) {
-          if (
-            lastfmSimilarTracks[i].similartracks &&
-            lastfmSimilarTracks[i].similartracks.track instanceof Array
-          ) {
-            var found = _this.extractInfoFromLastfmResults(
-              lastfmSimilarTracks[i].similartracks
-            );
+          if (lastfmSimilarTracks[i].similartracks && lastfmSimilarTracks[i].similartracks.track instanceof Array) {
+            var found = _this.extractInfoFromLastfmResults(lastfmSimilarTracks[i].similartracks);
             for (var j = 0; j < found.length; j++) {
               trackArr.push(new Track(found[j]));
             }
@@ -810,11 +625,11 @@ angular
         var _this = this;
 
         var req =
-          "http://ws.audioscrobbler.com/2.0/?method=tag.gettoptracks&tag=" +
+          'http://ws.audioscrobbler.com/2.0/?method=tag.gettoptracks&tag=' +
           tag +
-          "&api_key=" +
+          '&api_key=' +
           _this.apiKey +
-          "&format=json";
+          '&format=json';
 
         $http.get(req).success(callback);
       },
@@ -822,16 +637,16 @@ angular
         // http://www.last.fm/api/show/user.getWeeklyTrackChart
         var _this = this;
         var req =
-          "http://ws.audioscrobbler.com/2.0/?method=user.getweeklytrackchart&user=" +
+          'http://ws.audioscrobbler.com/2.0/?method=user.getweeklytrackchart&user=' +
           username +
-          "&api_key=" +
+          '&api_key=' +
           _this.apiKey +
-          "&format=json";
+          '&format=json';
         if (from) {
-          req += "&from=" + from;
+          req += '&from=' + from;
         }
         if (to) {
-          req += "&to=" + to;
+          req += '&to=' + to;
         }
 
         $http.get(req).success(callback);
@@ -839,42 +654,37 @@ angular
       getUserLovedTracks: function(username, callback) {
         var _this = this;
         var req =
-          "http://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks&limit=500&user=" +
+          'http://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks&limit=500&user=' +
           username +
-          "&api_key=" +
+          '&api_key=' +
           _this.apiKey +
-          "&format=json";
+          '&format=json';
 
         $http.get(req).success(callback);
       }
     };
   })
-  .factory("YouTubeFactory", function($http, $q) {
+  .factory('YouTubeFactory', function($http, $q) {
     return {
-      apiKey: "AIzaSyDh-yB1krW7TFjW30TYhLJLL-dZ90zOraY",
+      apiKey: 'AIzaSyDh-yB1krW7TFjW30TYhLJLL-dZ90zOraY',
       getPlaylist: function(playlistId, callback) {
         var _this = this,
           results = [];
 
         _this.getVideosFromPlaylist(playlistId, results, null, callback);
       },
-      getVideosFromPlaylist: function(
-        playlistId,
-        results,
-        nextPageToken,
-        callback
-      ) {
+      getVideosFromPlaylist: function(playlistId, results, nextPageToken, callback) {
         // Docs: https://developers.google.com/youtube/v3/docs/playlistItems/list
         // endpoint: GET https://www.googleapis.com/youtube/v3/playlistItems
         var _this = this,
           req =
-            "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=" +
+            'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=' +
             playlistId +
-            "&maxResults=50&key=" +
+            '&maxResults=50&key=' +
             _this.apiKey;
 
         if (nextPageToken) {
-          req += "&pageToken=" + nextPageToken;
+          req += '&pageToken=' + nextPageToken;
         }
         $http.get(req).success(function(res) {
           for (var i = 0; i < res.items.length; i += 1) {
@@ -882,12 +692,7 @@ angular
           }
 
           if (res.nextPageToken) {
-            _this.getVideosFromPlaylist(
-              playlistId,
-              results,
-              res.nextPageToken,
-              callback
-            );
+            _this.getVideosFromPlaylist(playlistId, results, res.nextPageToken, callback);
           } else {
             callback(results);
           }
@@ -895,12 +700,12 @@ angular
       }
     };
   })
-  .factory("SoundCloudFactory", function($http) {
+  .factory('SoundCloudFactory', function($http) {
     return {
-      apiKey: "88434bd865d117fd3f098ca6c2c7ad38"
+      apiKey: '88434bd865d117fd3f098ca6c2c7ad38'
     };
   })
-  .factory("Utilities", function() {
+  .factory('Utilities', function() {
     return {
       shuffleArray: function(array) {
         // Fisher-Yates shuffle
