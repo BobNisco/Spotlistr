@@ -1,6 +1,5 @@
 'use strict';
 
-/* Services */
 angular
   .module('spotlistr.services', [])
   .value('version', '1.13.0')
@@ -57,10 +56,11 @@ angular
       }
     };
   })
-  .factory('SpotifySearchFactory', function($http) {
+  .factory('SpotifySearchFactory', function($http, UserFactory) {
     return {
       search: function(track) {
         var _this = this;
+        $http.defaults.headers.common.Authorization = 'Bearer ' + UserFactory.getAccessToken();
         // https://developer.spotify.com/web-api/search-item/
         var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(track.cleanedQuery);
         $http

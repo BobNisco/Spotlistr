@@ -1,7 +1,5 @@
 'use strict';
 
-/* Directives */
-
 angular
   .module('spotlistr.directives', [])
   .directive('appVersion', [

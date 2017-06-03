@@ -1,7 +1,5 @@
 'use strict';
 
-/* Controllers */
-
 var defaultSearch = function(UserFactory, QueryFactory, SpotifyPlaylistFactory) {
   this.userFactory = UserFactory;
   // The tracks

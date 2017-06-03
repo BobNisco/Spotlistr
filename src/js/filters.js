@@ -1,7 +1,5 @@
 'use strict';
 
-/* Filters */
-
 angular.module('spotlistr.filters', []).filter('interpolate', [
   'version',
   function(version) {
