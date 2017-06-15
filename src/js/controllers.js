@@ -60,7 +60,7 @@ angular
         for (var i = 0; i < rawInputByLine.length; i += 1) {
           $scope.trackSet.tracks.push(new Track(rawInputByLine[i]));
         }
-        QueryFactory.performSearch($scope.trackSet.tracks);
+        QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
         $scope.searching = false;
       };
     }
@@ -318,7 +318,7 @@ angular
               e
             ) {
               // 2. Search Spotify
-              QueryFactory.performSearch($scope.trackSet.tracks);
+              QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
               $scope.searching = false;
             });
           },
@@ -460,7 +460,7 @@ angular
 
         $q.all(promises).then(function(e) {
           // 2. Search Spotify
-          QueryFactory.performSearch(_trackArr);
+          QueryFactory.performSearch(_trackArr, $scope.messages);
           $scope.searching = false;
         });
       };
@@ -505,7 +505,7 @@ angular
             $scope.trackSet.tracks = comments.map(function(comment) {
               return new Track(comment);
             });
-            QueryFactory.performSearch($scope.trackSet.tracks);
+            QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
             $scope.searching = false;
           },
           function(error) {
@@ -538,7 +538,7 @@ angular
 
         LastfmFactory.getSimilarTracksAndExtractInfo(inputByLine, $scope.similarCount, function(lastfmSimilarTracks) {
           LastfmFactory.extractQueriesFromLastfmSimilarTracks(lastfmSimilarTracks, $scope.trackSet.tracks);
-          QueryFactory.performSearch($scope.trackSet.tracks);
+          QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
           $scope.searching = false;
         });
       };
@@ -581,7 +581,7 @@ angular
           // 3. For each Top Track, find similar tracks and produce results
           LastfmFactory.getSimilarTracksAndExtractInfo(topTracks, $scope.similarCount, function(lastfmSimilarTracks) {
             LastfmFactory.extractQueriesFromLastfmSimilarTracks(lastfmSimilarTracks, $scope.trackSet.tracks);
-            QueryFactory.performSearch($scope.trackSet.tracks);
+            QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
             $scope.searching = false;
           });
         });
@@ -613,7 +613,7 @@ angular
             $scope.trackSet.tracks.push(new Track(lovedTracks[i]));
           }
           // 3. For each Top Track, find similar tracks and produce results
-          QueryFactory.performSearch($scope.trackSet.tracks);
+          QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
           $scope.searching = false;
         });
       };
@@ -644,7 +644,7 @@ angular
             $scope.trackSet.tracks.push(new Track(topTracks[i]));
           }
           // 3. For each Top Track, find similar tracks and produce results
-          QueryFactory.performSearch($scope.trackSet.tracks);
+          QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
           $scope.searching = false;
         });
       };
@@ -703,7 +703,7 @@ angular
               $scope.trackSet.tracks.push(newTrack);
             }
 
-            QueryFactory.performSearch($scope.trackSet.tracks);
+            QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
             $scope.searching = false;
           }
         );
@@ -733,7 +733,7 @@ angular
             newTrack.sourceUrl = 'http://youtube.com/watch?v=' + items[i].snippet.resourceId.videoId;
             $scope.trackSet.tracks.push(newTrack);
           }
-          QueryFactory.performSearch($scope.trackSet.tracks);
+          QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
           $scope.searching = false;
         });
       };
@@ -776,7 +776,7 @@ angular
             }
             $scope.trackSet.tracks.push(newTrack);
           }
-          QueryFactory.performSearch($scope.trackSet.tracks);
+          QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
           $scope.searching = false;
         });
       };

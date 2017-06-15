@@ -5,6 +5,7 @@ angular
   .value('version', '1.14.0')
   .factory('UserFactory', function($http, $rootScope) {
     return {
+      reauthAttempts: 0,
       currentUser: function() {
         return JSON.parse(window.localStorage.getItem('currentUser'));
       },
@@ -31,6 +32,13 @@ angular
         window.localStorage.setItem('refresh_token', refreshToken);
       },
       getNewAccessToken: function(successCallback, errorCallback) {
+        this.reauthAttempts++;
+
+        // Naively prevent infinite loops here
+        if (this.reauthAttempts >= 4) {
+          return null;
+        }
+
         $http
           .get('/refresh_token?refresh_token=' + this.getRefreshToken())
           .success(successCallback)
@@ -56,11 +64,45 @@ angular
       }
     };
   })
-  .factory('SpotifySearchFactory', function($http, UserFactory) {
+  .factory('SpotifyResponseFactory', function($http, UserFactory) {
     return {
-      search: function(track) {
+      handleErrorResponse: function(data, status, headers, config, messages, _this, onReauthCallback) {
+        if (status === 401) {
+          // 401 unauthorized
+          // The token needs to be refreshed
+          UserFactory.getNewAccessToken(
+            function(newTokenResponse) {
+              UserFactory.setAccessToken(newTokenResponse.access_token);
+              onReauthCallback();
+            },
+            function(data, status, headers, config) {
+              _this.addError(messages, data.error.message);
+            }
+          );
+        } else if (status === 429) {
+          // If we are exceeding max requests, try this request again after a period of time
+          window.setTimeout(function() {
+            onReauthCallback();
+          }, 3000);
+        } else {
+          _this.addError(messages, data.error.message);
+        }
+      }
+    };
+  })
+  .factory('SpotifySearchFactory', function($http, UserFactory, SpotifyResponseFactory) {
+    return {
+      search: function(track, messages) {
         var _this = this;
         $http.defaults.headers.common.Authorization = 'Bearer ' + UserFactory.getAccessToken();
+
+        var errorCallback = (data, status, headers, config) => {
+          return SpotifyResponseFactory.handleErrorResponse(data, status, headers, config, messages, _this, () => {
+            // Call the search function since we now have the proper access token
+            _this.search(track, messages);
+          });
+        };
+
         // https://developer.spotify.com/web-api/search-item/
         var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(track.cleanedQuery);
         $http
@@ -68,18 +110,11 @@ angular
           .success(function(response) {
             track.addSpotifyMatches(response.tracks.items);
           })
-          .error(function(response, status, headers, config) {
-            if (status === 429) {
-              // If we are exceeding max requests, try this request again after a period of time
-              window.setTimeout(function() {
-                _this.search(track);
-              }, 3000);
-            }
-          });
+          .error(errorCallback);
       }
     };
   })
-  .factory('SpotifyPlaylistFactory', function($http, UserFactory, QueryFactory) {
+  .factory('SpotifyPlaylistFactory', function($http, UserFactory, QueryFactory, SpotifyResponseFactory) {
     return {
       SPOTIFY_TRACK_LIMIT: 100,
       create: function(name, user_id, access_token, is_public, callback, errorCallback) {
@@ -180,7 +215,7 @@ angular
             }
           },
           errorCallback = function(data, status, headers, config) {
-            _this.handleErrorResponse(data, status, headers, config, messages, _this, function() {
+            SpotifyResponseFactory.handleErrorResponse(data, status, headers, config, messages, _this, function() {
               // Call the create new playlist function again
               // since we now have the proper access token
               _this.create(
@@ -246,23 +281,6 @@ angular
           doReplaceRequest(user_id, playlist_id, playlist, successCallback, errorCallback);
         }
       },
-      handleErrorResponse: function(data, status, headers, config, messages, _this, onReauthCallback) {
-        if (status === 401) {
-          // 401 unauthorized
-          // The token needs to be refreshed
-          UserFactory.getNewAccessToken(
-            function(newTokenResponse) {
-              UserFactory.setAccessToken(newTokenResponse.access_token);
-              onReauthCallback();
-            },
-            function(data, status, headers, config) {
-              _this.addError(messages, data.error.message);
-            }
-          );
-        } else {
-          _this.addError(messages, data.error.message);
-        }
-      },
       addError: function(messages, message) {
         messages.push({
           status: 'error',
@@ -286,7 +304,7 @@ angular
             encodeURIComponent(playlistId) +
             '/tracks',
           errorCallback = function(data, status, headers, config) {
-            _this.handleErrorResponse(data, status, headers, config, messages, _this, function() {
+            SpotifyResponseFactory.handleErrorResponse(data, status, headers, config, messages, _this, function() {
               // Call the get playlist tracks again
               _this.handleGetPlaylistTracks(getUrl, UserFactory.getAccessToken(), trackArr, callback, errorCallback);
             });
@@ -386,7 +404,7 @@ angular
         var _this = this;
 
         trackArr.map(function(track, i) {
-          // Initially batch these requests out a bit to overload the client and Spotify API
+          // Incredibly naive batching in an attempt to not overload the client and Spotify API
           var wait = Math.floor(i / 50) * 1000;
 
           return window.setTimeout(
