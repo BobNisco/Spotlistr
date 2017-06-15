@@ -1,6 +1,6 @@
 {
   "name": "Spotlistr",
-  "version": "1.14.2",
+  "version": "1.14.3",
   "description": "Spotlistr is the easiest way to create playlists for Spotify!",
   "main": "app.js",
   "dependencies": {
@@ -40,7 +40,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev-client": "gulp",
     "dev-server": "nodemon ./app.js",
-    "release": "gulp clean && gulp --release"
+    "release": "rm -rf node_modules && npm i && gulp clean && gulp --release"
   },
   "repository": {
     "type": "git",
