@@ -43,6 +43,24 @@ Track.prototype.getSelectedSong = function() {
   }
 };
 
+Track.disallowList = [
+  /With Lyrics/i,
+  /Official Video/i,
+  /ft/i,
+  /lyric video/i,
+  /official lyrics? video/i,
+  /HD/i,
+  /1080i/i,
+  /1080p/i,
+  /4k/i,
+  /explicit/i,
+  /explicit version/i,
+  /clean version/i,
+  /official music video/i,
+  /official music video hd/i,
+  /uncensored/i
+];
+
 Track.prototype.normalizeSearchQuery = function(query) {
   var normalized = query;
   // Remove any genre tags in the formation [genre]
@@ -52,6 +70,11 @@ Track.prototype.normalizeSearchQuery = function(query) {
   normalized = normalized.replace(/(\[(\d*)?:?\d+:\d+\])/, '');
   // Remove the year tags in the format [yyyy] or (yyyy)
   normalized = normalized.replace(/(\[|\()+\d*(\]|\))+/, '');
+
+  Track.disallowList.forEach(disallowedPhrase => {
+    normalized = normalized.replace(disallowedPhrase, '');
+  });
+
   // Remove all the extraneous stuff
   // This was causing problems with non-english characters
   // normalized = normalized.replace(/[^\w\s]/gi, '');
