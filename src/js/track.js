@@ -46,7 +46,6 @@ Track.prototype.getSelectedSong = function() {
 Track.disallowList = [
   /With Lyrics/i,
   /Official Video/i,
-  /ft/i,
   /lyric video/i,
   /official lyrics? video/i,
   /HD/i,
