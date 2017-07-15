@@ -2,7 +2,7 @@
 
 angular
   .module('spotlistr.services', [])
-  .value('version', '1.14.3')
+  .value('version', '1.14.4')
   .factory('UserFactory', function($http, $rootScope) {
     return {
       reauthAttempts: 0,
@@ -162,10 +162,10 @@ angular
           method: 'DELETE',
           url:
             'https://api.spotify.com/v1/users/' +
-              encodeURIComponent(user_id) +
-              '/playlists/' +
-              encodeURIComponent(playlist_id) +
-              '/tracks',
+            encodeURIComponent(user_id) +
+            '/playlists/' +
+            encodeURIComponent(playlist_id) +
+            '/tracks',
           data: { tracks: arr }
         }).success(callback);
       },
@@ -247,10 +247,10 @@ angular
             method: 'PUT',
             url:
               'https://api.spotify.com/v1/users/' +
-                encodeURIComponent(user_id) +
-                '/playlists/' +
-                encodeURIComponent(playlist_id) +
-                '/tracks',
+              encodeURIComponent(user_id) +
+              '/playlists/' +
+              encodeURIComponent(playlist_id) +
+              '/tracks',
             data: { uris: playlist }
           })
             .success(successCallback)
