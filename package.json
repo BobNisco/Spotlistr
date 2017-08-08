@@ -39,7 +39,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev-client": "gulp",
-    "dev-server": "nodemon ./app.js",
+    "dev-server": "NODE_ENV=development nodemon ./app.js",
     "release": "rm -rf node_modules && npm i && gulp clean && gulp --release"
   },
   "repository": {
