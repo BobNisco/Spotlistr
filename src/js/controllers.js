@@ -50,6 +50,7 @@ angular
       }
       // The data in the text area
       $scope.taData = '';
+      $scope.isIsrc = false;
 
       defaultSearch.apply($scope, [UserFactory, QueryFactory, SpotifyPlaylistFactory]);
 
@@ -60,7 +61,7 @@ angular
         for (var i = 0; i < rawInputByLine.length; i += 1) {
           $scope.trackSet.tracks.push(new Track(rawInputByLine[i]));
         }
-        QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages);
+        QueryFactory.performSearch($scope.trackSet.tracks, $scope.messages, { isIsrc: $scope.isIsrc });
         $scope.searching = false;
       };
     }

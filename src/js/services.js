@@ -92,7 +92,7 @@ angular
   })
   .factory('SpotifySearchFactory', function($http, UserFactory, SpotifyResponseFactory) {
     return {
-      search: function(track, messages) {
+      search: function(track, messages, { isIsrc } = {}) {
         var _this = this;
         $http.defaults.headers.common.Authorization = 'Bearer ' + UserFactory.getAccessToken();
 
@@ -104,7 +104,8 @@ angular
         };
 
         // https://developer.spotify.com/web-api/search-item/
-        var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(track.cleanedQuery);
+        var query = isIsrc ? `isrc:${track.cleanedQuery}` : track.cleanedQuery;
+        var req = 'https://api.spotify.com/v1/search?type=track&limit=8&q=' + encodeURIComponent(query);
         $http
           .get(req)
           .success(function(response) {
@@ -400,7 +401,7 @@ angular
       createSpotifyUriFromTrackId: function(id) {
         return 'spotify:track:' + id;
       },
-      performSearch: function(trackArr) {
+      performSearch: function(trackArr, messages, options = {}) {
         var _this = this;
 
         trackArr.map(function(track, i) {
@@ -409,7 +410,7 @@ angular
 
           return window.setTimeout(
             function() {
-              SpotifySearchFactory.search(track);
+              SpotifySearchFactory.search(track, messages, options);
             }.bind(_this),
             wait
           );
