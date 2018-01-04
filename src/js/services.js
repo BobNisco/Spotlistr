@@ -2,7 +2,7 @@
 
 angular
   .module('spotlistr.services', [])
-  .value('version', '1.14.5')
+  .value('version', '1.14.6')
   .factory('UserFactory', function($http, $rootScope) {
     return {
       reauthAttempts: 0,
