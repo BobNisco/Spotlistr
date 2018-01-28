@@ -349,7 +349,7 @@ angular
         return null;
       },
       extractUserIdAndPlaylistIdFromSpotifyUrl: function(url) {
-        var spotifyUrlRegex = /spotify.com\/user\/(.*)\/playlist\/(.*)\/?/,
+        var spotifyUrlRegex = /spotify.com\/user\/(.*)\/playlist\/([^?]*)\/?/,
           regExGroups = spotifyUrlRegex.exec(url);
         if (regExGroups !== null && regExGroups.length > 1) {
           return {
