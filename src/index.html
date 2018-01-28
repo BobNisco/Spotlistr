@@ -2,7 +2,10 @@
 <!--[if lt IE 7]>      <html lang="en" ng-app="spotlistr" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html lang="en" ng-app="spotlistr" class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html lang="en" ng-app="spotlistr" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="spotlistr" class="no-js"> <!--<![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="spotlistr" class="no-js">
+<!--<![endif]-->
+
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,23 +15,24 @@
 	<link rel="stylesheet" href="/css/styles.min.css">
 	<script src="/js/spotlistr.min.js"></script>
 	<script>
-	(function(i, s, o, g, r, a, m) {
-  i['GoogleAnalyticsObject'] = r;
-  (i[r] =
-    i[r] ||
-    function() {
-      (i[r].q = i[r].q || []).push(arguments);
-    }), (i[r].l = 1 * new Date());
-  (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
-  a.async = 1;
-  a.src = g;
-  m.parentNode.insertBefore(a, m);
-})(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+		(function (i, s, o, g, r, a, m) {
+			i['GoogleAnalyticsObject'] = r;
+			(i[r] =
+				i[r] ||
+				function () {
+					(i[r].q = i[r].q || []).push(arguments);
+				}), (i[r].l = 1 * new Date());
+			(a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+			a.async = 1;
+			a.src = g;
+			m.parentNode.insertBefore(a, m);
+		})(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-ga('create', 'UA-18378191-15', 'spotlistr.herokuapp.com');
-</script>
+		ga('create', 'UA-18378191-15', 'spotlistr.herokuapp.com');
+	</script>
 	<base href="/" />
 </head>
+
 <body ng-app="spotlistr">
 	<nav class="navbar navbar-default" role="navigation" ng-controller="User">
 		<div class="container">
@@ -43,44 +47,78 @@ ga('create', 'UA-18378191-15', 'spotlistr.herokuapp.com');
 			</div>
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li><a href="#/search/textbox">Textbox</a></li>
+					<li>
+						<a href="#/search/textbox">Textbox</a>
+					</li>
 					<li class="dropdown">
-						<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Reddit <b class="caret"></b></a>
+						<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Reddit
+							<b class="caret"></b>
+						</a>
 						<ul class="dropdown-menu">
-							<li><a href="#/search/subreddit">Subreddit</a></li>
-							<li><a href="#/search/multireddit">Your Multireddits</a></li>
-							<li><a href="#/search/reddit-comments">Reddit Comments</a></li>
+							<li>
+								<a href="#/search/subreddit">Subreddit</a>
+							</li>
+							<li>
+								<a href="#/search/multireddit">Your Multireddits</a>
+							</li>
+							<li>
+								<a href="#/search/reddit-comments">Reddit Comments</a>
+							</li>
 						</ul>
 					</li>
 					<li class="dropdown">
-						<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Last.fm <b class="caret"></b></a>
+						<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Last.fm
+							<b class="caret"></b>
+						</a>
 						<ul class="dropdown-menu">
-							<li><a href="#/search/lastfm-similar">Last.fm Similar Tracks</a></li>
-							<li><a href="#/search/lastfm-toptracks-similar">Last.fm Top Tracks Similar</a></li>
-							<li><a href="#/search/lastfm-tag-top-tracks">Last.fm Tag Top Tracks</a></li>
-							<li><a href="#/search/lastfm-top-for-time-period">Last.fm Top Tracks for Time Period</a></li>
-							<li><a href="#/search/lastfm-loved-tracks">Last.fm Loved Tracks</a></li>
+							<li>
+								<a href="#/search/lastfm-similar">Last.fm Similar Tracks</a>
+							</li>
+							<li>
+								<a href="#/search/lastfm-toptracks-similar">Last.fm Top Tracks Similar</a>
+							</li>
+							<li>
+								<a href="#/search/lastfm-tag-top-tracks">Last.fm Tag Top Tracks</a>
+							</li>
+							<li>
+								<a href="#/search/lastfm-top-for-time-period">Last.fm Top Tracks for Time Period</a>
+							</li>
+							<li>
+								<a href="#/search/lastfm-loved-tracks">Last.fm Loved Tracks</a>
+							</li>
 						</ul>
 					</li>
-					<li><a href="#/search/youtube">YouTube</a></li>
-					<li><a href="#/search/soundcloud">SoundCloud</a></li>
+					<li>
+						<a href="#/search/youtube">YouTube</a>
+					</li>
+					<li>
+						<a href="#/search/soundcloud">SoundCloud</a>
+					</li>
 					<li class="dropdown">
-						<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Playlist Tools <b class="caret"></b></a>
+						<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Playlist Tools
+							<b class="caret"></b>
+						</a>
 						<ul class="dropdown-menu">
-							<li><a href="#/export/spotify-playlist">Export Playlist</a></li>
-							<li><a href="#/manage/dedupe-playlist">Dedupe Playlist</a></li>
-							<li><a href="#/manage/shuffle-playlist">Shuffle Playlist</a></li>
+							<li>
+								<a href="#/export/spotify-playlist">Export Playlist</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right" ng-cloak>
 					<li ng-if="userFactory.userLoggedIn() === true" class="dropdown">
-						<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Sup, {{ userFactory.currentUser().display_name }} <b class="caret"></b></a>
+						<a href="!#" class="dropdown-toggle" data-toggle="dropdown">Hello{{ userFactory.currentUser().display_name ? ', ' + userFactory.currentUser().display_name : '' }}
+							<b class="caret"></b>
+						</a>
 						<ul class="dropdown-menu">
-							<li><a href="#/users/log-out">Log out</a></li>
+							<li>
+								<a href="#/users/log-out">Log out</a>
+							</li>
 						</ul>
 					</li>
-					<li ng-if="userFactory.userLoggedIn() === false"><a href="/login">Log in with Spotify</a></li>
+					<li ng-if="userFactory.userLoggedIn() === false">
+						<a href="/login">Log in with Spotify</a>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -91,31 +129,38 @@ ga('create', 'UA-18378191-15', 'spotlistr.herokuapp.com');
 	<![endif]-->
 	<div class="centered">
 		<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-		<ins class="adsbygoogle"
-		     style="display:block"
-		     data-ad-client="ca-pub-6550500852671313"
-		     data-ad-slot="2744548231"
-		     data-ad-format="auto"></ins>
+		<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6550500852671313" data-ad-slot="2744548231" data-ad-format="auto"></ins>
 		<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 	</div>
 	<div ng-view></div>
 	<footer class="spotlistr-footer" role="contentinfo">
 		<div class="container">
-			<p>Spotlistr is created by <a href="http://bobnisco.com" target="_blank">Bob Nisco</a> | <a href="https://open.spotify.com/user/bobnisco" target="_blank">Follow Bob Nisco on Spotify</a> | <a href="https://twitter.com/spotlistr" target="_blank">Follow @Spotlistr on Twitter</a></p>
-			<p>Want to contribute? Check out our <a href="https://github.com/BobNisco/Spotlistr#want-to-contribute" target="_blank">GitHub repo</a>!</p>
-			<p>Code is licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">Apache 2</a> license</p>
+			<p>Spotlistr is created by
+				<a href="http://bobnisco.com" target="_blank">Bob Nisco</a> |
+				<a href="https://open.spotify.com/user/bobnisco" target="_blank">Follow Bob Nisco on Spotify</a> |
+				<a href="https://twitter.com/spotlistr" target="_blank">Follow @Spotlistr on Twitter</a>
+			</p>
+			<p>Want to contribute? Check out our
+				<a href="https://github.com/BobNisco/Spotlistr#want-to-contribute" target="_blank">GitHub repo</a>!</p>
+			<p>Code is licensed under
+				<a href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank">Apache 2</a> license</p>
 			<ul class="spotlistr-footer-links muted">
-				<li>Spotlistr: v<span app-version></span></li>
-				<li><a href="https://github.com/BobNisco/Spotlistr" target="blank">GitHub</a></li>
+				<li>Spotlistr: v
+					<span app-version></span>
+				</li>
+				<li>
+					<a href="https://github.com/BobNisco/Spotlistr" target="blank">GitHub</a>
+				</li>
 			</ul>
 		</div>
 	</footer>
 	<script src="//connect.soundcloud.com/sdk.js"></script>
 	<script>
-	SC.initialize({
-  client_id: '88434bd865d117fd3f098ca6c2c7ad38',
-  redirect_uri: 'http://spotlistr.herokuapp.com/soundcloud-callback'
-});
-</script>
+		SC.initialize({
+			client_id: '88434bd865d117fd3f098ca6c2c7ad38',
+			redirect_uri: 'http://spotlistr.herokuapp.com/soundcloud-callback'
+		});
+	</script>
 </body>
+
 </html>
