@@ -57,7 +57,8 @@ Track.disallowList = [
   /clean version/i,
   /official music video/i,
   /official music video hd/i,
-  /uncensored/i
+  /uncensored/i,
+  /bass boosted/i
 ];
 
 Track.prototype.normalizeSearchQuery = function(query) {
