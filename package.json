@@ -1,5 +1,5 @@
 {
-  "name": "Spotlistr",
+  "name": "spotlistr",
   "version": "1.14.7",
   "description": "Spotlistr is the easiest way to create playlists for Spotify!",
   "main": "app.js",
@@ -18,6 +18,7 @@
     "babel-preset-es2015": "^6.24.1",
     "bootstrap": "^3.3.7",
     "bootswatch": "^3.3.7",
+    "cross-env": "^5.1.4",
     "del": "^2.1.0",
     "font-awesome": "^4.1.0",
     "gulp": "^3.9.1",
@@ -39,7 +40,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev-client": "gulp",
-    "dev-server": "NODE_ENV=development nodemon ./app.js",
+    "dev-server": "cross-env NODE_ENV=development nodemon ./app.js",
     "release": "rm -rf node_modules && npm i && gulp clean && gulp --release"
   },
   "repository": {
@@ -53,7 +54,7 @@
     "heroku"
   ],
   "engines": {
-    "node": "8.2.1"
+    "node": ">=8.2.1"
   },
   "author": "Bob Nisco",
   "license": "Apache-2.0",
