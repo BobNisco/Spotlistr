@@ -707,7 +707,9 @@ angular
         }
         $http.get(req).success(function(res) {
           for (var i = 0; i < res.items.length; i += 1) {
-            results.push(res.items[i]);
+			if (items[i].snippet.title != "This video has been deleted" && items[i].snippet.title != "Private video") {
+              results.push(res.items[i]);
+			}
           }
 
           if (res.nextPageToken) {
