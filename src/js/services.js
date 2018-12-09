@@ -581,7 +581,7 @@ angular
           splitTrack = value.split('-');
           // Async task
           var req =
-            'http://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' +
+            'https://ws.audioscrobbler.com/2.0/?method=track.getsimilar&artist=' +
             encodeURIComponent(splitTrack[0].trim()) +
             '&track=' +
             encodeURIComponent(splitTrack[1].trim()) +
@@ -605,11 +605,11 @@ angular
       },
       getUserTopTracks: function(username, period, callback) {
         // http://www.last.fm/api/show/user.getTopTracks
-        // http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=rj&api_key=0fa55d46c0a036a3f785cdd768fadbba&format=json
+        // https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=rj&api_key=0fa55d46c0a036a3f785cdd768fadbba&format=json
         var _this = this;
 
         var req =
-          'http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=' +
+          'https://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=' +
           encodeURIComponent(username) +
           '&api_key=' +
           _this.apiKey +
@@ -644,7 +644,7 @@ angular
         var _this = this;
 
         var req =
-          'http://ws.audioscrobbler.com/2.0/?method=tag.gettoptracks&tag=' +
+          'https://ws.audioscrobbler.com/2.0/?method=tag.gettoptracks&tag=' +
           tag +
           '&api_key=' +
           _this.apiKey +
@@ -656,7 +656,7 @@ angular
         // http://www.last.fm/api/show/user.getWeeklyTrackChart
         var _this = this;
         var req =
-          'http://ws.audioscrobbler.com/2.0/?method=user.getweeklytrackchart&user=' +
+          'https://ws.audioscrobbler.com/2.0/?method=user.getweeklytrackchart&user=' +
           username +
           '&api_key=' +
           _this.apiKey +
@@ -673,7 +673,7 @@ angular
       getUserLovedTracks: function(username, callback) {
         var _this = this;
         var req =
-          'http://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks&limit=500&user=' +
+          'https://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks&limit=500&user=' +
           username +
           '&api_key=' +
           _this.apiKey +
