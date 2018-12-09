@@ -54,7 +54,7 @@
     "heroku"
   ],
   "engines": {
-    "node": ">=8.2.1"
+    "node": "^8.2.1"
   },
   "author": "Bob Nisco",
   "license": "Apache-2.0",
